@@ -2,5 +2,9 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "mercybridge-app",
   "compatibility_date": "2025-12-01",
-  "pages_build_output_dir": "./dist"
+  "pages_build_output_dir": "./dist",
+  "vars": {
+    "VITE_SUPABASE_URL": "https://qkgtlxhuvuongwdzyizl.supabase.co",
+    "VITE_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFrZ3RseGh1dnVvbmd3ZHp5aXpsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg5NDM1MDcsImV4cCI6MjA2NDUxOTUwN30.Hm3YuDkpSVSBwGS5fWr7LykF6JXNLFrgGIB6t6mms04"
+  }
 }
