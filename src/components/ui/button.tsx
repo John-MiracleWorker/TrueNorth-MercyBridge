@@ -49,16 +49,16 @@ export interface ButtonProps
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, enableHaptics = false, onClick, ...props }, ref) => {
     const Comp = asChild ? Slot : "button"
-    const { hapticClick } = useHaptic()
+    const { haptic } = useHaptic()
     const { playClick } = useSound()
 
     const handleClick = React.useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
       if (enableHaptics) {
-        hapticClick();
+        haptic('light');
         playClick();
       }
       onClick?.(e);
-    }, [enableHaptics, hapticClick, playClick, onClick]);
+    }, [enableHaptics, haptic, playClick, onClick]);
 
     return (
       <Comp

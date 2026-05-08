@@ -80,7 +80,12 @@ export function ContributionVerifyModal({
                   Confirm that this proof shows a donor paid the biller directly.
                 </p>
               </div>
-              <button className="rounded-lg p-2 text-slate-400 hover:bg-white/[0.08]" onClick={onClose}>
+              <button
+                type="button"
+                aria-label="Close modal"
+                className="rounded-lg p-2 text-slate-400 hover:bg-white/[0.08]"
+                onClick={onClose}
+              >
                 <X className="h-5 w-5" />
               </button>
             </div>
