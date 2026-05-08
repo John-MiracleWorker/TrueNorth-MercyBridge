@@ -208,6 +208,15 @@ export function MercyBridgeLayout({ children }: MercyBridgeLayoutProps) {
           <ArrowLeft className="h-4 w-4" />
           Service Hub
         </Button>
+        <a
+          href="https://www.find-true-north.net"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex w-full items-center justify-start gap-3 rounded-xl border border-sky-200/20 bg-gradient-to-r from-sky-200/12 to-cyan-200/8 px-3 py-3 text-sm font-medium text-sky-100 transition-colors hover:border-sky-100/35 hover:bg-sky-200/15 hover:text-white"
+        >
+          <Compass className="h-4 w-4" />
+          TrueNorth
+        </a>
         <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
           <div className="flex items-start gap-2.5">
             <Compass className="mt-0.5 h-4 w-4 shrink-0 text-amber-100" />
