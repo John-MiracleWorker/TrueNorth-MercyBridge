@@ -1,0 +1,5 @@
+🎯 **What:** The vulnerability fixed was a hardcoded internal IP address (`http://192.168.1.214:8000`) used as a fallback for the `OCR_SERVER_URL` in `src/components/BillUpload.tsx`.
+
+⚠️ **Risk:** If left unfixed, this could leak internal network infrastructure details to clients, potentially assisting attackers in footprinting and lateral movement if they gain access to the environment.
+
+🛡️ **Solution:** The hardcoded IP was removed and replaced with an empty string (`''`) as the fallback. This relies safely on relative paths if the environment variable is not defined. Additionally, `src/vite-env.d.ts` was added to fix TypeScript linting errors related to `import.meta.env`.
