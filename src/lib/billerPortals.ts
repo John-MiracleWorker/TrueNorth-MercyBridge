@@ -95,7 +95,8 @@ export const knownBillerPortals: Record<string, BillerPortal> = {
 export function getBillerPortal(billerName: string): BillerPortal {
   const normalized = billerName.toLowerCase()
     .replace(/[^a-z0-9]/g, '-')
-    .replace(/-+/g, '-');
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
   
   return knownBillerPortals[normalized] || {
     ...knownBillerPortals.default,
