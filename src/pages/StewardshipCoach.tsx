@@ -208,7 +208,7 @@ export default function StewardshipCoach() {
             const assistantContent = finalContent.trim();
             if (assistantContent) {
               setMessages((prev) => {
-                const updated = [...prev, { role: 'assistant', content: assistantContent }];
+                const updated = [...prev, { role: "assistant" as const, content: assistantContent }];
                 // Persist after assistant response
                 void persistChat(updated, activeSnapshot);
                 return updated;
@@ -386,7 +386,7 @@ export default function StewardshipCoach() {
             {messages.map((message, index) => (
               <div
                 key={`${message.role}-${index}`}
-                className={`flex gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                className={`flex gap-2 sm:gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 {message.role === 'assistant' ? (
                   <span className="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-300/10 text-emerald-200">
