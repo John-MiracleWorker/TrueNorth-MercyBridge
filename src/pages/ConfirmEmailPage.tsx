@@ -29,9 +29,8 @@ export default function ConfirmEmailPage() {
         // This page is mainly for user feedback
         setMessage('Email confirmed successfully!');
       } catch (err: unknown) {
-        const msg = err instanceof Error ? err.message : 'Failed to confirm email';
         logger.error('Confirm email error:', err);
-        setError(msg);
+        setError('Failed to confirm email. Please try again.');
       } finally {
         setLoading(false);
       }

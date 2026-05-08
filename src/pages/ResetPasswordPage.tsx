@@ -27,9 +27,8 @@ export default function ResetPasswordPage() {
       if (error) throw error;
       setMessage('Check your email for a password reset link!');
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Failed to send reset email';
       logger.error('Reset password error:', err);
-      setError(message);
+      setError('Failed to send reset email. Please try again.');
     } finally {
       setLoading(false);
     }
