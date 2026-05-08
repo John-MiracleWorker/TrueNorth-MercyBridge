@@ -295,7 +295,7 @@ export default function StewardshipCoach() {
                 placeholder={`Electric bill - 184 - May 15\nRent - 850 - May 20`}
                 value={context.bills}
                 onChange={(event) => updateContext('bills', event.target.value)}
-                className="mt-1.5 min-h-[80px] border-white/10 bg-slate-950/45 text-white sm:mt-2 sm:min-h-[96px]"
+                className="mt-1.5 min-h-[60px] resize-none border-white/10 bg-slate-950/45 text-white sm:mt-2 sm:min-h-[80px]"
               />
             </div>
 
@@ -305,7 +305,7 @@ export default function StewardshipCoach() {
                 placeholder={`Groceries - 300\nGas - 120\nPhone - 65`}
                 value={context.expenses}
                 onChange={(event) => updateContext('expenses', event.target.value)}
-                className="mt-1.5 min-h-[72px] border-white/10 bg-slate-950/45 text-white sm:mt-2 sm:min-h-[84px]"
+                className="mt-1.5 min-h-[60px] resize-none border-white/10 bg-slate-950/45 text-white sm:mt-2 sm:min-h-[72px]"
               />
             </div>
 
@@ -315,7 +315,7 @@ export default function StewardshipCoach() {
                 placeholder="What changed, and what feels most urgent?"
                 value={context.hardship_notes}
                 onChange={(event) => updateContext('hardship_notes', event.target.value)}
-                className="mt-1.5 min-h-[80px] border-white/10 bg-slate-950/45 text-white sm:mt-2 sm:min-h-[96px]"
+                className="mt-1.5 min-h-[60px] resize-none border-white/10 bg-slate-950/45 text-white sm:mt-2 sm:min-h-[80px]"
               />
             </div>
 
@@ -527,7 +527,7 @@ export default function StewardshipCoach() {
                   }
                 }}
                 placeholder="Ask for help triaging bills..."
-                className="min-h-[80px] w-full resize-none border-white/10 bg-slate-950/45 text-sm text-white sm:min-h-[72px] sm:text-base"
+                className="min-h-[60px] w-full resize-none border-white/10 bg-slate-950/45 text-sm text-white sm:min-h-[72px] sm:text-base"
                 disabled={isStreaming || !hasSnapshot}
               />
               <div className="flex gap-3">
