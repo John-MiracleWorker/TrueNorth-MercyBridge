@@ -27,9 +27,8 @@ export default function LoginPage() {
       if (error) throw error;
       navigate('/');
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Failed to sign in';
       logger.error('Login error:', err);
-      setError(message);
+      setError('Invalid email or password');
     } finally {
       setLoading(false);
     }
