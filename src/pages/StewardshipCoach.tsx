@@ -448,13 +448,13 @@ export default function StewardshipCoach() {
                       <button
                         type="button"
                         onClick={() => setShowThinking((prev) => !prev)}
-                        className="flex w-full items-center justify-between px-3 py-2 text-left text-xs font-semibold text-sky-100 sm:px-4 sm:py-3 sm:text-sm"
+                        className="flex w-full items-center justify-between px-2 py-2 text-left text-xs font-semibold text-sky-100 sm:px-4 sm:py-3 sm:text-sm"
                       >
                         Thinking
                         <span className="text-xs text-sky-200/70">{showThinking ? 'Hide' : 'Show'}</span>
                       </button>
                       {showThinking ? (
-                        <p className="whitespace-pre-wrap border-t border-sky-300/10 px-3 py-2 text-xs leading-5 text-sky-100/80 sm:px-4 sm:py-3">
+                        <p className="whitespace-pre-wrap border-t border-sky-300/10 px-2 py-2 text-xs leading-5 text-sky-100/80 sm:px-4 sm:py-3">
                           {streamingThinking}
                         </p>
                       ) : null}
