@@ -203,7 +203,7 @@ export function MercyBridgeLayout({ children }: MercyBridgeLayoutProps) {
           type="button"
           variant="ghost"
           className="w-full justify-start gap-3 rounded-xl border border-amber-200/20 bg-gradient-to-r from-amber-200/12 to-emerald-200/8 px-3 py-3 text-amber-100 hover:border-amber-100/35 hover:bg-amber-200/15 hover:text-white"
-          onClick={() => navigate('/hub')}
+          onClick={() => window.location.href = 'https://www.find-true-north.net'}
         >
           <ArrowLeft className="h-4 w-4" />
           Service Hub
@@ -271,8 +271,8 @@ export function MercyBridgeLayout({ children }: MercyBridgeLayoutProps) {
             variant="ghost"
             size="icon"
             className="h-10 w-10 rounded-xl border border-amber-300/20 bg-amber-300/10 text-amber-100 hover:bg-amber-300/15 hover:text-white"
-            onClick={() => navigate('/hub')}
-            aria-label="Open service hub"
+            onClick={() => window.location.href = 'https://www.find-true-north.net'}
+            aria-label="Open TrueNorth"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
