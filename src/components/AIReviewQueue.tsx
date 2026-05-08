@@ -81,8 +81,8 @@ export function AIReviewQueue({
 
       <div className="space-y-3">
         {flaggedContributions.map((contribution, index) => {
-          const aiResult = (contribution as any).ai_verification_result || {};
-          const confidence = (contribution as any).ai_confidence_score || 0;
+          const aiResult = contribution.ai_verification_result || {};
+          const confidence = contribution.ai_confidence_score || 0;
           const issues = aiResult.issues || [];
           const requiresReview = aiResult.requires_review || false;
 

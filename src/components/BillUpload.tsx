@@ -25,7 +25,7 @@ interface UploadState {
   message: string;
 }
 
-const OCR_SERVER_URL = import.meta.env.VITE_OCR_SERVER_URL || 'http://192.168.1.214:8000';
+const OCR_SERVER_URL = import.meta.env.VITE_OCR_SERVER_URL || '';
 
 export default function BillUpload({ onUploadComplete, onError }: BillUploadProps) {
   const { user } = useAuth();
@@ -220,6 +220,8 @@ export default function BillUpload({ onUploadComplete, onError }: BillUploadProp
                   className="w-full max-h-64 object-contain"
                 />
                 <button
+                  type="button"
+                  aria-label="Close preview"
                   onClick={resetUpload}
                   className="absolute top-2 right-2 p-1 rounded-full bg-slate-950/80 text-white hover:bg-red-500/80 transition-colors"
                 >

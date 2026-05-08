@@ -48,9 +48,8 @@ export default function RegisterPage() {
       if (error) throw error;
       setMessage('Check your email for a confirmation link!');
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Failed to sign up';
       logger.error('Register error:', err);
-      setError(message);
+      setError('Failed to create account. Please try again.');
     } finally {
       setLoading(false);
     }

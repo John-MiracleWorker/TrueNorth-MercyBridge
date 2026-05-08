@@ -1,0 +1,3 @@
+## 2024-05-08 - Accessible close buttons
+**Learning:** Found that multiple modals and preview sections utilized `<button>` tags with generic close icons (`<X>`) without any accessible `aria-label` or explicit `type="button"`. Screen readers could not correctly announce the purpose of these icon-only buttons, reducing accessibility for modal navigation and document management.
+**Action:** Always provide descriptive `aria-label` attributes on icon-only buttons (e.g., `aria-label="Close modal"`). Additionally, always specify `type="button"` to avoid unintended form submissions in dynamic interfaces.

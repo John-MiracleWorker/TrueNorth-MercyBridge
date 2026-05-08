@@ -196,6 +196,8 @@ export function ProofUploadModal({ isOpen, onClose, needId, onUploadComplete }: 
                 <p className="text-sm text-slate-400 mt-1">Verify that the bill was paid directly</p>
               </div>
               <button
+                type="button"
+                aria-label="Close modal"
                 onClick={onClose}
                 className="p-2 hover:bg-white/[0.08] rounded-lg transition-colors"
               >

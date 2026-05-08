@@ -1,6 +1,7 @@
 // Supabase client configuration
 // Uses environment variables for security - see .env.example for setup
 import { createClient } from '@supabase/supabase-js';
+import type { Database } from './types';
 
 interface DenoRuntime {
   env?: {
@@ -19,15 +20,16 @@ const SUPABASE_ANON_KEY =
 
 // Validate required environment variables
 if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-  throw new Error(
+  console.warn(
     'Missing required Supabase configuration. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your .env file.'
   );
 }
 
-// Import the supabase client like this:
-// import { supabase } from "@/integrations/supabase/client";
+// Provide fallback values so the app doesn't crash on import (avoids white screen)
+const url = SUPABASE_URL || 'https://placeholder.supabase.co';
+const key = SUPABASE_ANON_KEY || 'placeholder';
 
-export const supabase: any = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+export const supabase = createClient<Database>(url, key, {
   auth: {
     storage: browserStorage,
     persistSession: Boolean(browserStorage),

@@ -208,7 +208,7 @@ export default function StewardshipCoach() {
             const assistantContent = finalContent.trim();
             if (assistantContent) {
               setMessages((prev) => {
-                const updated = [...prev, { role: 'assistant', content: assistantContent }];
+                const updated = [...prev, { role: "assistant" as const, content: assistantContent }];
                 // Persist after assistant response
                 void persistChat(updated, activeSnapshot);
                 return updated;
@@ -295,7 +295,7 @@ export default function StewardshipCoach() {
                 placeholder={`Electric bill - 184 - May 15\nRent - 850 - May 20`}
                 value={context.bills}
                 onChange={(event) => updateContext('bills', event.target.value)}
-                className="mt-1.5 min-h-[80px] border-white/10 bg-slate-950/45 text-white sm:mt-2 sm:min-h-[96px]"
+                className="mt-1.5 min-h-[60px] resize-none border-white/10 bg-slate-950/45 text-white sm:mt-2 sm:min-h-[80px]"
               />
             </div>
 
@@ -305,7 +305,7 @@ export default function StewardshipCoach() {
                 placeholder={`Groceries - 300\nGas - 120\nPhone - 65`}
                 value={context.expenses}
                 onChange={(event) => updateContext('expenses', event.target.value)}
-                className="mt-1.5 min-h-[72px] border-white/10 bg-slate-950/45 text-white sm:mt-2 sm:min-h-[84px]"
+                className="mt-1.5 min-h-[60px] resize-none border-white/10 bg-slate-950/45 text-white sm:mt-2 sm:min-h-[72px]"
               />
             </div>
 
@@ -315,7 +315,7 @@ export default function StewardshipCoach() {
                 placeholder="What changed, and what feels most urgent?"
                 value={context.hardship_notes}
                 onChange={(event) => updateContext('hardship_notes', event.target.value)}
-                className="mt-1.5 min-h-[80px] border-white/10 bg-slate-950/45 text-white sm:mt-2 sm:min-h-[96px]"
+                className="mt-1.5 min-h-[60px] resize-none border-white/10 bg-slate-950/45 text-white sm:mt-2 sm:min-h-[80px]"
               />
             </div>
 
@@ -368,9 +368,9 @@ export default function StewardshipCoach() {
         </aside>
 
         <section className="flex min-h-[60vh] flex-col rounded-2xl border border-white/10 bg-white/[0.055] shadow-xl shadow-black/15 backdrop-blur-xl sm:min-h-[calc(100vh-4rem)]">
-          <div className="border-b border-white/10 p-5">
-            <h2 className="text-2xl font-bold text-white">MercyBridge Conversation</h2>
-            <p className="mt-1 text-sm text-slate-400">
+          <div className="border-b border-white/10 p-4 sm:p-5">
+            <h2 className="text-lg font-bold text-white sm:text-2xl">MercyBridge Conversation</h2>
+            <p className="mt-1 text-xs text-slate-400 sm:text-sm">
               Ask about bill triage, hardship calls, direct-pay proof, or one next step.
             </p>
           </div>
@@ -386,7 +386,7 @@ export default function StewardshipCoach() {
             {messages.map((message, index) => (
               <div
                 key={`${message.role}-${index}`}
-                className={`flex gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                className={`flex gap-2 sm:gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 {message.role === 'assistant' ? (
                   <span className="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-300/10 text-emerald-200">
@@ -448,13 +448,13 @@ export default function StewardshipCoach() {
                       <button
                         type="button"
                         onClick={() => setShowThinking((prev) => !prev)}
-                        className="flex w-full items-center justify-between px-3 py-2 text-left text-xs font-semibold text-sky-100 sm:px-4 sm:py-3 sm:text-sm"
+                        className="flex w-full items-center justify-between px-2 py-2 text-left text-xs font-semibold text-sky-100 sm:px-4 sm:py-3 sm:text-sm"
                       >
                         Thinking
                         <span className="text-xs text-sky-200/70">{showThinking ? 'Hide' : 'Show'}</span>
                       </button>
                       {showThinking ? (
-                        <p className="whitespace-pre-wrap border-t border-sky-300/10 px-3 py-2 text-xs leading-5 text-sky-100/80 sm:px-4 sm:py-3">
+                        <p className="whitespace-pre-wrap border-t border-sky-300/10 px-2 py-2 text-xs leading-5 text-sky-100/80 sm:px-4 sm:py-3">
                           {streamingThinking}
                         </p>
                       ) : null}
@@ -527,7 +527,7 @@ export default function StewardshipCoach() {
                   }
                 }}
                 placeholder="Ask for help triaging bills..."
-                className="min-h-[80px] w-full resize-none border-white/10 bg-slate-950/45 text-sm text-white sm:min-h-[72px] sm:text-base"
+                className="min-h-[60px] w-full resize-none border-white/10 bg-slate-950/45 text-sm text-white sm:min-h-[72px] sm:text-base"
                 disabled={isStreaming || !hasSnapshot}
               />
               <div className="flex gap-3">
@@ -535,7 +535,7 @@ export default function StewardshipCoach() {
                   <Button
                     type="button"
                     variant="outline"
-                    className="h-11 flex-1 border-red-400/30 text-xs text-red-200 hover:bg-red-400/10 sm:h-auto sm:w-32 sm:text-sm"
+                    className="h-11 w-full border-red-400/30 text-xs text-red-200 hover:bg-red-400/10 sm:h-auto sm:w-32 sm:text-sm"
                     onClick={stopStream}
                   >
                     <Square className="mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4" />
@@ -544,7 +544,7 @@ export default function StewardshipCoach() {
                 ) : (
                   <Button
                     type="button"
-                    className="h-11 flex-1 bg-amber-500 text-xs font-semibold text-slate-950 hover:bg-amber-600 sm:h-auto sm:w-32 sm:text-sm"
+                    className="h-11 w-full bg-amber-500 text-xs font-semibold text-slate-950 hover:bg-amber-600 sm:h-auto sm:w-32 sm:text-sm"
                     onClick={() => void sendMessage()}
                     disabled={!input.trim() || !hasSnapshot}
                   >
