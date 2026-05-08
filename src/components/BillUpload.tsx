@@ -25,7 +25,7 @@ interface UploadState {
   message: string;
 }
 
-const OCR_SERVER_URL = import.meta.env.VITE_OCR_SERVER_URL || 'http://192.168.1.214:8000';
+const OCR_SERVER_URL = import.meta.env.VITE_OCR_SERVER_URL || '';
 
 export default function BillUpload({ onUploadComplete, onError }: BillUploadProps) {
   const { user } = useAuth();
