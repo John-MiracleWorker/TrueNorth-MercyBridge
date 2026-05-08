@@ -169,13 +169,9 @@ export async function submitAdditionalDocuments(
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('Not authenticated');
 
-  const newDocumentUrls: string[] = [];
-  const newDocumentPaths: string[] = [];
-  for (const file of payload.files) {
-    const upload = await uploadBillDocument(file);
-    newDocumentUrls.push(upload.url);
-    newDocumentPaths.push(upload.path);
-  }
+  const uploads = await Promise.all(payload.files.map(file => uploadBillDocument(file)));
+  const newDocumentUrls: string[] = uploads.map(u => u.url);
+  const newDocumentPaths: string[] = uploads.map(u => u.path);
 
   const { data: currentNeed, error: fetchError } = await supabase
     .from('mercybridge_needs')
