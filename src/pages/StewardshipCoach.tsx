@@ -368,9 +368,9 @@ export default function StewardshipCoach() {
         </aside>
 
         <section className="flex min-h-[60vh] flex-col rounded-2xl border border-white/10 bg-white/[0.055] shadow-xl shadow-black/15 backdrop-blur-xl sm:min-h-[calc(100vh-4rem)]">
-          <div className="border-b border-white/10 p-5">
-            <h2 className="text-2xl font-bold text-white">MercyBridge Conversation</h2>
-            <p className="mt-1 text-sm text-slate-400">
+          <div className="border-b border-white/10 p-4 sm:p-5">
+            <h2 className="text-lg font-bold text-white sm:text-2xl">MercyBridge Conversation</h2>
+            <p className="mt-1 text-xs text-slate-400 sm:text-sm">
               Ask about bill triage, hardship calls, direct-pay proof, or one next step.
             </p>
           </div>
