@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import { createNeed, screenNeedWithAI, uploadBillDocument } from '@/services/mercybridgeApi';
 import type { CreateNeedRequest, HardshipProofType, NeedCategory, UrgencyLevel } from '@/types/mercybridge';
+import { validateFiles } from "../utils/validateFiles";
 
 type Step = 1 | 2 | 3 | 4 | 5 | 6;
 
@@ -85,26 +86,6 @@ const MAX_HARDSHIP_FILES = 3;
 const ALLOWED_BILL_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
 const ALLOWED_HARDSHIP_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf', 'text/plain'];
 
-function validateFiles(
-  files: File[],
-  allowedTypes: string[],
-  maxCount: number,
-  label: string
-): string | null {
-  if (files.length === 0) return null;
-  if (files.length > maxCount) {
-    return `${label}: maximum ${maxCount} files allowed.`;
-  }
-  for (const file of files) {
-    if (!allowedTypes.includes(file.type)) {
-      return `${label}: "${file.name}" is not an allowed file type. Allowed: ${allowedTypes.map((t) => t.split('/')[1]).join(', ')}.`;
-    }
-    if (file.size > MAX_FILE_SIZE) {
-      return `${label}: "${file.name}" exceeds 10MB limit.`;
-    }
-  }
-  return null;
-}
 
 export default function RequestHelp() {
   const navigate = useNavigate();
