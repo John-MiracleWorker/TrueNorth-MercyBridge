@@ -535,7 +535,7 @@ export default function StewardshipCoach() {
                   <Button
                     type="button"
                     variant="outline"
-                    className="h-11 flex-1 border-red-400/30 text-xs text-red-200 hover:bg-red-400/10 sm:h-auto sm:w-32 sm:text-sm"
+                    className="h-11 w-full border-red-400/30 text-xs text-red-200 hover:bg-red-400/10 sm:h-auto sm:w-32 sm:text-sm"
                     onClick={stopStream}
                   >
                     <Square className="mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4" />
@@ -544,7 +544,7 @@ export default function StewardshipCoach() {
                 ) : (
                   <Button
                     type="button"
-                    className="h-11 flex-1 bg-amber-500 text-xs font-semibold text-slate-950 hover:bg-amber-600 sm:h-auto sm:w-32 sm:text-sm"
+                    className="h-11 w-full bg-amber-500 text-xs font-semibold text-slate-950 hover:bg-amber-600 sm:h-auto sm:w-32 sm:text-sm"
                     onClick={() => void sendMessage()}
                     disabled={!input.trim() || !hasSnapshot}
                   >
