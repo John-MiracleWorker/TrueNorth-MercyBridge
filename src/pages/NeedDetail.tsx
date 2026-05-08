@@ -592,7 +592,12 @@ export default function NeedDetail() {
                   {docFiles.map((file, index) => (
                     <div key={index} className="flex items-center justify-between rounded-lg border border-white/10 bg-slate-950/35 px-3 py-2 text-sm text-slate-300">
                       <span className="truncate">{file.name}</span>
-                      <button onClick={() => removeDocFile(index)} className="ml-2 text-slate-500 hover:text-red-400">
+                      <button
+                        type="button"
+                        aria-label="Remove file"
+                        onClick={() => removeDocFile(index)}
+                        className="ml-2 text-slate-500 hover:text-red-400"
+                      >
                         <X className="w-4 h-4" />
                       </button>
                     </div>
