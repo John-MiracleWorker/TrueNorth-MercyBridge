@@ -1,0 +1,1268 @@
+/* Fonts loaded via index.html with preconnect for better performance */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* Mobile-first improvements */
+  * {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+  }
+  
+  html {
+    -webkit-text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    --app-safe-top: env(safe-area-inset-top, 0px);
+  }
+
+  /* Mobile PWA: ensure minimum top safe area for Android status bar (~24px) */
+  @media (max-width: 1023px) {
+    html {
+      --app-safe-top: max(env(safe-area-inset-top, 0px), 24px);
+    }
+  }
+
+  html.native-platform {
+    --app-safe-top: max(env(safe-area-inset-top, 0px), 24px);
+  }
+  
+  body {
+    touch-action: manipulation;
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+  
+  /* Safe area insets for mobile devices */
+  .safe-area-inset-top {
+    padding-top: var(--app-safe-top);
+  }
+  
+  .safe-area-inset-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  
+  .safe-area-inset-left {
+    padding-left: env(safe-area-inset-left);
+  }
+  
+  .safe-area-inset-right {
+    padding-right: env(safe-area-inset-right);
+  }
+
+  .min-h-app-screen {
+    min-height: 100vh;
+    min-height: 100svh;
+    min-height: 100dvh;
+  }
+
+  .safe-bottom-nav-offset {
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 6rem);
+  }
+
+  .max-h-app-overlay {
+    max-height: calc(100dvh - var(--app-safe-top) - env(safe-area-inset-bottom, 0px) - 2rem);
+  }
+
+  :root {
+    /* Warm daytime palette */
+    --background: 38 42% 94%;
+    --foreground: 24 24% 18%;
+    --card: 36 42% 97%;
+    --card-foreground: 24 24% 18%;
+    --surface-muted: 34 32% 90%;
+    --surface-elevated: 35 36% 92%;
+    --surface-contrast: 25 20% 24%;
+    --popover: 36 42% 97%;
+    --popover-foreground: 24 24% 18%;
+    --primary: 36 72% 55%;
+    --primary-foreground: 24 24% 18%;
+    --secondary: 31 26% 88%;
+    --secondary-foreground: 24 24% 18%;
+    --muted: 31 26% 88%;
+    --muted-foreground: 25 14% 42%;
+    --accent: 16 38% 74%;
+    --accent-foreground: 24 24% 18%;
+    --destructive: 0 62% 45%;
+    --destructive-foreground: 36 42% 97%;
+    --border: 30 22% 82%;
+    --input: 30 22% 82%;
+    --ring: 36 72% 55%;
+    --radius: 1rem;
+
+    --outline-strong: 30 22% 76%;
+    --outline-soft: 30 22% 82%;
+    --shadow-color: 28 24% 35%;
+
+    --brand-amber: 36 72% 55%;
+    --brand-rose: 16 38% 68%;
+    --brand-sky: 190 32% 52%;
+    --brand-indigo: 36 72% 55%;
+    --brand-purple: 16 38% 68%;
+
+    --sacred-gold: var(--brand-amber);
+    --heaven-blue: 190 32% 52%;
+    --parchment: 38 42% 96%;
+    --deep-navy: 24 24% 18%;
+    --growth-green: 142 55% 42%;
+    --wisdom-purple: var(--brand-rose);
+    --prayer-rose: 10 40% 62%;
+    --warning-amber: var(--brand-amber);
+    --soft-gray: 31 26% 88%;
+    --medium-gray: 25 14% 42%;
+    --charcoal: 24 24% 18%;
+
+    --gold: var(--brand-amber);
+    --sacred: var(--brand-amber);
+    --earth: 142 55% 42%;
+    --heaven: 24 24% 18%;
+    --parchment: 38 42% 96%;
+    --navy: 24 24% 18%;
+    --cream: 38 42% 96%;
+
+    --gradient-spiritual: linear-gradient(135deg, hsl(var(--brand-amber)), hsl(var(--brand-rose)));
+    --gradient-sacred: linear-gradient(45deg, hsl(var(--brand-amber)), hsl(10 40% 62%));
+    --gradient-earth: linear-gradient(180deg, hsl(var(--surface-elevated)), hsl(var(--surface-muted)));
+    --gradient-app: linear-gradient(120deg, hsl(38 42% 94%) 0%, hsl(35 36% 90%) 100%);
+
+    --font-ui: 'Manrope', 'Inter', sans-serif;
+    --font-display: 'Cormorant Garamond', 'Crimson Text', serif;
+    --font-scripture: 'Crimson Text', 'Cormorant Garamond', serif;
+
+    --celestial-bg: 38 42% 94%;
+    --celestial-bg-2: 35 36% 89%;
+    --celestial-panel: 36 42% 97%;
+    --celestial-edge: 26 18% 38%;
+    --celestial-text: 24 24% 18%;
+    --celestial-text-muted: 25 14% 36%;
+    --celestial-text-fade: 25 12% 50%;
+    --celestial-gold: 36 72% 55%;
+    --celestial-gold-bright: 38 76% 60%;
+    --celestial-celadon: 20 28% 74%;
+    --celestial-rose: 16 34% 66%;
+    --celestial-paper: 39 44% 97%;
+    --celestial-paper-ink: 28 24% 18%;
+    --celestial-field-opacity: 0;
+    --celestial-chart-opacity: 0;
+    --celestial-chart-mix-blend: normal;
+
+    --ease-celestial: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-truenorth: cubic-bezier(0.22, 1, 0.36, 1);
+
+    --hero-overlay-start: hsl(36 42% 93% / 0.74);
+    --hero-overlay-end: hsl(35 34% 88% / 0.88);
+
+    --shadow-soft: 0 16px 50px hsl(var(--shadow-color) / 0.10);
+    --shadow-sacred: 0 24px 60px hsl(var(--shadow-color) / 0.14);
+    --shadow-depth: 0 36px 96px hsl(var(--shadow-color) / 0.18);
+    --shadow-xs: 0 1px 2px hsl(var(--shadow-color) / 0.08);
+    --shadow-inset: inset 0 1px 0 hsl(0 0% 100% / 0.5);
+
+    --chart-1: var(--brand-amber);
+    --chart-2: 190 32% 52%;
+    --chart-3: 10 40% 62%;
+    --chart-4: 142 55% 42%;
+    --chart-5: 36 60% 48%;
+
+    --aurora-1: rgba(229, 168, 75, 0.18);
+    --aurora-2: rgba(201, 169, 160, 0.16);
+    --aurora-3: rgba(229, 168, 75, 0.12);
+    --aurora-4: rgba(201, 100, 80, 0.10);
+
+    --ray-1: rgba(229, 168, 75, 0.12);
+    --ray-2: rgba(201, 169, 160, 0.08);
+
+    --aurora-blend-mode: normal;
+  }
+
+  .dark {
+    --background: 222 16% 11%;
+    --foreground: 33 16% 89%;
+    --card: 222 14% 16%;
+    --card-foreground: 33 16% 89%;
+    --surface-muted: 222 14% 13%;
+    --surface-elevated: 222 14% 18%;
+    --surface-contrast: 222 14% 22%;
+    --popover: 222 14% 16%;
+    --popover-foreground: 33 16% 89%;
+    --primary: 36 75% 59%;
+    --primary-foreground: 222 16% 11%;
+    --secondary: 222 14% 22%;
+    --secondary-foreground: 33 16% 89%;
+    --muted: 222 14% 18%;
+    --muted-foreground: 0 0% 55%;
+    --accent: 10 26% 71%;
+    --accent-foreground: 222 16% 11%;
+    --destructive: 0 72% 55%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 222 12% 23%;
+    --input: 222 12% 23%;
+    --ring: 36 75% 59%;
+
+    --outline-strong: 222 12% 28%;
+    --outline-soft: 222 12% 20%;
+    --shadow-color: 222 20% 4%;
+
+    --brand-amber: 36 75% 59%;
+    --brand-rose: 10 26% 71%;
+    --brand-sky: 199 55% 60%;
+    --brand-indigo: 36 75% 59%;
+    --brand-purple: 10 26% 71%;
+
+    --sacred-gold: var(--brand-amber);
+    --heaven-blue: 199 55% 60%;
+    --parchment: 222 14% 16%;
+    --deep-navy: 222 16% 11%;
+    --growth-green: 142 55% 48%;
+    --wisdom-purple: var(--brand-rose);
+    --prayer-rose: 10 40% 62%;
+    --warning-amber: var(--brand-amber);
+    --soft-gray: 222 14% 18%;
+    --medium-gray: 0 0% 58%;
+    --charcoal: 33 16% 89%;
+
+    --gradient-spiritual: linear-gradient(135deg, hsl(var(--brand-amber)), hsl(var(--brand-rose)));
+    --gradient-sacred: linear-gradient(45deg, hsl(var(--brand-amber)), hsl(10 40% 62%));
+    --gradient-earth: linear-gradient(180deg, hsl(222 16% 11%), hsl(222 14% 18%));
+    --gradient-app: linear-gradient(130deg, hsl(222 16% 11%) 0%, hsl(222 14% 16%) 100%);
+
+    --font-ui: 'Manrope', 'Inter', sans-serif;
+    --font-display: 'Cormorant Garamond', 'Crimson Text', serif;
+    --font-scripture: 'Crimson Text', 'Cormorant Garamond', serif;
+
+    --celestial-bg: 218 49% 8%;
+    --celestial-bg-2: 220 43% 12%;
+    --celestial-panel: 221 43% 14%;
+    --celestial-edge: 42 49% 78%;
+    --celestial-text: 43 57% 95%;
+    --celestial-text-muted: 39 17% 72%;
+    --celestial-text-fade: 38 12% 56%;
+    --celestial-gold: 39 59% 59%;
+    --celestial-gold-bright: 40 67% 68%;
+    --celestial-celadon: 163 16% 57%;
+    --celestial-rose: 16 30% 56%;
+    --celestial-paper: 40 36% 91%;
+    --celestial-paper-ink: 35 17% 12%;
+    --celestial-field-opacity: 0.75;
+    --celestial-chart-opacity: 0.78;
+    --celestial-chart-mix-blend: screen;
+
+    --hero-overlay-start: hsl(222 16% 11% / 0.88);
+    --hero-overlay-end: hsl(222 14% 16% / 0.94);
+
+    --shadow-soft: 0 20px 45px hsl(0 0% 0% / 0.40);
+    --shadow-sacred: 0 28px 70px hsl(222 20% 4% / 0.50);
+    --shadow-depth: 0 40px 100px hsl(222 20% 3% / 0.55);
+    --shadow-xs: 0 1px 2px hsl(0 0% 0% / 0.45);
+    --shadow-inset: inset 0 1px 0 hsl(0 0% 100% / 0.06);
+
+    --chart-1: var(--brand-amber);
+    --chart-2: 199 55% 60%;
+    --chart-3: 10 40% 62%;
+    --chart-4: 142 55% 48%;
+    --chart-5: 36 60% 48%;
+
+    /* Aurora & Spiritual Effects - Dawn Light Dark Mode (Warm Amber/Rose) */
+    --aurora-1: rgba(229, 168, 75, 0.35);  /* Dawn amber */
+    --aurora-2: rgba(201, 169, 160, 0.30); /* Soft rose */
+    --aurora-3: rgba(229, 140, 60, 0.28);  /* Deep amber */
+    --aurora-4: rgba(201, 100, 80, 0.25);  /* Deep rose */
+
+    --ray-1: rgba(229, 168, 75, 0.20);
+    --ray-2: rgba(201, 169, 160, 0.18);
+
+    --aurora-blend-mode: screen;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    font-family: var(--font-ui);
+    min-height: 100vh;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    transition: background-color 0.3s ease, color 0.3s ease;
+    color-scheme: light;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.03em;
+    color: hsl(var(--foreground));
+  }
+  h1 { font-weight: 700; }
+  h2 { font-weight: 600; }
+  h3 { font-weight: 600; }
+  h4 { font-weight: 500; }
+
+  blockquote,
+  cite {
+    font-family: var(--font-scripture);
+  }
+
+  .surface-card {
+    border-radius: var(--radius);
+    background-color: hsl(var(--card));
+    border: 1px solid hsl(var(--outline-soft));
+    box-shadow: var(--shadow-xs);
+  }
+
+  .surface-raised {
+    border-radius: calc(var(--radius) + 0.25rem);
+    background-color: hsl(var(--surface-elevated));
+    border: 1px solid hsl(var(--outline-strong));
+    box-shadow: var(--shadow-soft);
+  }
+
+  .surface-overlay {
+    border-radius: calc(var(--radius) + 0.5rem);
+    background-color: hsl(var(--card) / 0.85);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid hsl(var(--outline-strong) / 0.6);
+    box-shadow: var(--shadow-sacred);
+  }
+
+  .card-spiritual {
+    border-radius: calc(var(--radius) + 0.25rem);
+    background-color: hsl(var(--card));
+    border: 1px solid hsl(var(--outline-soft));
+    box-shadow: var(--shadow-soft);
+  }
+
+  .surface-muted {
+    background-color: hsl(var(--surface-muted));
+  }
+
+  .surface-contrast {
+    background-color: hsl(var(--surface-contrast));
+    color: hsl(0 0% 100%);
+  }
+
+  .shadow-xs {
+    box-shadow: var(--shadow-xs);
+  }
+
+  .shadow-soft {
+    box-shadow: var(--shadow-soft);
+  }
+  
+  .shadow-sacred {
+    box-shadow: var(--shadow-sacred);
+  }
+  
+  .shadow-depth {
+    box-shadow: var(--shadow-depth);
+  }
+
+  .shadow-inset {
+    box-shadow: var(--shadow-inset);
+  }
+
+  .bg-sacred-gold { background-color: hsl(var(--sacred-gold)); }
+  .text-sacred-gold { color: hsl(var(--sacred-gold)); }
+  .bg-heaven-blue { background-color: hsl(var(--heaven-blue)); }
+  .text-heaven-blue { color: hsl(var(--heaven-blue)); }
+  .bg-growth-green { background-color: hsl(var(--growth-green)); }
+  .text-growth-green { color: hsl(var(--growth-green)); }
+  .bg-wisdom-purple { background-color: hsl(var(--wisdom-purple)); }
+  .text-wisdom-purple { color: hsl(var(--wisdom-purple)); }
+  .bg-prayer-rose { background-color: hsl(var(--prayer-rose)); }
+  .text-prayer-rose { color: hsl(var(--prayer-rose)); }
+  .bg-deep-navy { background-color: hsl(var(--deep-navy)); }
+  .text-deep-navy { color: hsl(var(--deep-navy)); }
+
+  .bg-spiritual {
+    background: var(--gradient-spiritual);
+  }
+  
+  .bg-sacred {
+    background: var(--gradient-sacred);
+  }
+
+  .text-sacred {
+    color: hsl(var(--sacred));
+  }
+  
+  .text-gold {
+    color: hsl(var(--gold));
+  }
+  
+  .bg-navy {
+    background-color: hsl(var(--navy));
+  }
+  
+  .text-navy {
+    color: hsl(var(--navy));
+  }
+  
+  .bg-cream {
+    background-color: hsl(var(--cream));
+  }
+  
+  .text-cream {
+    color: hsl(var(--cream));
+  }
+  
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, var(--hero-overlay-start), var(--hero-overlay-end));
+  }
+
+  .glass-card {
+    background-color: hsl(var(--card) / 0.82);
+    border: 1px solid hsl(var(--outline-strong) / 0.55);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .bg-grid {
+    background-color: hsl(var(--background));
+    background-image: radial-gradient(hsl(var(--outline-soft) / 0.04) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+
+  .bg-gold { background-color: hsl(var(--gold)); }
+
+  .celestial-shell {
+    position: relative;
+    background:
+      radial-gradient(circle at 18% 12%, hsl(var(--celestial-gold) / 0.14), transparent 0 22%),
+      radial-gradient(circle at 82% 18%, hsl(var(--celestial-celadon) / 0.12), transparent 0 26%),
+      radial-gradient(circle at 50% 100%, hsl(var(--celestial-gold) / 0.08), transparent 0 32%),
+      linear-gradient(180deg, hsl(var(--celestial-bg)) 0%, hsl(var(--celestial-bg-2)) 55%, hsl(var(--celestial-bg)) 100%);
+    isolation: isolate;
+  }
+
+  .celestial-shell::before,
+  .celestial-shell::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .celestial-shell::before {
+    background-image:
+      radial-gradient(1px 1px at 10% 18%, rgba(250, 246, 234, 0.82), transparent 70%),
+      radial-gradient(1px 1px at 21% 74%, rgba(250, 246, 234, 0.55), transparent 70%),
+      radial-gradient(1px 1px at 34% 27%, rgba(250, 246, 234, 0.72), transparent 70%),
+      radial-gradient(1px 1px at 46% 58%, rgba(250, 246, 234, 0.44), transparent 70%),
+      radial-gradient(1px 1px at 59% 20%, rgba(250, 246, 234, 0.72), transparent 70%),
+      radial-gradient(1px 1px at 72% 64%, rgba(250, 246, 234, 0.5), transparent 70%),
+      radial-gradient(1.2px 1.2px at 88% 12%, rgba(250, 246, 234, 0.9), transparent 70%),
+      radial-gradient(0.8px 0.8px at 92% 86%, rgba(250, 246, 234, 0.5), transparent 70%);
+    opacity: var(--celestial-field-opacity);
+  }
+
+  .celestial-shell::after {
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent 24%),
+      radial-gradient(circle at center top, hsl(var(--celestial-gold) / 0.08), transparent 30%);
+  }
+
+  .celestial-constellation-cluster {
+    position: absolute;
+    top: clamp(4.5rem, 10vw, 6rem);
+    right: clamp(1rem, 5vw, 4.5rem);
+    width: min(22rem, 34vw);
+    aspect-ratio: 18 / 19;
+    pointer-events: none;
+    opacity: var(--celestial-chart-opacity);
+    mix-blend-mode: var(--celestial-chart-mix-blend);
+    transition: opacity 0.35s ease;
+    z-index: 1;
+  }
+
+  .celestial-constellation-svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  .celestial-constellation-line {
+    stroke: hsl(var(--celestial-gold) / 0.5);
+    stroke-width: 0.6;
+    fill: none;
+    stroke-dasharray: 100%;
+    stroke-dashoffset: 100%;
+    animation: draw 3000ms var(--ease-celestial) forwards;
+  }
+
+  .celestial-constellation-star-glow {
+    fill: hsl(var(--celestial-text) / 0.08);
+  }
+
+  .celestial-constellation-star {
+    fill: hsl(var(--celestial-text) / 0.92);
+  }
+
+  .celestial-constellation-star-polaris {
+    fill: hsl(var(--celestial-gold-bright));
+    animation: pulse-star 5s ease-in-out infinite;
+    transform-origin: center;
+  }
+
+  .celestial-constellation-label {
+    position: absolute;
+    top: 2.5rem;
+    right: 0.6rem;
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+  }
+
+  .celestial-constellation-label-text {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-style: italic;
+    color: hsl(var(--celestial-gold));
+    letter-spacing: 0.01em;
+  }
+
+  .celestial-constellation-label-rule {
+    width: 1.5rem;
+    height: 1px;
+    background: hsl(var(--celestial-gold) / 0.5);
+  }
+
+  @media (max-width: 1023px) {
+    .celestial-constellation-cluster {
+      top: 5rem;
+      right: 1rem;
+      width: min(14rem, 40vw);
+    }
+  }
+
+  @media (max-width: 767px) {
+    .celestial-constellation-cluster {
+      opacity: calc(var(--celestial-chart-opacity) * 0.72);
+    }
+
+    .celestial-constellation-label {
+      display: none;
+    }
+  }
+
+  .celestial-panel {
+    border: 1px solid hsl(var(--celestial-edge) / 0.12);
+    background:
+      linear-gradient(180deg, hsl(0 0% 100% / 0.05), transparent 34%),
+      hsl(var(--celestial-panel) / 0.58);
+    box-shadow:
+      inset 0 1px 0 hsl(0 0% 100% / 0.05),
+      0 20px 55px hsl(220 55% 4% / 0.35);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+  }
+
+  .celestial-panel-soft {
+    border: 1px solid hsl(var(--celestial-edge) / 0.08);
+    background: hsl(var(--celestial-panel) / 0.32);
+    box-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.04);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+
+  .celestial-paper-panel {
+    border: 1px solid hsl(35 17% 20% / 0.14);
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.25), transparent 24%),
+      hsl(var(--celestial-paper));
+    color: hsl(var(--celestial-paper-ink));
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.32),
+      0 24px 50px rgba(9, 12, 20, 0.18);
+  }
+
+  .celestial-kicker {
+    font-family: var(--font-ui);
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.42em;
+    color: hsl(var(--celestial-gold));
+  }
+
+  .celestial-title {
+    font-family: var(--font-display);
+    letter-spacing: -0.03em;
+    color: hsl(var(--celestial-text));
+  }
+
+  .celestial-copy {
+    font-family: var(--font-ui);
+    color: hsl(var(--celestial-text-muted));
+    line-height: 1.7;
+  }
+
+  .celestial-scripture {
+    font-family: var(--font-scripture);
+    color: hsl(var(--celestial-text));
+    letter-spacing: -0.02em;
+    line-height: 1.45;
+  }
+
+  .celestial-divider {
+    height: 1px;
+    border: 0;
+    background: linear-gradient(90deg, transparent, hsl(var(--celestial-gold) / 0.35), transparent);
+  }
+
+  .celestial-text-link {
+    color: hsl(var(--celestial-gold));
+    transition: color 0.35s var(--ease-celestial), transform 0.35s var(--ease-celestial);
+  }
+
+  .celestial-text-link:hover {
+    color: hsl(var(--celestial-gold-bright));
+  }
+
+  .celestial-hover {
+    transition:
+      transform 0.35s var(--ease-truenorth),
+      box-shadow 0.35s var(--ease-truenorth),
+      border-color 0.35s var(--ease-truenorth),
+      background-color 0.35s var(--ease-truenorth);
+  }
+
+  .celestial-hover:hover {
+    transform: translateY(-3px);
+    box-shadow:
+      inset 0 1px 0 hsl(0 0% 100% / 0.06),
+      0 24px 60px hsl(220 55% 4% / 0.4),
+      0 0 0 1px hsl(var(--celestial-gold) / 0.1);
+  }
+
+  .celestial-ring {
+    box-shadow: 0 0 0 2px hsl(var(--celestial-gold) / 0.75), 0 0 0 6px hsl(var(--celestial-bg) / 0.45);
+  }
+
+  .celestial-compass {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 9999px;
+    border: 1px solid hsl(var(--celestial-gold) / 0.72);
+    background: radial-gradient(circle at center, hsl(var(--celestial-gold) / 0.06), transparent 60%);
+    color: hsl(var(--celestial-gold));
+    flex-shrink: 0;
+  }
+
+  .celestial-compass::before {
+    content: '';
+    position: absolute;
+    inset: 0.25rem;
+    border-radius: 9999px;
+    border: 1px solid hsl(var(--celestial-gold) / 0.18);
+  }
+
+  .celestial-compass-needle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 2px;
+    height: 1.15rem;
+    transform: translate(-50%, -100%) rotate(var(--needle-rotation, 0deg));
+    transform-origin: 50% 100%;
+    transition: transform 1.2s var(--ease-celestial);
+  }
+
+  .celestial-compass-needle::before {
+    content: '';
+    position: absolute;
+    top: -0.45rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 0.32rem solid transparent;
+    border-right: 0.32rem solid transparent;
+    border-bottom: 0.55rem solid hsl(var(--celestial-gold));
+  }
+
+  .celestial-compass-needle::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 2px;
+    height: 0.45rem;
+    transform: translateX(-50%);
+    background: hsl(var(--celestial-text-fade));
+  }
+
+  .celestial-compass-dot {
+    position: absolute;
+    width: 0.3rem;
+    height: 0.3rem;
+    border-radius: 9999px;
+    background: hsl(var(--celestial-gold));
+  }
+
+  .celestial-compass-label {
+    position: absolute;
+    top: -0.75rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.55rem;
+    font-weight: 700;
+    letter-spacing: 0.24em;
+    color: hsl(var(--celestial-gold));
+  }
+
+  .celestial-wordmark {
+    font-family: var(--font-display);
+    font-size: 1.7rem;
+    letter-spacing: -0.03em;
+    color: hsl(var(--celestial-text));
+  }
+}
+
+/* Loading spinner animation */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes message-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+@keyframes draw {
+  from {
+    stroke-dashoffset: 100%;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Spiritual breathing glow animation */
+@keyframes breathe {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+}
+
+/* Gentle floating animation */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Slow float with subtle rotation */
+@keyframes floatRotate {
+  0%, 100% {
+    transform: translateY(0) rotate(-1deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(1deg);
+  }
+}
+
+/* Flowing gradient animation */
+@keyframes gradientFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Gentle pulse for icons/buttons */
+@keyframes gentlePulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 hsl(var(--primary) / 0.2);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 0 20px 5px hsl(var(--primary) / 0.1);
+  }
+}
+
+@keyframes pulse-star {
+  0%, 100% {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}
+
+/* Staggered fade in for lists */
+@keyframes staggerFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Light reveal from center */
+@keyframes revealLight {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
+
+/* Orbit animation for decorative elements */
+@keyframes orbit {
+  0% {
+    transform: rotate(0deg) translateX(10px) rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg) translateX(10px) rotate(-360deg);
+  }
+}
+
+@keyframes ambientDrift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.82;
+  }
+  50% {
+    transform: translate3d(0, -1.25%, 0) scale(1.02);
+    opacity: 0.96;
+  }
+  100% {
+    transform: translate3d(0, 0.75%, 0) scale(1);
+    opacity: 0.88;
+  }
+}
+
+@keyframes ambientFloatNorth {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(1.5rem, -1rem, 0) scale(1.08);
+  }
+}
+
+@keyframes ambientFloatSouth {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-1.25rem, 1rem, 0) scale(1.06);
+  }
+}
+
+@keyframes livePulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  70% {
+    transform: scale(2.8);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(2.8);
+    opacity: 0;
+  }
+}
+
+@keyframes signalSweep {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@layer utilities {
+  .truenorth-page-shell {
+    background-color: hsl(var(--celestial-bg));
+    background-image:
+      radial-gradient(circle at 18% 12%, hsl(var(--celestial-gold) / 0.14), transparent 0 22%),
+      radial-gradient(circle at 82% 18%, hsl(var(--celestial-celadon) / 0.1), transparent 0 26%),
+      linear-gradient(180deg, hsl(var(--celestial-bg)) 0%, hsl(var(--celestial-bg-2)) 55%, hsl(var(--celestial-bg)) 100%),
+      radial-gradient(hsl(var(--celestial-text) / 0.06) 1px, transparent 1px);
+    background-size: auto, auto, auto, 48px 48px;
+  }
+  .truenorth-card {
+    @apply rounded-3xl border border-border/60 bg-card/70 shadow-soft backdrop-blur-md;
+  }
+
+  .premium-page-ambient {
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    opacity: 0.9;
+    overflow: hidden;
+    animation: ambientDrift 18s ease-in-out infinite;
+    mask-image: linear-gradient(180deg, black 0%, black 78%, transparent 100%);
+    -webkit-mask-image: linear-gradient(180deg, black 0%, black 78%, transparent 100%);
+    will-change: transform, opacity;
+  }
+
+  .premium-page-ambient::before,
+  .premium-page-ambient::after {
+    content: "";
+    position: absolute;
+    inset: auto;
+    border-radius: 9999px;
+    filter: blur(56px);
+    opacity: 0.45;
+  }
+
+  .premium-page-ambient::before {
+    top: -5rem;
+    left: -2rem;
+    width: 14rem;
+    height: 14rem;
+    background: radial-gradient(circle, hsl(var(--brand-amber) / 0.18) 0%, transparent 72%);
+    animation: ambientFloatNorth 20s ease-in-out infinite;
+  }
+
+  .premium-page-ambient::after {
+    top: 15%;
+    right: -3rem;
+    width: 16rem;
+    height: 16rem;
+    background: radial-gradient(circle, hsl(var(--brand-sky) / 0.14) 0%, transparent 72%);
+    animation: ambientFloatSouth 24s ease-in-out infinite;
+  }
+
+  .premium-page-ambient-default {
+    background:
+      linear-gradient(180deg, hsl(0 0% 100% / 0.03) 0%, transparent 18%),
+      radial-gradient(circle at 24% 0%, hsl(var(--brand-amber) / 0.10), transparent 30%);
+  }
+
+  .premium-page-ambient-reflective {
+    background:
+      linear-gradient(180deg, hsl(var(--brand-rose) / 0.06) 0%, transparent 20%),
+      radial-gradient(circle at 50% 0%, hsl(var(--brand-amber) / 0.12), transparent 32%);
+  }
+
+  .premium-page-ambient-immersive {
+    background:
+      linear-gradient(180deg, hsl(var(--brand-sky) / 0.06) 0%, transparent 16%),
+      radial-gradient(circle at 50% 0%, hsl(var(--brand-amber) / 0.14), transparent 34%);
+  }
+
+  .premium-panel {
+    border: 1px solid hsl(0 0% 100% / 0.06);
+    background:
+      linear-gradient(180deg, hsl(0 0% 100% / 0.04), transparent 36%),
+      hsl(var(--card) / 0.78);
+    box-shadow:
+      inset 0 1px 0 hsl(0 0% 100% / 0.05),
+      0 18px 48px hsl(222 20% 4% / 0.24);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+  }
+
+  .premium-panel-interactive {
+    transition:
+      transform 240ms cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 240ms ease,
+      border-color 240ms ease,
+      background-color 240ms ease;
+  }
+
+  .premium-panel-interactive:hover {
+    transform: translateY(-3px);
+    border-color: hsl(var(--brand-amber) / 0.18);
+    box-shadow:
+      inset 0 1px 0 hsl(0 0% 100% / 0.06),
+      0 24px 56px hsl(222 20% 3% / 0.32);
+  }
+
+  .premium-pill {
+    border: 1px solid hsl(0 0% 100% / 0.08);
+    background: linear-gradient(180deg, hsl(0 0% 100% / 0.06), hsl(0 0% 100% / 0.02));
+    box-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.06);
+  }
+
+  .premium-sheen {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .premium-sheen::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(110deg, transparent 10%, hsl(0 0% 100% / 0.08) 45%, transparent 70%);
+    opacity: 0;
+    transform: translateX(-35%);
+    transition: transform 380ms ease, opacity 280ms ease;
+    pointer-events: none;
+  }
+
+  .premium-sheen:hover::after {
+    opacity: 1;
+    transform: translateX(35%);
+  }
+
+  .live-dot {
+    position: relative;
+    display: inline-flex;
+    width: 0.625rem;
+    height: 0.625rem;
+    border-radius: 9999px;
+    background: hsl(var(--brand-rose) / 0.95);
+    box-shadow: 0 0 0 0.2rem hsl(var(--brand-rose) / 0.16);
+    flex-shrink: 0;
+  }
+
+  .live-dot::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: hsl(var(--brand-rose) / 0.7);
+    animation: livePulse 1.8s ease-out infinite;
+  }
+
+  .live-signal {
+    background-image: linear-gradient(110deg, hsl(var(--brand-amber) / 0.1), hsl(var(--brand-sky) / 0.12), hsl(var(--brand-amber) / 0.08));
+    background-size: 180% 180%;
+    animation: signalSweep 8s ease infinite;
+  }
+
+  .chat-composer-active {
+    box-shadow:
+      inset 0 1px 0 hsl(0 0% 100% / 0.07),
+      0 0 0 1px hsl(var(--brand-amber) / 0.12),
+      0 26px 64px hsl(222 20% 3% / 0.34);
+  }
+
+  .chat-suggestion-chip {
+    transition:
+      transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 220ms ease,
+      background-color 220ms ease,
+      box-shadow 220ms ease;
+  }
+
+  .chat-suggestion-chip:hover {
+    transform: translateY(-2px);
+    border-color: hsl(var(--brand-amber) / 0.2);
+    box-shadow: 0 16px 36px hsl(222 20% 4% / 0.2);
+  }
+
+  .page-theme-bleed {
+    @apply -mx-4 sm:-mx-6 lg:-mx-8 -my-6 lg:-my-10;
+  }
+
+  .animate-message {
+    animation: message-in 0.3s ease-out both;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-out both;
+  }
+
+  .animate-fade-in-up {
+    animation: fadeInUp 0.4s ease-out both;
+  }
+
+  .animate-shimmer {
+    animation: shimmer 2s infinite linear;
+    background: linear-gradient(
+      to right,
+      hsl(var(--muted)) 0%,
+      hsl(var(--muted) / 0.5) 50%,
+      hsl(var(--muted)) 100%
+    );
+    background-size: 1000px 100%;
+  }
+
+  .page-transition {
+    animation: fadeInUp 0.3s ease-out both;
+  }
+
+  /* Spiritual animation utilities */
+  .animate-breathe {
+    animation: breathe 4s ease-in-out infinite;
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-float-slow {
+    animation: float 8s ease-in-out infinite;
+  }
+
+  .animate-float-rotate {
+    animation: floatRotate 7s ease-in-out infinite;
+  }
+
+  .animate-gradient-flow {
+    background-size: 200% 200%;
+    animation: gradientFlow 8s ease infinite;
+  }
+
+  .animate-gentle-pulse {
+    animation: gentlePulse 3s ease-in-out infinite;
+  }
+
+  .animate-reveal-light {
+    animation: revealLight 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  }
+
+  .animate-orbit {
+    animation: orbit 20s linear infinite;
+  }
+
+  /* Staggered children - use with animation-delay */
+  .stagger-item {
+    animation: staggerFadeIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  }
+
+  .stagger-1 { animation-delay: 0.05s; }
+  .stagger-2 { animation-delay: 0.1s; }
+  .stagger-3 { animation-delay: 0.15s; }
+  .stagger-4 { animation-delay: 0.2s; }
+  .stagger-5 { animation-delay: 0.25s; }
+  .stagger-6 { animation-delay: 0.3s; }
+  .stagger-7 { animation-delay: 0.35s; }
+  .stagger-8 { animation-delay: 0.4s; }
+
+  /* Hover effects */
+  .hover-lift {
+    transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+                box-shadow 0.3s ease;
+  }
+  .hover-lift:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 40px -10px hsl(var(--foreground) / 0.1);
+  }
+
+  .hover-glow {
+    transition: box-shadow 0.3s ease;
+  }
+  .hover-glow:hover {
+    box-shadow: 0 0 30px hsl(var(--primary) / 0.2);
+  }
+
+  .hover-scale {
+    transition: transform 0.2s ease;
+  }
+  .hover-scale:hover {
+    transform: scale(1.05);
+  }
+  .hover-scale:active {
+    transform: scale(0.98);
+  }
+
+  /* Mobile touch target - minimum 44px for accessibility */
+  .touch-target-44 {
+    min-width: 44px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .premium-page-ambient,
+    .premium-page-ambient::before,
+    .premium-page-ambient::after,
+    .live-dot::after,
+    .live-signal {
+      animation: none;
+    }
+
+    .premium-panel-interactive,
+    .premium-sheen::after {
+      transition: none;
+    }
+
+    .premium-panel-interactive:hover {
+      transform: none;
+    }
+
+    .chat-suggestion-chip:hover {
+      transform: none;
+      box-shadow: none;
+    }
+  }
+}
+
+.dark body {
+  color-scheme: dark;
+}
