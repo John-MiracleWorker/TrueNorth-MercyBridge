@@ -2,6 +2,7 @@
 // Uses environment variables for security - see .env.example for setup
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
+import { cookieStorage } from '@/lib/cookieStorage';
 
 interface DenoRuntime {
   env?: {
@@ -28,9 +29,16 @@ if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
 const url = SUPABASE_URL || 'https://placeholder.supabase.co';
 const key = SUPABASE_ANON_KEY || 'placeholder';
 
+// Use cross-subdomain cookie storage so the hub (find-true-north.net) and
+// MercyBridge (mercybridge.find-true-north.net) share a single auth session.
+// Falls back to localStorage during SSR or when document is unavailable.
+const authStorage =
+  typeof document !== 'undefined' ? cookieStorage :
+  typeof localStorage !== 'undefined' ? localStorage : undefined;
+
 export const supabase = createClient<Database>(url, key, {
   auth: {
-    storage: typeof localStorage !== 'undefined' ? localStorage : undefined,
+    storage: authStorage,
     persistSession: true,
     autoRefreshToken: true,
     flowType: 'pkce',

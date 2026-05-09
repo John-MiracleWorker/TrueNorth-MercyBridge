@@ -1,6 +1,7 @@
 import { logger } from '@/lib/logger';
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { cookieStorage } from '@/lib/cookieStorage';
 import type { User, Session } from '@supabase/supabase-js';
 
 interface AuthContextType {
@@ -21,7 +22,7 @@ interface SafeAuthProviderProps {
   children: ReactNode;
 }
 
-function getCrossDomainSession(): string | null {
+function getLegacyCrossDomainSession(): string | null {
   try {
     const match = document.cookie.match(/(^| )truenorth_session=([^;]+)/);
     return match ? decodeURIComponent(match[2]) : null;
@@ -30,47 +31,26 @@ function getCrossDomainSession(): string | null {
   }
 }
 
-function setCrossDomainSession(value: string | null) {
-  const domain = '.find-true-north.net';
-  if (value === null) {
-    document.cookie = `truenorth_session=; domain=${domain}; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax; Secure`;
-    return;
-  }
-  document.cookie = `truenorth_session=${encodeURIComponent(value)}; domain=${domain}; path=/; max-age=${60*60*24*7}; SameSite=Lax; Secure`;
-}
-
-function importSessionFromCookie() {
+// Legacy fallback: if the hub still mirrors the session into a `truenorth_session`
+// cookie (instead of using cookieStorage on Supabase directly), copy it into the
+// canonical `sb-<ref>-auth-token` cookie that Supabase reads.
+function importLegacySessionCookie() {
   try {
-    const cookieSession = getCrossDomainSession();
-    if (!cookieSession) return false;
+    const legacyValue = getLegacyCrossDomainSession();
+    if (!legacyValue) return false;
 
-    // Find or create the supabase auth key in localStorage
-    let authKey: string | null = null;
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key && key.includes('auth-token')) {
-        authKey = key;
-        break;
-      }
-    }
-    
-    // If no key found, construct one from the Supabase URL
-    if (!authKey) {
-      const url = import.meta.env.VITE_SUPABASE_URL || '';
-      const match = url.match(/https:\/\/([^.]+)/);
-      if (match) {
-        authKey = `sb-${match[1]}-auth-token`;
-      }
-    }
+    const url = import.meta.env.VITE_SUPABASE_URL || '';
+    const match = url.match(/https:\/\/([^.]+)/);
+    if (!match) return false;
+    const authKey = `sb-${match[1]}-auth-token`;
 
-    if (authKey) {
-      localStorage.setItem(authKey, cookieSession);
-      console.info('[Auth] Session imported from cross-domain cookie');
-      return true;
+    if (!cookieStorage.getItem(authKey)) {
+      cookieStorage.setItem(authKey, legacyValue);
+      console.info('[Auth] Legacy session imported from truenorth_session cookie');
     }
-    return false;
+    return true;
   } catch (err) {
-    console.error('[Auth] Failed to import session from cookie:', err);
+    console.error('[Auth] Failed to import legacy session cookie:', err);
     return false;
   }
 }
@@ -137,9 +117,10 @@ function AuthProviderContent({ children }: SafeAuthProviderProps) {
 
     const initializeAuth = async () => {
       try {
-        // Import session from cross-domain cookie before checking Supabase
-        importSessionFromCookie();
-        
+        // Backward-compat: pull a legacy `truenorth_session` cookie into the
+        // canonical Supabase cookie before reading the session.
+        importLegacySessionCookie();
+
         const { data: { session: initialSession }, error } = await supabase.auth.getSession();
         
         if (error) {
