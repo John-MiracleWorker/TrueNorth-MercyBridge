@@ -106,8 +106,8 @@ export default function MercyBridgeLanding() {
   const [needs, setNeeds] = useState<PublicNeed[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const requestRoute = isLoggedIn ? '/mercybridge/request-help' : '/register';
-  const browseRoute = isLoggedIn ? '/mercybridge/browse' : '/register';
+  const requestRoute = isLoggedIn ? '/request-help' : '/login';
+  const browseRoute = isLoggedIn ? '/browse' : '/login';
 
   useEffect(() => {
     let cancelled = false;
@@ -134,20 +134,20 @@ export default function MercyBridgeLanding() {
       <SEO
         title="MercyBridge | Verified Bill Help with Christian Stewardship"
         description="MercyBridge connects Christians with verified essential bills. Sponsors pay billers directly while MercyBridge protects dignity, privacy, and accountability."
-        canonical="/mercybridge"
+        canonical="/"
         structuredData={{
           '@context': 'https://schema.org',
           '@graph': [
             {
               '@type': 'Organization',
-              '@id': `${siteUrl}/mercybridge/#organization`,
+              '@id': `${siteUrl}/#organization`,
               name: 'MercyBridge',
-              url: `${siteUrl}/mercybridge`,
+              url: `${siteUrl}/`,
             },
             {
               '@type': 'WebSite',
-              '@id': `${siteUrl}/mercybridge/#website`,
-              url: `${siteUrl}/mercybridge`,
+              '@id': `${siteUrl}/#website`,
+              url: `${siteUrl}/`,
               name: 'MercyBridge',
             },
           ],
@@ -173,7 +173,7 @@ export default function MercyBridgeLanding() {
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8 lg:px-10">
           <button
             type="button"
-            onClick={() => navigate('/hub')}
+            onClick={() => window.location.href='https://www.find-true-north.net'}
             className="flex items-center gap-3 rounded-full text-left transition-opacity hover:opacity-85"
           >
             <span className="flex h-10 w-10 items-center justify-center rounded-2xl border border-amber-200/20 bg-amber-200/10 shadow-[0_18px_42px_rgba(251,191,36,0.12)]">
@@ -192,13 +192,13 @@ export default function MercyBridgeLanding() {
               variant="ghost"
               size="sm"
               className="hidden rounded-full text-slate-300 hover:bg-white/10 hover:text-white sm:inline-flex"
-              onClick={() => navigate('/hub')}
+              onClick={() => window.location.href='https://www.find-true-north.net'}
             >
               Hub
             </Button>
             <Button
               size="sm"
-              onClick={() => navigate(isLoggedIn ? '/mercybridge/browse' : '/login')}
+              onClick={() => navigate(isLoggedIn ? '/browse' : '/login')}
               className="rounded-full bg-white/10 px-4 text-white backdrop-blur-xl hover:bg-white/15"
             >
               {isLoggedIn ? 'Browse' : 'Sign in'}
@@ -375,7 +375,7 @@ export default function MercyBridgeLanding() {
                   viewport={{ once: true, margin: '-120px' }}
                   transition={{ delay: index * 0.1 }}
                   className="group rounded-[1.7rem] border border-white/10 bg-white/[0.055] p-6 shadow-xl shadow-black/20 backdrop-blur-xl transition-all duration-500 hover:-translate-y-1 hover:border-amber-100/35 cursor-pointer"
-                  onClick={() => navigate(`/mercybridge/need/${need.id}`)}
+                  onClick={() => navigate(`/need/${need.id}`)}
                 >
                   <div className="mb-5 flex items-center justify-between">
                     <span className="rounded-full bg-amber-200/10 px-3 py-1 text-xs font-medium text-amber-100">{need.category.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}</span>

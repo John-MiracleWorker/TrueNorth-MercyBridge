@@ -93,7 +93,7 @@ export default function SponsorDashboard() {
             <h2 className="font-semibold text-white">Payment Proofs</h2>
             <Button
               size="sm"
-              onClick={() => navigate('/mercybridge/browse')}
+              onClick={() => navigate('/browse')}
               className="bg-amber-200 text-slate-950 hover:bg-amber-100 shadow-[0_0_32px_rgba(251,191,36,0.16)]"
             >
               Browse Needs
@@ -110,7 +110,7 @@ export default function SponsorDashboard() {
               {contributions.map((contribution) => (
                 <button
                   key={contribution.id}
-                  onClick={() => navigate(`/mercybridge/need/${contribution.need_id}`)}
+                  onClick={() => navigate(`/need/${contribution.need_id}`)}
                   className="flex w-full flex-col gap-3 p-4 text-left hover:bg-white/[0.055] sm:flex-row sm:items-center sm:justify-between"
                 >
                   <div className="flex-1 min-w-0">

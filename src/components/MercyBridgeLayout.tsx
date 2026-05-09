@@ -35,43 +35,43 @@ interface MercyBridgeNavItem {
 
 const navItems: MercyBridgeNavItem[] = [
   {
-    to: '/mercybridge',
+    to: '/',
     label: 'Overview',
     description: 'How direct-pay help works',
     icon: Home,
   },
   {
-    to: '/mercybridge/browse',
+    to: '/browse',
     label: 'Browse Needs',
     description: 'Sponsor verified bills',
     icon: Search,
   },
   {
-    to: '/mercybridge/request-help',
+    to: '/request-help',
     label: 'Request Help',
     description: 'Submit a bill for review',
     icon: HelpingHand,
   },
   {
-    to: '/mercybridge/dashboard',
+    to: '/dashboard',
     label: 'My Requests',
     description: 'Track submitted needs',
     icon: LayoutDashboard,
   },
   {
-    to: '/mercybridge/sponsor-dashboard',
+    to: '/sponsor-dashboard',
     label: 'My Sponsorships',
     description: 'Proofs and impact',
     icon: ClipboardCheck,
   },
   {
-    to: '/mercybridge/stewardship',
+    to: '/stewardship',
     label: 'Stewardship Coach',
     description: 'Plan the next step',
     icon: Sparkles,
   },
   {
-    to: '/mercybridge/admin',
+    to: '/admin',
     label: 'Verification',
     description: 'Review needs and proofs',
     icon: ShieldCheck,
@@ -80,12 +80,12 @@ const navItems: MercyBridgeNavItem[] = [
 ];
 
 function isRouteActive(pathname: string, target: string) {
-  if (target === '/mercybridge') {
-    return pathname === target;
+  if (target === '/') {
+    return pathname === '/';
   }
 
-  if (target === '/mercybridge/browse') {
-    return pathname === target || pathname.startsWith('/mercybridge/need/');
+  if (target === '/browse') {
+    return pathname === '/browse' || pathname.startsWith('/need/');
   }
 
   return pathname === target || pathname.startsWith(`${target}/`);

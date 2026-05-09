@@ -274,7 +274,7 @@ export default function RequestHelp() {
             <p className="text-slate-400 mb-6">
               {submittedMessage}
             </p>
-            <Button onClick={() => navigate('/mercybridge/dashboard')} className="bg-amber-200 hover:bg-amber-100 text-slate-950 shadow-[0_0_32px_rgba(251,191,36,0.16)]">
+            <Button onClick={() => navigate('/dashboard')} className="bg-amber-200 hover:bg-amber-100 text-slate-950 shadow-[0_0_32px_rgba(251,191,36,0.16)]">
               Go to Dashboard
             </Button>
           </motion.div>

@@ -39,7 +39,7 @@ export default function BrowseNeeds() {
 
   useEffect(() => {
     if (!isLoggedIn) {
-      navigate('/mercybridge');
+      navigate('/');
       return;
     }
     loadNeeds();
@@ -88,7 +88,7 @@ export default function BrowseNeeds() {
             </p>
           </div>
           <Button
-            onClick={() => navigate('/mercybridge/request-help')}
+            onClick={() => navigate('/request-help')}
             className="bg-amber-200 text-slate-950 hover:bg-amber-100 shadow-[0_0_32px_rgba(251,191,36,0.16)]"
           >
             Request Help
@@ -201,7 +201,7 @@ function NeedCard({ need }: { need: PublicNeed }) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className="bg-slate-950/35 border border-white/10 rounded-2xl p-6 hover:border-amber-500/30 transition-all cursor-pointer group"
-      onClick={() => navigate(`/mercybridge/need/${need.id}`)}
+      onClick={() => navigate(`/need/${need.id}`)}
     >
       <div className="flex items-start justify-between mb-4">
         <span className="text-xs font-medium text-amber-100 bg-amber-500/10 px-2 py-1 rounded">
@@ -254,7 +254,7 @@ function NeedCard({ need }: { need: PublicNeed }) {
           className="bg-amber-200 hover:bg-amber-100 text-slate-950 shadow-[0_0_32px_rgba(251,191,36,0.16)]"
           onClick={(e) => {
             e.stopPropagation();
-            navigate(`/mercybridge/need/${need.id}`);
+            navigate(`/need/${need.id}`);
           }}
         >
           Help

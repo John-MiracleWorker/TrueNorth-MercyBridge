@@ -71,7 +71,7 @@ function NeedList({ title, needs }: { title: string; needs: Need[] }) {
           {needs.map((need) => (
             <button
               key={need.id}
-              onClick={() => navigate(`/mercybridge/need/${need.id}`)}
+              onClick={() => navigate(`/need/${need.id}`)}
               className="flex w-full items-center justify-between gap-4 p-4 text-left hover:bg-white/[0.055]"
             >
               <div className="flex-1 min-w-0">
@@ -177,7 +177,7 @@ export default function RequesterDashboard() {
               </p>
             </div>
             <Button
-              onClick={() => navigate('/mercybridge/stewardship')}
+              onClick={() => navigate('/stewardship')}
               className="bg-amber-200 font-semibold text-slate-950 hover:bg-amber-100 shadow-[0_0_32px_rgba(251,191,36,0.16)]"
             >
               Open Coach
@@ -204,7 +204,7 @@ export default function RequesterDashboard() {
 
         <div className="mt-8 text-center">
           <Button
-            onClick={() => navigate('/mercybridge/request-help')}
+            onClick={() => navigate('/request-help')}
             className="bg-amber-200 font-semibold text-slate-950 hover:bg-amber-100 shadow-[0_0_32px_rgba(251,191,36,0.16)]"
           >
             Submit a Need

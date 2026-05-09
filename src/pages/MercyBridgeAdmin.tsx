@@ -256,7 +256,7 @@ export default function MercyBridgeAdmin() {
                 <button
                   key={need.id}
                   className="block w-full p-4 text-left transition hover:bg-slate-950/35"
-                  onClick={() => navigate(`/mercybridge/need/${need.id}`)}
+                  onClick={() => navigate(`/need/${need.id}`)}
                 >
                   <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                     <div>
@@ -367,7 +367,7 @@ export default function MercyBridgeAdmin() {
                   <button
                     key={screening.id}
                     className="block w-full p-4 text-left transition hover:bg-slate-950/35"
-                    onClick={() => navigate(`/mercybridge/need/${screening.need_id}`)}
+                    onClick={() => navigate(`/need/${screening.need_id}`)}
                   >
                     <div className="flex flex-wrap items-center gap-2">
                       <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium ${getAiStatusClasses(screening.screening_status as Contribution['ai_verification_status'])}`}>
