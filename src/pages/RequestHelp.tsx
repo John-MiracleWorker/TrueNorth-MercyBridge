@@ -22,6 +22,7 @@ import {
   Clock,
   Trash2,
   Lock,
+  Loader2,
 } from 'lucide-react';
 import { createNeed, screenNeedWithAI, uploadBillDocument } from '@/services/mercybridgeApi';
 import type { CreateNeedRequest, HardshipProofType, NeedCategory, UrgencyLevel } from '@/types/mercybridge';
@@ -673,9 +674,16 @@ export default function RequestHelp() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex-1 bg-amber-200 hover:bg-amber-100 text-slate-950 shadow-[0_0_32px_rgba(251,191,36,0.16)] px-6 py-3 rounded-lg font-medium disabled:opacity-60"
+                  className="flex-1 flex items-center justify-center bg-amber-200 hover:bg-amber-100 text-slate-950 shadow-[0_0_32px_rgba(251,191,36,0.16)] px-6 py-3 rounded-lg font-medium disabled:opacity-60"
                 >
-                  {isSubmitting ? 'Submitting...' : 'Submit Request'}
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Submitting...
+                    </>
+                  ) : (
+                    'Submit Request'
+                  )}
                 </button>
               </div>
             </div>
