@@ -23,20 +23,18 @@ interface SafeAuthProviderProps {
 
 function getCrossDomainSession(): string | null {
   try {
-    const match = document.cookie.match(/(^| )truenorth_session=([^;]+)/);
-    return match ? decodeURIComponent(match[2]) : null;
+    // Look for Supabase auth-token cookies (written by TrueNorth hub)
+    const cookies = document.cookie.split(';');
+    for (const cookie of cookies) {
+      const [name, value] = cookie.trim().split('=');
+      if (name && name.includes('auth-token') && !name.includes('code-verifier')) {
+        return decodeURIComponent(value);
+      }
+    }
+    return null;
   } catch {
     return null;
   }
-}
-
-function setCrossDomainSession(value: string | null) {
-  const domain = '.find-true-north.net';
-  if (value === null) {
-    document.cookie = `truenorth_session=; domain=${domain}; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax; Secure`;
-    return;
-  }
-  document.cookie = `truenorth_session=${encodeURIComponent(value)}; domain=${domain}; path=/; max-age=${60*60*24*7}; SameSite=Lax; Secure`;
 }
 
 function importSessionFromCookie() {
