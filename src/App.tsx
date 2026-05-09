@@ -9,12 +9,8 @@ import { queryClient } from '@/lib/query-client';
 import { MercyBridgeLayout } from '@/components/MercyBridgeLayout';
 import { RoleGate } from '@/components/RoleGate';
 
-// Auth pages
-const LoginPage = lazy(() => import('@/pages/LoginPage'));
-const RegisterPage = lazy(() => import('@/pages/RegisterPage'));
-const ResetPasswordPage = lazy(() => import('@/pages/ResetPasswordPage'));
-const ConfirmEmailPage = lazy(() => import('@/pages/ConfirmEmailPage'));
-const AuthCallbackPage = lazy(() => import('@/pages/AuthCallbackPage'));
+// Auth redirect - all auth goes through TrueNorth hub
+const LoginRedirect = lazy(() => import('@/pages/LoginRedirect'));
 
 // MercyBridge pages
 const MercyBridgeLanding = lazy(() => import('@/pages/MercyBridgeLanding'));
@@ -60,27 +56,12 @@ function App() {
             <main id="main-content">
               <AnimatePresence mode="wait">
                 <Routes location={location} key={location.pathname}>
-                  {/* Auth Routes */}
-                  <Route
-                    path="/login"
-                    element={renderRoute(<LoginPage />, 'Loading sign in...')}
-                  />
-                  <Route
-                    path="/register"
-                    element={renderRoute(<RegisterPage />, 'Loading registration...')}
-                  />
-                  <Route
-                    path="/reset-password"
-                    element={renderRoute(<ResetPasswordPage />, 'Loading password reset...')}
-                  />
-                  <Route
-                    path="/confirm-email"
-                    element={renderRoute(<ConfirmEmailPage />, 'Loading confirmation...')}
-                  />
-                  <Route
-                    path="/auth/callback"
-                    element={renderRoute(<AuthCallbackPage />, 'Completing sign in...')}
-                  />
+                  {/* All auth routes redirect to TrueNorth hub login */}
+                  <Route path="/login" element={renderRoute(<LoginRedirect />, 'Redirecting...')} />
+                  <Route path="/register" element={renderRoute(<LoginRedirect />, 'Redirecting...')} />
+                  <Route path="/reset-password" element={renderRoute(<LoginRedirect />, 'Redirecting...')} />
+                  <Route path="/confirm-email" element={renderRoute(<LoginRedirect />, 'Redirecting...')} />
+                  <Route path="/auth/callback" element={renderRoute(<LoginRedirect />, 'Redirecting...')} />
 
                   {/* MercyBridge Routes */}
                   <Route
