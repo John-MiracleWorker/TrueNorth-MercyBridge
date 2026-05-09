@@ -8,12 +8,15 @@ export default function LoginRedirect() {
   const location = useLocation();
 
   useEffect(() => {
-    // Build the return URL - current path on MercyBridge
-    const returnTo = `${window.location.origin}${location.pathname}${location.search}`;
-    const loginUrl = `${HUB_LOGIN_URL}?return_to=${encodeURIComponent(returnTo)}`;
+    // Store current MercyBridge path so we can return after hub login
+    try {
+      sessionStorage.setItem('mb_return_path', location.pathname + location.search);
+    } catch {
+      // ignore
+    }
     
-    logger.info('[LoginRedirect] Redirecting to hub login:', loginUrl);
-    window.location.href = loginUrl;
+    logger.info('[LoginRedirect] Redirecting to hub login');
+    window.location.href = HUB_LOGIN_URL;
   }, [location]);
 
   return (

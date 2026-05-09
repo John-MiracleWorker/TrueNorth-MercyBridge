@@ -15,9 +15,8 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   useEffect(() => {
     if (!loading) {
       if (!user) {
-        // Redirect to hub login with return_to
-        const returnTo = `${window.location.origin}${location.pathname}${location.search}`;
-        window.location.href = `${HUB_LOGIN_URL}?return_to=${encodeURIComponent(returnTo)}`;
+        // Redirect to hub login (no return_to to avoid redirect loops)
+        window.location.href = HUB_LOGIN_URL;
         return;
       }
 
