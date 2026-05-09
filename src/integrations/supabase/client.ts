@@ -2,6 +2,7 @@
 // Uses environment variables for security - see .env.example for setup
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
+import { cookieStorage } from '@/lib/cookieStorage';
 
 interface DenoRuntime {
   env?: {
@@ -10,7 +11,6 @@ interface DenoRuntime {
 }
 
 const denoRuntime = (globalThis as typeof globalThis & { Deno?: DenoRuntime }).Deno;
-const browserStorage = typeof localStorage !== 'undefined' ? localStorage : undefined;
 const viteEnv = (import.meta as ImportMeta & { env?: ImportMetaEnv }).env;
 
 // Prefer Vite env in browser builds, but allow Deno env during Deno-based tests.
@@ -31,9 +31,10 @@ const key = SUPABASE_ANON_KEY || 'placeholder';
 
 export const supabase = createClient<Database>(url, key, {
   auth: {
-    storage: browserStorage,
-    persistSession: Boolean(browserStorage),
-    autoRefreshToken: Boolean(browserStorage),
+    storage: cookieStorage,
+    persistSession: true,
+    autoRefreshToken: true,
     flowType: 'pkce',
+    detectSessionInUrl: false,
   }
 });

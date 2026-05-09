@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,29 +9,54 @@ export default function AuthCallbackPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const hasRun = useRef(false);
 
   useEffect(() => {
+    // Prevent double execution due to React Strict Mode or re-renders
+    if (hasRun.current) return;
+    hasRun.current = true;
+
+    const code = searchParams.get('code');
+
     const handleAuthCallback = async () => {
       try {
-        // Supabase PKCE flow handles the code exchange automatically
-        // We just need to check if the session is established
-        const { data: { session }, error } = await supabase.auth.getSession();
+        // First check if we already have a session (e.g., from localStorage)
+        const { data: { session: existingSession } } = await supabase.auth.getSession();
         
-        if (error) throw error;
+        if (existingSession) {
+          logger.info('[AuthCallback] Existing session found, redirecting');
+          navigate('/', { replace: true });
+          return;
+        }
+
+        // If no session and no code, something went wrong
+        if (!code) {
+          setError('No authentication code found. Please try signing in again.');
+          setLoading(false);
+          return;
+        }
+
+        logger.info('[AuthCallback] Exchanging code for session');
         
-        if (session) {
+        // Exchange the code for a session
+        const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+        
+        if (exchangeError) {
+          throw exchangeError;
+        }
+
+        // Give Supabase a moment to persist to localStorage, then verify
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        const { data: { session: newSession } } = await supabase.auth.getSession();
+        
+        if (newSession) {
+          logger.info('[AuthCallback] Session established, redirecting');
           navigate('/', { replace: true });
         } else {
-          // Check for code in URL (PKCE flow)
-          const code = searchParams.get('code');
-          if (code) {
-            const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
-            if (exchangeError) throw exchangeError;
-            navigate('/', { replace: true });
-          } else {
-            setError('Authentication failed. Please try again.');
-            setLoading(false);
-          }
+          logger.warn('[AuthCallback] No session after exchange');
+          setError('Could not establish session. Please try signing in again.');
+          setLoading(false);
         }
       } catch (err: unknown) {
         const msg = err instanceof Error ? err.message : 'Authentication failed';
