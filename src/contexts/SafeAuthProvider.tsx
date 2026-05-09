@@ -12,6 +12,7 @@ interface AuthContextType {
   isLoggedIn: boolean;
   isBanned: boolean;
   isPermanentlyBanned: boolean;
+  signInWithGoogle: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -127,6 +128,24 @@ function AuthProviderContent({ children }: SafeAuthProviderProps) {
     };
   }, []);
 
+  const signInWithGoogle = async () => {
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+      if (error) throw error;
+      if (data?.url) {
+        window.location.href = data.url;
+      }
+    } catch (error) {
+      logger.error('Google sign-in error:', error);
+      throw error;
+    }
+  };
+
   const signOut = async () => {
     try {
       await supabase.auth.signOut();
@@ -146,6 +165,7 @@ function AuthProviderContent({ children }: SafeAuthProviderProps) {
     isLoggedIn: !!user,
     isBanned,
     isPermanentlyBanned,
+    signInWithGoogle,
   };
 
   return (
