@@ -495,7 +495,7 @@ export default function MercyBridgeLanding() {
       <footer className="border-t border-white/10 bg-slate-950/45 pb-24 backdrop-blur-xl md:pb-8">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-5 py-8 text-center sm:px-8 md:flex-row md:text-left lg:px-10">
           <div className="flex items-center gap-3">
-            <TrueNorthLogo className="h-6 w-6" />
+            <TrueNorthLogo className="h-6 w-6" hideText />
             <span className="font-semibold text-white">MercyBridge</span>
             <span className="hidden text-slate-600 sm:inline">|</span>
             <span className="hidden text-sm text-slate-400 sm:inline">Verified bill help with Christian stewardship</span>
