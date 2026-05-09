@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { AlertTriangle, CheckCircle2, ExternalLink, Sparkles, X } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, ExternalLink, Sparkles, X, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { verifyContribution } from '@/services/mercybridgeApi';
@@ -189,7 +189,11 @@ export function ContributionVerifyModal({
                 disabled={Boolean(processing)}
                 onClick={() => submit('verify')}
               >
-                <CheckCircle2 className="mr-2 h-4 w-4" />
+                {processing === 'verify' ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <CheckCircle2 className="mr-2 h-4 w-4" />
+                )}
                 {processing === 'verify' ? 'Verifying...' : 'Verify'}
               </Button>
               <Button
@@ -198,6 +202,9 @@ export function ContributionVerifyModal({
                 disabled={Boolean(processing)}
                 onClick={() => submit('reject')}
               >
+                {processing === 'reject' && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
                 {processing === 'reject' ? 'Rejecting...' : 'Reject'}
               </Button>
             </div>

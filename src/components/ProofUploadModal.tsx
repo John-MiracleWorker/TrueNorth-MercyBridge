@@ -417,7 +417,7 @@ export function ProofUploadModal({ isOpen, onClose, needId, onUploadComplete }: 
                 >
                   {isUploading ? (
                     <span className="flex items-center gap-2">
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-slate-950" />
+                      <Loader2 className="animate-spin h-4 w-4" />
                       Uploading...
                     </span>
                   ) : (
