@@ -11,6 +11,7 @@ import { RoleGate } from '@/components/RoleGate';
 
 // Auth redirect - all auth goes through TrueNorth hub
 const LoginRedirect = lazy(() => import('@/pages/LoginRedirect'));
+const AuthCallbackPage = lazy(() => import('@/pages/AuthCallbackPage'));
 
 // MercyBridge pages
 const MercyBridgeLanding = lazy(() => import('@/pages/MercyBridgeLanding'));
@@ -61,7 +62,7 @@ function App() {
                   <Route path="/register" element={renderRoute(<LoginRedirect />, 'Redirecting...')} />
                   <Route path="/reset-password" element={renderRoute(<LoginRedirect />, 'Redirecting...')} />
                   <Route path="/confirm-email" element={renderRoute(<LoginRedirect />, 'Redirecting...')} />
-                  <Route path="/auth/callback" element={renderRoute(<LoginRedirect />, 'Redirecting...')} />
+                  <Route path="/auth/callback" element={renderRoute(<AuthCallbackPage />, 'Completing sign in...')} />
 
                   {/* MercyBridge Routes */}
                   <Route
