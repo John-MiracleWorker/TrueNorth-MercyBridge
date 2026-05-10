@@ -110,6 +110,7 @@ export function PaymentInstructions({
           <h3 className="text-sm font-medium text-white">Payment Instructions</h3>
           <button
             onClick={handleCopy}
+            aria-label="Copy payment instructions"
             className="flex items-center gap-1 text-xs text-slate-400 hover:text-white transition-colors"
           >
             {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
