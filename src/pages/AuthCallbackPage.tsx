@@ -20,29 +20,32 @@ export default function AuthCallbackPage() {
 
     const handleAuthCallback = async () => {
       try {
-        // First check if we already have a session (e.g., from localStorage)
-        const { data: { session: existingSession } } = await supabase.auth.getSession();
-        
-        if (existingSession) {
-          logger.info('[AuthCallback] Existing session found, redirecting');
-          navigate('/', { replace: true });
-          return;
-        }
+        if (code) {
+          logger.info('[AuthCallback] Exchanging code for session');
 
-        // If no session and no code, something went wrong
-        if (!code) {
+          // Always exchange a fresh OAuth/email callback code when present.
+          // Do not short-circuit on an existing local/cookie session; it may be stale
+          // or from the sibling TrueNorth app and would prevent this callback from
+          // establishing the MercyBridge session correctly.
+          const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+
+          if (exchangeError) {
+            throw exchangeError;
+          }
+        } else {
+          // No code means this route was opened directly or with an old-style callback.
+          // In that case, accept an already-persisted session if one exists.
+          const { data: { session: existingSession } } = await supabase.auth.getSession();
+
+          if (existingSession) {
+            logger.info('[AuthCallback] Existing session found, redirecting');
+            navigate('/', { replace: true });
+            return;
+          }
+
           setError('No authentication code found. Please try signing in again.');
           setLoading(false);
           return;
-        }
-
-        logger.info('[AuthCallback] Exchanging code for session');
-        
-        // Exchange the code for a session
-        const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
-        
-        if (exchangeError) {
-          throw exchangeError;
         }
 
         // Give Supabase a moment to persist to localStorage, then verify

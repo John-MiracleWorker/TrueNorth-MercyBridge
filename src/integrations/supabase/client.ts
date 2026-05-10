@@ -2,6 +2,7 @@
 // Uses environment variables for security - see .env.example for setup
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
+import { cookieStorage } from '@/lib/cookieStorage';
 
 interface DenoRuntime {
   env?: {
@@ -30,7 +31,7 @@ const key = SUPABASE_ANON_KEY || 'placeholder';
 
 export const supabase = createClient<Database>(url, key, {
   auth: {
-    storage: typeof localStorage !== 'undefined' ? localStorage : undefined,
+    storage: typeof document !== 'undefined' ? cookieStorage : (typeof localStorage !== 'undefined' ? localStorage : undefined),
     persistSession: true,
     autoRefreshToken: true,
     flowType: 'pkce',
