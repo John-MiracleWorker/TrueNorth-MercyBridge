@@ -699,6 +699,7 @@ export interface BrowseNeedsFilters {
 /** Need with public-safe fields for browsing */
 export interface PublicNeed {
   id: string;
+  requester_id: string;
   title: string;
   category: NeedCategory;
   biller_name: string;
@@ -710,6 +711,7 @@ export interface PublicNeed {
   urgency_level: UrgencyLevel;
   hardship_summary_public: string | null;
   public_location: string | null;
+  payment_instructions_public: string | null;
   verification_level: VerificationLevel;
   status: NeedStatus;
   submitted_at: string;

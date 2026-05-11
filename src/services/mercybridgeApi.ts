@@ -35,6 +35,13 @@ import type {
 const ENABLE_STRIPE = import.meta.env.VITE_MERCYBRIDGE_ENABLE_STRIPE === 'true';
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 
+type SupabaseAny = typeof supabase & {
+  from: (table: string) => any;
+  rpc: (fn: string, args?: Record<string, unknown>) => any;
+};
+
+const db = supabase as SupabaseAny;
+
 export interface UploadedMercyBridgeDocument {
   url: string;
   path: string;
@@ -271,8 +278,8 @@ export async function submitAdditionalDocuments(
 
 export async function getPublicNeeds(filters?: BrowseNeedsFilters): Promise<PublicNeed[]> {
   let query = supabase
-    .from('mercybridge_needs')
-    .select('id, title, category, biller_name, bill_amount, amount_requested, amount_funded, amount_remaining, due_date, urgency_level, hardship_summary_public, public_location, verification_level, status, submitted_at')
+    .from('mercybridge_public_needs')
+    .select('*')
     .eq('status', 'approved')
     .order('submitted_at', { ascending: false });
 
@@ -291,6 +298,44 @@ export async function getPublicNeeds(filters?: BrowseNeedsFilters): Promise<Publ
   })) as PublicNeed[];
 }
 
+export async function getPublicNeedById(id: string): Promise<PublicNeed | null> {
+  const { data, error } = await supabase
+    .from('mercybridge_public_needs')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (error) return null;
+  return data as unknown as PublicNeed;
+}
+
+export async function getRequesterNeedById(id: string): Promise<NeedWithDetails | null> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  const { data, error } = await supabase
+    .from('mercybridge_needs')
+    .select('*')
+    .eq('id', id)
+    .eq('requester_id', user.id)
+    .single();
+
+  if (error) return null;
+  return data as unknown as NeedWithDetails;
+}
+
+export async function getAdminNeedById(id: string): Promise<NeedWithDetails | null> {
+  const { data, error } = await supabase
+    .from('mercybridge_needs')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (error) return null;
+  return data as unknown as NeedWithDetails;
+}
+
+/** @deprecated Use getPublicNeedById, getRequesterNeedById, or getAdminNeedById instead */
 export async function getNeedById(id: string): Promise<NeedWithDetails | null> {
   const { data, error } = await supabase
     .from('mercybridge_needs')
@@ -995,12 +1040,7 @@ export async function uploadBillDocument(file: File): Promise<UploadedMercyBridg
 // V2 PAYEE DIRECTORY + VERIFICATION WORKFLOW
 // ============================================================================
 
-type SupabaseAny = typeof supabase & {
-  from: (table: string) => any;
-  rpc: (fn: string, args?: Record<string, unknown>) => any;
-};
 
-const db = supabase as SupabaseAny;
 
 export interface CreatePayeeRequest {
   legal_name: string;

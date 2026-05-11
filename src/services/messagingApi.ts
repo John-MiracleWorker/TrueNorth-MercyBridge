@@ -47,10 +47,9 @@ export async function sendMessage(payload: SendMessageRequest): Promise<Message>
 }
 
 export async function markMessageAsRead(messageId: string): Promise<void> {
-  const { error } = await supabase
-    .from('mercybridge_messages')
-    .update({ is_read: true })
-    .eq('id', messageId);
+  const { error } = await supabase.rpc('mark_mercybridge_message_read', {
+    message_id: messageId,
+  });
 
   if (error) throw new Error(error.message);
 }

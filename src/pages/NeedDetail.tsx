@@ -37,7 +37,9 @@ import {
   createPaymentIntent,
   getContributionsForNeed,
   getMercyBridgeRole,
-  getNeedById,
+  getPublicNeedById,
+  getRequesterNeedById,
+  getAdminNeedById,
   getNeedAIScreening,
   getStatusUpdatesForNeed,
   isStripeEnabled,
@@ -138,8 +140,24 @@ export default function NeedDetail() {
     setLoading(true);
     setError(null);
     try {
-      const [needData, contributionData, updateData] = await Promise.all([
-        getNeedById(id),
+      let needData: NeedWithDetails | null = null;
+
+      // Route to the correct endpoint based on auth context
+      if (mercybridgeRole === 'admin') {
+        needData = await getAdminNeedById(id);
+      } else if (user) {
+        // RLS enforces ownership; returns null if not owner
+        needData = await getRequesterNeedById(id);
+      }
+
+      // Fallback to public-safe view for non-owners and anonymous users
+      if (!needData) {
+        const publicNeed = await getPublicNeedById(id);
+        // Cast is safe: PublicNeed contains all fields rendered on public pages
+        needData = publicNeed as unknown as NeedWithDetails | null;
+      }
+
+      const [contributionData, updateData] = await Promise.all([
         getContributionsForNeed(id),
         getStatusUpdatesForNeed(id),
       ]);
@@ -153,7 +171,7 @@ export default function NeedDetail() {
     } finally {
       setLoading(false);
     }
-  }, [id]);
+  }, [id, user, mercybridgeRole]);
 
   const loadAiScreening = useCallback(async () => {
     if (!id || !isMercyBridgeAdmin) return;

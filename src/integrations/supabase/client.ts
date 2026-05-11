@@ -19,6 +19,11 @@ const SUPABASE_ANON_KEY =
 
 // Validate required environment variables
 if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+  if (import.meta.env.PROD) {
+    throw new Error(
+      'Missing required Supabase configuration. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your .env file.'
+    );
+  }
   console.warn(
     'Missing required Supabase configuration. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your .env file.'
   );
