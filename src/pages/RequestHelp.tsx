@@ -311,14 +311,23 @@ export default function RequestHelp() {
               <h2 className="text-2xl font-bold text-white">Basic Info</h2>
 
               <div>
-                <Label className="text-white">Category</Label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
+                <Label id="category-group-label" className="text-white">Category</Label>
+                <div
+                  className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2"
+                  role="group"
+                  aria-labelledby="category-group-label"
+                >
                   {CATEGORIES.map((cat) => (
                     <button
                       key={cat.value}
                       type="button"
+                      aria-pressed={formData.category === cat.value}
                       onClick={() => setValue('category', cat.value)}
-                      className={`p-4 rounded-xl border text-left text-sm ${formData.category === cat.value ? 'border-amber-500 bg-amber-500/10 text-white' : 'border-white/10 text-slate-300 hover:border-slate-600'}`}
+                      className={`p-4 rounded-xl border text-left text-sm transition-all duration-200 ${
+                        formData.category === cat.value
+                          ? 'border-amber-500 bg-amber-500/10 text-white shadow-[0_0_15px_rgba(251,191,36,0.1)]'
+                          : 'border-white/10 text-slate-300 hover:border-slate-600 hover:bg-white/[0.02]'
+                      }`}
                     >
                       {cat.label}
                     </button>
@@ -341,14 +350,23 @@ export default function RequestHelp() {
               </div>
 
               <div>
-                <Label className="text-white">Urgency</Label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
+                <Label id="urgency-group-label" className="text-white">Urgency</Label>
+                <div
+                  className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2"
+                  role="group"
+                  aria-labelledby="urgency-group-label"
+                >
                   {URGENCY_LEVELS.map((level) => (
                     <button
                       key={level.value}
                       type="button"
+                      aria-pressed={formData.urgency_level === level.value}
                       onClick={() => setValue('urgency_level', level.value)}
-                      className={`p-4 rounded-xl border text-left text-sm ${formData.urgency_level === level.value ? 'border-amber-500 bg-amber-500/10 text-white' : 'border-white/10 text-slate-300 hover:border-slate-600'}`}
+                      className={`p-4 rounded-xl border text-left text-sm transition-all duration-200 ${
+                        formData.urgency_level === level.value
+                          ? 'border-amber-500 bg-amber-500/10 text-white shadow-[0_0_15px_rgba(251,191,36,0.1)]'
+                          : 'border-white/10 text-slate-300 hover:border-slate-600 hover:bg-white/[0.02]'
+                      }`}
                     >
                       <span className="font-medium">{level.label}</span>
                       <span className="block text-xs text-slate-400 mt-1">{level.description}</span>
