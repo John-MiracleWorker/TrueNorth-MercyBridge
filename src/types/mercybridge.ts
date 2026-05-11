@@ -82,6 +82,57 @@ export type PurgeStatus =
   | 'failed'
   | 'not_needed';
 
+export type PayeeCategory =
+  | 'utility'
+  | 'rent_landlord'
+  | 'property_manager'
+  | 'medical'
+  | 'dental'
+  | 'auto_repair'
+  | 'insurance'
+  | 'childcare'
+  | 'school'
+  | 'church_partner'
+  | 'government_fee'
+  | 'telecom'
+  | 'other';
+
+export type PayeeVerificationStatus =
+  | 'unverified'
+  | 'pending_review'
+  | 'limited_verified'
+  | 'verified'
+  | 'trusted'
+  | 'suspended'
+  | 'rejected';
+
+export type PayeeMatchStatus =
+  | 'not_checked'
+  | 'matched'
+  | 'possible_match'
+  | 'new_payee_pending'
+  | 'no_match'
+  | 'rejected';
+
+export type DocumentExtractionStatus =
+  | 'pending'
+  | 'processing'
+  | 'completed'
+  | 'failed'
+  | 'reviewed';
+
+export type PaymentAttemptStatus =
+  | 'pending'
+  | 'initiated'
+  | 'paid'
+  | 'confirmed'
+  | 'settled'
+  | 'failed'
+  | 'reversed'
+  | 'cancelled';
+
+export type RiskSeverity = 'low' | 'medium' | 'high' | 'critical';
+
 // ============================================================================
 // CORE DATABASE INTERFACES
 // ============================================================================
@@ -120,6 +171,11 @@ export interface Need {
   // Status & verification
   status: NeedStatus;
   verification_level: VerificationLevel;
+  payee_id?: string | null;
+  payee_match_status?: PayeeMatchStatus | null;
+  payee_match_confidence?: number | null;
+  payee_risk_score?: number | null;
+  payee_review_notes?: string | null;
   submitted_at: string;
   approved_at: string | null;
   funded_at: string | null;
@@ -152,6 +208,183 @@ export interface Need {
 
   created_at: string;
   updated_at: string;
+}
+
+export interface Payee {
+  id: string;
+  legal_name: string;
+  display_name: string;
+  normalized_name: string;
+  category: PayeeCategory;
+  website: string | null;
+  phone: string | null;
+  address: Record<string, unknown> | null;
+  ein_or_tax_id_encrypted?: string | null;
+  verification_status: PayeeVerificationStatus;
+  verification_level: number;
+  risk_score: number;
+  trust_score: number;
+  last_verified_at: string | null;
+  suspended_at: string | null;
+  suspension_reason: string | null;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PayeeAlias {
+  id: string;
+  payee_id: string;
+  alias_text: string;
+  normalized_alias: string;
+  source: string;
+  confidence: number;
+  created_at: string;
+}
+
+export interface NeedDocument {
+  id: string;
+  need_id: string;
+  document_type: string;
+  storage_path: string;
+  safe_summary: Record<string, unknown> | null;
+  extracted_fields: PayeeExtractedFields | Record<string, unknown> | null;
+  extraction_status: DocumentExtractionStatus;
+  extraction_confidence: number | null;
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+  retention_until: string | null;
+  purged_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PayeeExtractedFields {
+  payee_name?: string | null;
+  amount_due?: number | null;
+  minimum_due?: number | null;
+  due_date?: string | null;
+  account_number_last4?: string | null;
+  billing_address?: string | null;
+  requester_name_on_bill?: string | null;
+  payment_url?: string | null;
+  payee_phone?: string | null;
+  invoice_number?: string | null;
+  service_address?: string | null;
+}
+
+export interface PayeeVerification {
+  id: string;
+  payee_id: string;
+  need_id: string | null;
+  reviewer_id: string | null;
+  verification_type: string;
+  result: 'passed' | 'failed' | 'partial' | 'needs_more_info';
+  evidence: Record<string, unknown> | null;
+  notes: string | null;
+  created_at: string;
+}
+
+export interface PayeePaymentMethod {
+  id: string;
+  payee_id: string;
+  method_type: 'biller_portal' | 'guest_pay_portal' | 'card_by_phone' | 'mailed_check' | 'ach' | 'wire' | 'manual_other';
+  payment_url: string | null;
+  mailing_address: Record<string, unknown> | null;
+  ach_details_encrypted?: string | null;
+  check_payable_to: string | null;
+  phone_payment_allowed: boolean;
+  phone: string | null;
+  requires_account_number: boolean;
+  requires_invoice_number: boolean;
+  notes: string | null;
+  status: 'pending_review' | 'approved' | 'limited_verified' | 'suspended' | 'rejected';
+  last_successful_payment_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PaymentAttempt {
+  id: string;
+  need_id: string;
+  payee_id: string | null;
+  payment_method_id: string | null;
+  amount: number;
+  method: string;
+  status: PaymentAttemptStatus;
+  confirmation_number: string | null;
+  receipt_storage_path: string | null;
+  paid_at: string | null;
+  settled_at: string | null;
+  failed_reason: string | null;
+  reviewer_id: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface RiskFlag {
+  id: string;
+  need_id: string | null;
+  payee_id: string | null;
+  requester_id: string | null;
+  flag_type: string;
+  severity: RiskSeverity;
+  message: string;
+  evidence: Record<string, unknown> | null;
+  resolved_at: string | null;
+  resolved_by: string | null;
+  created_at: string;
+}
+
+export interface PayeeMatchSuggestion {
+  payee_id: string;
+  display_name: string;
+  legal_name: string;
+  category: PayeeCategory;
+  verification_status: PayeeVerificationStatus;
+  verification_level: number;
+  trust_score: number;
+  risk_score: number;
+  matched_alias: string;
+  confidence: number;
+}
+
+export interface PayeeWithDetails extends Payee {
+  aliases?: PayeeAlias[];
+  payment_methods?: PayeePaymentMethod[];
+  verifications?: PayeeVerification[];
+  payment_attempts?: PaymentAttempt[];
+  risk_flags?: RiskFlag[];
+}
+
+export interface PayeeVerificationQueueItem {
+  need: Need;
+  payee: Payee | null;
+  documents: NeedDocument[];
+  risk_flags: RiskFlag[];
+  matches: PayeeMatchSuggestion[];
+}
+
+export interface PayeeDirectoryResults {
+  total_payees: number;
+  trusted_payees: number;
+  verified_payees: number;
+  pending_payees: number;
+  suspended_or_rejected_payees: number;
+  payment_routes: number;
+  approved_payment_routes: number;
+  captured_documents: number;
+  pending_document_extractions: number;
+  matched_needs: number;
+  possible_match_needs: number;
+  needs_without_match: number;
+  unresolved_risk_flags: number;
+  successful_payments: number;
+  failed_payments: number;
+  recent_documents: NeedDocument[];
+  recent_verifications: PayeeVerification[];
+  recent_payment_attempts: PaymentAttempt[];
+  recent_risk_flags: RiskFlag[];
 }
 
 export interface AIScreeningResult {

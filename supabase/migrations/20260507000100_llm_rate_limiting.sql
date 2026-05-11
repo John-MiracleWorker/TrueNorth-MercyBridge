@@ -150,3 +150,11 @@ COMMENT ON FUNCTION reset_user_quota IS 'Admin utility to manually reset a users
 --     return jsonResponse(req, { error: 'Daily LLM quota exceeded' }, 429);
 --   }
 -- =============================================================================
+
+-- Phase 1 hardening for quota RPCs: backend/service role only.
+REVOKE ALL ON FUNCTION check_and_increment_quota(UUID, INTEGER) FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION reset_user_quota(UUID, INTEGER) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION check_and_increment_quota(UUID, INTEGER) TO service_role;
+GRANT EXECUTE ON FUNCTION reset_user_quota(UUID, INTEGER) TO service_role;
+ALTER FUNCTION check_and_increment_quota(UUID, INTEGER) SET search_path = public, extensions;
+ALTER FUNCTION reset_user_quota(UUID, INTEGER) SET search_path = public, extensions;

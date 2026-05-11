@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
 import { ContributionVerifyModal } from '@/components/ContributionVerifyModal';
+import { PayeeDirectoryAdmin } from '@/components/PayeeDirectoryAdmin';
 import {
   getAdminDashboard,
   getNeedAIScreeningsForNeeds,
@@ -242,6 +243,8 @@ export default function MercyBridgeAdmin() {
           ))}
         </div>
 
+        <PayeeDirectoryAdmin />
+
         <section className="mb-8 rounded-2xl border border-white/10 bg-white/[0.055] shadow-xl shadow-black/15 backdrop-blur-xl">
           <div className="flex items-center gap-3 border-b border-white/10 p-4">
             <Inbox className="h-5 w-5 text-slate-300" />
@@ -265,7 +268,7 @@ export default function MercyBridgeAdmin() {
                         <span>{money(need.amount_requested)} requested</span>
                         <span>{need.biller_name}</span>
                         <span className={`rounded-full border px-2 py-0.5 text-xs ${getNeedStatusClasses(need.status)}`}>
-                          {need.status.replaceAll('_', ' ')}
+                          {need.status.split('_').join(' ')}
                         </span>
                       </div>
                     </div>

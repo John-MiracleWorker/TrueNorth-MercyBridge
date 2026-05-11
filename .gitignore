@@ -33,6 +33,7 @@ releases/
 tmp/
 backups/
 *.patch
+supabase/.temp/
 
 # Local Netlify folder
 .netlify
