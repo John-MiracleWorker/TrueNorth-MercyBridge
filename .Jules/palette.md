@@ -1,3 +1,6 @@
 ## 2024-05-08 - Accessible close buttons
 **Learning:** Found that multiple modals and preview sections utilized `<button>` tags with generic close icons (`<X>`) without any accessible `aria-label` or explicit `type="button"`. Screen readers could not correctly announce the purpose of these icon-only buttons, reducing accessibility for modal navigation and document management.
 **Action:** Always provide descriptive `aria-label` attributes on icon-only buttons (e.g., `aria-label="Close modal"`). Additionally, always specify `type="button"` to avoid unintended form submissions in dynamic interfaces.
+## 2024-05-12 - Accessible custom button groups
+**Learning:** Found that custom selection components for "Category" and "Urgency" using `button` tags mapped to formData relied exclusively on visual classes for state. Screen readers had no way to identify them as a group of choices or determine which option was actively selected.
+**Action:** When replacing standard `<select>` or `<input type="radio">` components with custom button groups, ensure the buttons are wrapped in a `<div role="group" aria-labelledby="label-id">`. The container label should provide the context, and each button should communicate its state using the `aria-pressed` attribute dynamically mapped to the underlying selection value.
