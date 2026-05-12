@@ -64,6 +64,8 @@ export default function AdminReviewQueue() {
           {filters.map((item) => (
             <button
               key={item}
+              aria-label={`Filter by ${item.replace('_', ' ')}`}
+              aria-pressed={filter === item}
               className={`rounded-full border px-3 py-1 text-xs capitalize ${
                 filter === item
                   ? 'border-amber-500/40 bg-amber-500/10 text-amber-300'
