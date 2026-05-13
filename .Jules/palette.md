@@ -1,3 +1,3 @@
-## 2024-05-10 - Add aria labels and aria-pressed attributes to filter buttons and copy buttons
-**Learning:** Adding descriptive `aria-label` attributes to icon-only buttons (like the copy button) and dynamically adding `aria-pressed` to filter toggles significantly improves accessibility for screen readers without altering the visual design.
-**Action:** Always check for interactive elements that lack text content or rely purely on visual state, and enhance them with appropriate ARIA attributes.
+## 2023-10-27 - [Add ARIA roles to custom radio buttons in RequestHelp]
+**Learning:** Custom UI elements like "radio buttons" that are visually styled differently need `role="group"`, `aria-labelledby`, and `aria-pressed` for screen readers to properly announce their groupings and states.
+**Action:** Next time creating a custom interactive list like radio button or toggle, always use appropriate ARIA tags and groups.
