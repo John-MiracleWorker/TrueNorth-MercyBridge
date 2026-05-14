@@ -60,7 +60,7 @@ export default function AdminReviewQueue() {
           <h2 className="font-semibold text-white">Review Queue</h2>
           <p className="text-sm text-slate-400">{visibleNeeds.length} needs shown</p>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2" role="group" aria-label="Filter needs by status">
           {filters.map((item) => (
             <button
               key={item}
@@ -95,21 +95,29 @@ export default function AdminReviewQueue() {
                 <Button
                   size="sm"
                   variant="outline"
-                  disabled={processingId === need.id}
+                  disabled={processingId !== null}
                   className="border-green-600 text-green-400 hover:bg-green-600/20"
                   onClick={() => handleReview(need, 'approved')}
                 >
-                  <CheckCircle className="mr-1 h-4 w-4" />
+                  {processingId === need.id ? (
+                    <Loader2 className="mr-1 h-4 w-4 animate-spin" />
+                  ) : (
+                    <CheckCircle className="mr-1 h-4 w-4" />
+                  )}
                   Approve
                 </Button>
                 <Button
                   size="sm"
                   variant="outline"
-                  disabled={processingId === need.id}
+                  disabled={processingId !== null}
                   className="border-red-600 text-red-400 hover:bg-red-600/20"
                   onClick={() => handleReview(need, 'rejected')}
                 >
-                  <XCircle className="mr-1 h-4 w-4" />
+                  {processingId === need.id ? (
+                    <Loader2 className="mr-1 h-4 w-4 animate-spin" />
+                  ) : (
+                    <XCircle className="mr-1 h-4 w-4" />
+                  )}
                   Reject
                 </Button>
               </div>
