@@ -311,12 +311,13 @@ export default function RequestHelp() {
               <h2 className="text-2xl font-bold text-white">Basic Info</h2>
 
               <div>
-                <Label className="text-white">Category</Label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
+                <Label id="category-label" className="text-white">Category</Label>
+                <div role="group" aria-labelledby="category-label" className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
                   {CATEGORIES.map((cat) => (
                     <button
                       key={cat.value}
                       type="button"
+                      aria-pressed={formData.category === cat.value}
                       onClick={() => setValue('category', cat.value)}
                       className={`p-4 rounded-xl border text-left text-sm ${formData.category === cat.value ? 'border-amber-500 bg-amber-500/10 text-white' : 'border-white/10 text-slate-300 hover:border-slate-600'}`}
                     >
@@ -341,12 +342,13 @@ export default function RequestHelp() {
               </div>
 
               <div>
-                <Label className="text-white">Urgency</Label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
+                <Label id="urgency-label" className="text-white">Urgency</Label>
+                <div role="group" aria-labelledby="urgency-label" className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
                   {URGENCY_LEVELS.map((level) => (
                     <button
                       key={level.value}
                       type="button"
+                      aria-pressed={formData.urgency_level === level.value}
                       onClick={() => setValue('urgency_level', level.value)}
                       className={`p-4 rounded-xl border text-left text-sm ${formData.urgency_level === level.value ? 'border-amber-500 bg-amber-500/10 text-white' : 'border-white/10 text-slate-300 hover:border-slate-600'}`}
                     >
