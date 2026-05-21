@@ -57,16 +57,16 @@ export default function AdminReviewQueue() {
     <section className="rounded-2xl border border-white/10 bg-white/[0.055] shadow-xl shadow-black/15 backdrop-blur-xl">
       <div className="flex flex-col gap-3 border-b border-white/10 p-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="font-semibold text-white">Review Queue</h2>
+          <h2 id="review-queue-heading" className="font-semibold text-white">Review Queue</h2>
           <p className="text-sm text-slate-400">{visibleNeeds.length} needs shown</p>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div role="group" aria-labelledby="review-queue-heading" className="flex flex-wrap gap-2">
           {filters.map((item) => (
             <button
               key={item}
               aria-label={`Filter by ${item.replace('_', ' ')}`}
               aria-pressed={filter === item}
-              className={`rounded-full border px-3 py-1 text-xs capitalize ${
+              className={`rounded-full border px-3 py-1 text-xs capitalize focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50 hover:bg-white/[0.08] hover:text-white transition-colors ${
                 filter === item
                   ? 'border-amber-500/40 bg-amber-500/10 text-amber-300'
                   : 'border-white/10 text-slate-400'
