@@ -410,7 +410,12 @@ export default function MercyBridgeAdmin() {
                   return (
                     <div key={need.id} className="p-4">
                       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                        <button className="flex-1 text-left" onClick={() => setExpandedNeedId(isExpanded ? null : need.id)}>
+                        <button
+                          className="flex-1 text-left"
+                          onClick={() => setExpandedNeedId(isExpanded ? null : need.id)}
+                          aria-expanded={isExpanded}
+                          aria-controls={`need-details-${need.id}`}
+                        >
                           <h3 className="font-semibold text-white">{need.title}</h3>
                           <div className="mt-1 flex flex-wrap items-center gap-2 text-sm text-slate-400">
                             <span>{money(need.bill_amount)}</span>
@@ -446,7 +451,7 @@ export default function MercyBridgeAdmin() {
                       </div>
 
                       {isExpanded && (
-                        <div className="mt-4 space-y-4 rounded-2xl border border-white/10 bg-white/[0.055] shadow-xl shadow-black/15 backdrop-blur-xl p-4">
+                        <div id={`need-details-${need.id}`} className="mt-4 space-y-4 rounded-2xl border border-white/10 bg-white/[0.055] shadow-xl shadow-black/15 backdrop-blur-xl p-4">
                           <div>
                             <h4 className="text-sm font-semibold text-white mb-2 flex items-center gap-2">
                               <FileText className="w-4 h-4 text-slate-400" />
