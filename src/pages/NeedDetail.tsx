@@ -599,11 +599,11 @@ export default function NeedDetail() {
               <p className="text-sm text-orange-200/80 mb-4">{need.review_notes}</p>
             )}
             <div className="space-y-3">
-              <label className="flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-white/20 bg-slate-950/35 p-6 cursor-pointer hover:border-orange-400/40 transition">
+              <label className="flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-white/20 bg-slate-950/35 p-6 cursor-pointer hover:border-orange-400/40 transition focus-within:ring-2 focus-within:ring-orange-500 focus-within:ring-offset-2 focus-within:ring-offset-slate-950">
                 <Upload className="w-6 h-6 text-orange-300" />
                 <span className="text-sm text-slate-300">Click to upload documents</span>
                 <span className="text-xs text-slate-500">PDF, JPG, PNG, WEBP up to 10MB each (max 5)</span>
-                <input type="file" accept="image/jpeg,image/png,image/webp,application/pdf" multiple onChange={handleDocFileChange} className="hidden" />
+                <input type="file" accept="image/jpeg,image/png,image/webp,application/pdf" multiple onChange={handleDocFileChange} className="sr-only" />
               </label>
               {docFiles.length > 0 && (
                 <div className="space-y-2">
