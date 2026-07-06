@@ -311,14 +311,34 @@ export default function RequestHelp() {
               <h2 className="text-2xl font-bold text-white">Basic Info</h2>
 
               <div>
-                <Label className="text-white">Category</Label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
-                  {CATEGORIES.map((cat) => (
+                <Label id="category-label" className="text-white">Category</Label>
+                <div role="radiogroup" aria-labelledby="category-label" className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
+                  {CATEGORIES.map((cat, index) => (
                     <button
                       key={cat.value}
                       type="button"
+                      role="radio"
+                      aria-checked={formData.category === cat.value}
+                      tabIndex={formData.category === cat.value ? 0 : -1}
+                      onKeyDown={(e) => {
+                        let nextIndex = index;
+                        if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+                          nextIndex = (index + 1) % CATEGORIES.length;
+                          e.preventDefault();
+                        } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+                          nextIndex = (index - 1 + CATEGORIES.length) % CATEGORIES.length;
+                          e.preventDefault();
+                        }
+                        if (nextIndex !== index) {
+                          const value = CATEGORIES[nextIndex].value;
+                          setValue('category', value as any);
+                          const element = document.getElementById(`cat-${value}`);
+                          if (element) element.focus();
+                        }
+                      }}
+                      id={`cat-${cat.value}`}
                       onClick={() => setValue('category', cat.value)}
-                      className={`p-4 rounded-xl border text-left text-sm ${formData.category === cat.value ? 'border-amber-500 bg-amber-500/10 text-white' : 'border-white/10 text-slate-300 hover:border-slate-600'}`}
+                      className={`p-4 rounded-xl border text-left text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 ${formData.category === cat.value ? 'border-amber-500 bg-amber-500/10 text-white' : 'border-white/10 text-slate-300 hover:border-slate-600'}`}
                     >
                       {cat.label}
                     </button>
@@ -341,14 +361,34 @@ export default function RequestHelp() {
               </div>
 
               <div>
-                <Label className="text-white">Urgency</Label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
-                  {URGENCY_LEVELS.map((level) => (
+                <Label id="urgency-label" className="text-white">Urgency</Label>
+                <div role="radiogroup" aria-labelledby="urgency-label" className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
+                  {URGENCY_LEVELS.map((level, index) => (
                     <button
                       key={level.value}
                       type="button"
+                      role="radio"
+                      aria-checked={formData.urgency_level === level.value}
+                      tabIndex={formData.urgency_level === level.value ? 0 : -1}
+                      onKeyDown={(e) => {
+                        let nextIndex = index;
+                        if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+                          nextIndex = (index + 1) % URGENCY_LEVELS.length;
+                          e.preventDefault();
+                        } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+                          nextIndex = (index - 1 + URGENCY_LEVELS.length) % URGENCY_LEVELS.length;
+                          e.preventDefault();
+                        }
+                        if (nextIndex !== index) {
+                          const value = URGENCY_LEVELS[nextIndex].value;
+                          setValue('urgency_level', value as any);
+                          const element = document.getElementById(`urgency-${value}`);
+                          if (element) element.focus();
+                        }
+                      }}
+                      id={`urgency-${level.value}`}
                       onClick={() => setValue('urgency_level', level.value)}
-                      className={`p-4 rounded-xl border text-left text-sm ${formData.urgency_level === level.value ? 'border-amber-500 bg-amber-500/10 text-white' : 'border-white/10 text-slate-300 hover:border-slate-600'}`}
+                      className={`p-4 rounded-xl border text-left text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 ${formData.urgency_level === level.value ? 'border-amber-500 bg-amber-500/10 text-white' : 'border-white/10 text-slate-300 hover:border-slate-600'}`}
                     >
                       <span className="font-medium">{level.label}</span>
                       <span className="block text-xs text-slate-400 mt-1">{level.description}</span>
