@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
-import ReactMarkdown from 'react-markdown';
+import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
+import ReactMarkdown from "react-markdown";
 import {
   AlertCircle,
   Bot,
@@ -11,25 +11,25 @@ import {
   Sparkles,
   Square,
   UserRound,
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { useSafeToast } from '@/hooks/useSafeToast';
-import { useAuth } from '@/contexts/SafeAuthProvider';
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useSafeToast } from "@/hooks/useSafeToast";
+import { useAuth } from "@/contexts/SafeAuthProvider";
 import {
   streamStewardshipCoachMessage,
   loadStewardshipChat,
   saveStewardshipChat,
   type StewardshipChatContext,
   type StewardshipChatMessage,
-} from '@/services/mercybridgeApi';
+} from "@/services/mercybridgeApi";
 
 const starterPrompts = [
-  'Help me decide which bill to call first.',
-  'Write a hardship script I can use with my utility company.',
-  'What should I do in the next 24 hours?',
+  "Help me decide which bill to call first.",
+  "Write a hardship script I can use with my utility company.",
+  "What should I do in the next 24 hours?",
 ];
 
 export default function StewardshipCoach() {
@@ -39,23 +39,24 @@ export default function StewardshipCoach() {
   const abortControllerRef = useRef<AbortController | null>(null);
   const [messages, setMessages] = useState<StewardshipChatMessage[]>([
     {
-      role: 'assistant',
+      role: "assistant",
       content:
-        'Tell me what feels most urgent right now. I can help you triage bills, prepare a call script, and choose one faithful next step.',
+        "Tell me what feels most urgent right now. I can help you triage bills, prepare a call script, and choose one faithful next step.",
     },
   ]);
-  const [input, setInput] = useState('');
-  const [streamingContent, setStreamingContent] = useState('');
-  const [streamingThinking, setStreamingThinking] = useState('');
+  const [input, setInput] = useState("");
+  const [streamingContent, setStreamingContent] = useState("");
+  const [streamingThinking, setStreamingThinking] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
   const [showThinking, setShowThinking] = useState(true);
-  const [activeSnapshot, setActiveSnapshot] = useState<StewardshipChatContext | null>(null);
+  const [activeSnapshot, setActiveSnapshot] =
+    useState<StewardshipChatContext | null>(null);
   const [context, setContext] = useState<StewardshipChatContext>({
-    monthly_income: '',
-    bills: '',
-    expenses: '',
-    hardship_notes: '',
-    church_community: '',
+    monthly_income: "",
+    bills: "",
+    expenses: "",
+    hardship_notes: "",
+    church_community: "",
   });
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const [hasLoadedHistory, setHasLoadedHistory] = useState(false);
@@ -77,7 +78,7 @@ export default function StewardshipCoach() {
         }
       })
       .catch((err) => {
-        console.error('Failed to load stewardship chat history:', err);
+        console.error("Failed to load stewardship chat history:", err);
       })
       .finally(() => {
         setIsLoadingHistory(false);
@@ -88,7 +89,7 @@ export default function StewardshipCoach() {
   // Auto-save chat after each assistant response
   const persistChat = async (
     currentMessages: StewardshipChatMessage[],
-    currentContext: StewardshipChatContext | null
+    currentContext: StewardshipChatContext | null,
   ) => {
     if (!user?.id) return;
     try {
@@ -97,12 +98,12 @@ export default function StewardshipCoach() {
         context: currentContext,
       });
     } catch (err) {
-      console.error('Failed to save stewardship chat:', err);
+      console.error("Failed to save stewardship chat:", err);
     }
   };
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [messages, streamingContent, streamingThinking]);
 
   useEffect(() => {
@@ -111,27 +112,34 @@ export default function StewardshipCoach() {
     };
   }, []);
 
-  const updateContext = (field: keyof StewardshipChatContext, value: string) => {
+  const updateContext = (
+    field: keyof StewardshipChatContext,
+    value: string,
+  ) => {
     setContext((prev) => ({ ...prev, [field]: value }));
   };
 
   const hasSnapshot = Boolean(activeSnapshot);
   const currentSnapshot = {
-    monthly_income: context.monthly_income?.trim() || '',
-    bills: context.bills?.trim() || '',
-    expenses: context.expenses?.trim() || '',
-    hardship_notes: context.hardship_notes?.trim() || '',
-    church_community: context.church_community?.trim() || '',
+    monthly_income: context.monthly_income?.trim() || "",
+    bills: context.bills?.trim() || "",
+    expenses: context.expenses?.trim() || "",
+    hardship_notes: context.hardship_notes?.trim() || "",
+    church_community: context.church_community?.trim() || "",
   };
-  const hasSnapshotChanges = JSON.stringify(activeSnapshot) !== JSON.stringify(currentSnapshot);
-  const canSaveSnapshot = Boolean(context.bills?.trim() && context.hardship_notes?.trim());
+  const hasSnapshotChanges =
+    JSON.stringify(activeSnapshot) !== JSON.stringify(currentSnapshot);
+  const canSaveSnapshot = Boolean(
+    context.bills?.trim() && context.hardship_notes?.trim(),
+  );
 
   const saveSnapshot = () => {
     if (!canSaveSnapshot) {
       toast({
-        title: 'Add the core snapshot first',
-        description: 'Please include your bills and a short note about what feels most urgent.',
-        variant: 'destructive',
+        title: "Add the core snapshot first",
+        description:
+          "Please include your bills and a short note about what feels most urgent.",
+        variant: "destructive",
       });
       return;
     }
@@ -141,9 +149,9 @@ export default function StewardshipCoach() {
     if (messages.length === 1) {
       setMessages([
         {
-          role: 'assistant',
+          role: "assistant",
           content:
-            'I have your situation snapshot now. Ask me what to do first, or use one of the prompts below.',
+            "I have your situation snapshot now. Ask me what to do first, or use one of the prompts below.",
         },
       ]);
     }
@@ -152,8 +160,9 @@ export default function StewardshipCoach() {
     void persistChat(messages, currentSnapshot);
 
     toast({
-      title: 'Snapshot ready',
-      description: 'Your situation snapshot will be sent as context with each stewardship message.',
+      title: "Snapshot ready",
+      description:
+        "Your situation snapshot will be sent as context with each stewardship message.",
     });
   };
 
@@ -169,20 +178,21 @@ export default function StewardshipCoach() {
 
     if (!activeSnapshot) {
       toast({
-        title: 'Save your situation snapshot first',
-        description: 'The coach needs your bills and current hardship context before the conversation starts.',
-        variant: 'destructive',
+        title: "Save your situation snapshot first",
+        description:
+          "The coach needs your bills and current hardship context before the conversation starts.",
+        variant: "destructive",
       });
       return;
     }
 
-    const nextUserMessage: StewardshipChatMessage = { role: 'user', content };
+    const nextUserMessage: StewardshipChatMessage = { role: "user", content };
     const history = messages;
 
     setMessages((prev) => [...prev, nextUserMessage]);
-    setInput('');
-    setStreamingContent('');
-    setStreamingThinking('');
+    setInput("");
+    setStreamingContent("");
+    setStreamingThinking("");
     setIsStreaming(true);
     setShowThinking(true);
 
@@ -208,28 +218,34 @@ export default function StewardshipCoach() {
             const assistantContent = finalContent.trim();
             if (assistantContent) {
               setMessages((prev) => {
-                const updated = [...prev, { role: "assistant" as const, content: assistantContent }];
+                const updated = [
+                  ...prev,
+                  { role: "assistant" as const, content: assistantContent },
+                ];
                 // Persist after assistant response
                 void persistChat(updated, activeSnapshot);
                 return updated;
               });
             }
-            setStreamingContent('');
-            setStreamingThinking(finalThinking || '');
+            setStreamingContent("");
+            setStreamingThinking(finalThinking || "");
           },
           onError: (message) => {
             throw new Error(message);
           },
-        }
+        },
       );
     } catch (error) {
       if (abortController.signal.aborted) return;
 
-      const description = error instanceof Error ? error.message : 'The stewardship coach could not respond.';
+      const description =
+        error instanceof Error
+          ? error.message
+          : "The stewardship coach could not respond.";
       toast({
-        title: 'Stewardship coach unavailable',
+        title: "Stewardship coach unavailable",
         description,
-        variant: 'destructive',
+        variant: "destructive",
       });
     } finally {
       if (abortControllerRef.current === abortController) {
@@ -253,15 +269,19 @@ export default function StewardshipCoach() {
                 <Sparkles className="h-5 w-5" />
               </span>
               <div>
-                <h1 className="text-lg font-bold text-white sm:text-xl">Stewardship Coach</h1>
-                <p className="text-xs text-slate-400 sm:text-sm">Conversational direct-pay guidance.</p>
+                <h1 className="text-lg font-bold text-white sm:text-xl">
+                  Stewardship Coach
+                </h1>
+                <p className="text-xs text-slate-400 sm:text-sm">
+                  Conversational direct-pay guidance.
+                </p>
               </div>
             </div>
 
             <div className="rounded-xl border border-amber-300/15 bg-amber-300/10 p-2.5 text-xs text-amber-100/90 sm:p-3 sm:text-sm">
               <AlertCircle className="mr-2 inline h-3.5 w-3.5 sm:h-4 sm:w-4" />
-              Educational guidance only. For legal, tax, investment, or professional financial
-              advice, consult a qualified advisor.
+              Educational guidance only. For legal, tax, investment, or
+              professional financial advice, consult a qualified advisor.
             </div>
           </motion.div>
 
@@ -272,9 +292,12 @@ export default function StewardshipCoach() {
             className="space-y-3 rounded-2xl border border-white/10 bg-white/[0.055] shadow-xl shadow-black/15 backdrop-blur-xl p-4 sm:space-y-4 sm:p-5"
           >
             <div>
-              <h2 className="text-base font-semibold text-white sm:text-lg">Situation Snapshot</h2>
+              <h2 className="text-base font-semibold text-white sm:text-lg">
+                Situation Snapshot
+              </h2>
               <p className="text-xs text-slate-400 sm:text-sm">
-                Fill this out first. It is sent to the coach as context for the conversation.
+                Fill this out first. It is sent to the coach as context for the
+                conversation.
               </p>
             </div>
 
@@ -284,7 +307,9 @@ export default function StewardshipCoach() {
                 inputMode="decimal"
                 placeholder="e.g. 2400"
                 value={context.monthly_income}
-                onChange={(event) => updateContext('monthly_income', event.target.value)}
+                onChange={(event) =>
+                  updateContext("monthly_income", event.target.value)
+                }
                 className="mt-1.5 border-white/10 bg-slate-950/45 text-white sm:mt-2"
               />
             </div>
@@ -294,7 +319,7 @@ export default function StewardshipCoach() {
               <Textarea
                 placeholder={`Electric bill - 184 - May 15\nRent - 850 - May 20`}
                 value={context.bills}
-                onChange={(event) => updateContext('bills', event.target.value)}
+                onChange={(event) => updateContext("bills", event.target.value)}
                 className="mt-1.5 min-h-[60px] resize-none border-white/10 bg-slate-950/45 text-white sm:mt-2 sm:min-h-[80px]"
               />
             </div>
@@ -304,7 +329,9 @@ export default function StewardshipCoach() {
               <Textarea
                 placeholder={`Groceries - 300\nGas - 120\nPhone - 65`}
                 value={context.expenses}
-                onChange={(event) => updateContext('expenses', event.target.value)}
+                onChange={(event) =>
+                  updateContext("expenses", event.target.value)
+                }
                 className="mt-1.5 min-h-[60px] resize-none border-white/10 bg-slate-950/45 text-white sm:mt-2 sm:min-h-[72px]"
               />
             </div>
@@ -314,17 +341,23 @@ export default function StewardshipCoach() {
               <Textarea
                 placeholder="What changed, and what feels most urgent?"
                 value={context.hardship_notes}
-                onChange={(event) => updateContext('hardship_notes', event.target.value)}
+                onChange={(event) =>
+                  updateContext("hardship_notes", event.target.value)
+                }
                 className="mt-1.5 min-h-[60px] resize-none border-white/10 bg-slate-950/45 text-white sm:mt-2 sm:min-h-[80px]"
               />
             </div>
 
             <div>
-              <Label className="text-sm text-slate-200">Church or Community</Label>
+              <Label className="text-sm text-slate-200">
+                Church or Community
+              </Label>
               <Input
                 placeholder="Local church, 211, family, community group..."
                 value={context.church_community}
-                onChange={(event) => updateContext('church_community', event.target.value)}
+                onChange={(event) =>
+                  updateContext("church_community", event.target.value)
+                }
                 className="mt-1.5 border-white/10 bg-slate-950/45 text-white sm:mt-2"
               />
             </div>
@@ -355,13 +388,13 @@ export default function StewardshipCoach() {
 
             {hasSnapshot ? (
               <div className="rounded-xl border border-emerald-300/15 bg-emerald-300/10 p-2.5 text-xs leading-5 text-emerald-100/85 sm:p-3">
-                This saved snapshot is attached to every message. Update it if your bills or
-                hardship details change.
+                This saved snapshot is attached to every message. Update it if
+                your bills or hardship details change.
               </div>
             ) : (
               <div className="rounded-2xl border border-white/10 bg-slate-950/35 backdrop-blur-xl p-2.5 text-xs leading-5 text-slate-400 sm:p-3">
-                Required before chatting: bills and hardship notes. Income, expenses, and community
-                support are helpful but optional.
+                Required before chatting: bills and hardship notes. Income,
+                expenses, and community support are helpful but optional.
               </div>
             )}
           </motion.section>
@@ -369,9 +402,12 @@ export default function StewardshipCoach() {
 
         <section className="flex min-h-[60vh] flex-col rounded-2xl border border-white/10 bg-white/[0.055] shadow-xl shadow-black/15 backdrop-blur-xl sm:min-h-[calc(100vh-4rem)]">
           <div className="border-b border-white/10 p-4 sm:p-5">
-            <h2 className="text-lg font-bold text-white sm:text-2xl">MercyBridge Conversation</h2>
+            <h2 className="text-lg font-bold text-white sm:text-2xl">
+              MercyBridge Conversation
+            </h2>
             <p className="mt-1 text-xs text-slate-400 sm:text-sm">
-              Ask about bill triage, hardship calls, direct-pay proof, or one next step.
+              Ask about bill triage, hardship calls, direct-pay proof, or one
+              next step.
             </p>
           </div>
 
@@ -386,50 +422,93 @@ export default function StewardshipCoach() {
             {messages.map((message, index) => (
               <div
                 key={`${message.role}-${index}`}
-                className={`flex gap-2 sm:gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                className={`flex gap-2 sm:gap-3 ${message.role === "user" ? "justify-end" : "justify-start"}`}
               >
-                {message.role === 'assistant' ? (
+                {message.role === "assistant" ? (
                   <span className="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-300/10 text-emerald-200">
                     <Bot className="h-5 w-5" />
                   </span>
                 ) : null}
                 <div
                   className={`max-w-full rounded-xl border p-3 text-sm leading-6 sm:max-w-[min(42rem,82%)] sm:p-4 ${
-                    message.role === 'user'
-                      ? 'border-amber-300/20 bg-amber-300/10 text-amber-50'
-                      : 'border-white/10 bg-slate-950/70 text-slate-200'
+                    message.role === "user"
+                      ? "border-amber-300/20 bg-amber-300/10 text-amber-50"
+                      : "border-white/10 bg-slate-950/70 text-slate-200"
                   }`}
                 >
                   <div className="markdown-content break-words">
                     <ReactMarkdown
                       components={{
-                        p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
-                        h1: ({ children }) => <h1 className="mb-2 mt-3 text-base font-bold text-white">{children}</h1>,
-                        h2: ({ children }) => <h2 className="mb-2 mt-3 text-sm font-semibold text-white">{children}</h2>,
-                        h3: ({ children }) => <h3 className="mb-1 mt-2 text-sm font-semibold text-slate-200">{children}</h3>,
-                        ul: ({ children }) => <ul className="mb-2 list-disc space-y-1 pl-4">{children}</ul>,
-                        ol: ({ children }) => <ol className="mb-2 list-decimal space-y-1 pl-4">{children}</ol>,
-                        li: ({ children }) => <li className="leading-relaxed">{children}</li>,
-                        a: ({ children, href }) => <a href={href} className="text-amber-200 underline hover:text-amber-100" target="_blank" rel="noopener noreferrer">{children}</a>,
+                        p: ({ children }) => (
+                          <p className="mb-2 last:mb-0">{children}</p>
+                        ),
+                        h1: ({ children }) => (
+                          <h1 className="mb-2 mt-3 text-base font-bold text-white">
+                            {children}
+                          </h1>
+                        ),
+                        h2: ({ children }) => (
+                          <h2 className="mb-2 mt-3 text-sm font-semibold text-white">
+                            {children}
+                          </h2>
+                        ),
+                        h3: ({ children }) => (
+                          <h3 className="mb-1 mt-2 text-sm font-semibold text-slate-200">
+                            {children}
+                          </h3>
+                        ),
+                        ul: ({ children }) => (
+                          <ul className="mb-2 list-disc space-y-1 pl-4">
+                            {children}
+                          </ul>
+                        ),
+                        ol: ({ children }) => (
+                          <ol className="mb-2 list-decimal space-y-1 pl-4">
+                            {children}
+                          </ol>
+                        ),
+                        li: ({ children }) => (
+                          <li className="leading-relaxed">{children}</li>
+                        ),
+                        a: ({ children, href }) => (
+                          <a
+                            href={href}
+                            className="text-amber-200 underline hover:text-amber-100"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {children}
+                          </a>
+                        ),
                         code: ({ children, className }) => {
                           const isInline = !className;
                           return isInline ? (
-                            <code className="rounded bg-slate-800 px-1 py-0.5 text-xs text-amber-100">{children}</code>
+                            <code className="rounded bg-slate-800 px-1 py-0.5 text-xs text-amber-100">
+                              {children}
+                            </code>
                           ) : (
                             <pre className="mb-2 overflow-x-auto rounded-lg bg-slate-900 p-3 text-xs">
                               <code className="text-slate-200">{children}</code>
                             </pre>
                           );
                         },
-                        blockquote: ({ children }) => <blockquote className="mb-2 border-l-2 border-amber-300/30 pl-3 italic text-slate-300">{children}</blockquote>,
-                        strong: ({ children }) => <strong className="font-semibold text-white">{children}</strong>,
+                        blockquote: ({ children }) => (
+                          <blockquote className="mb-2 border-l-2 border-amber-300/30 pl-3 italic text-slate-300">
+                            {children}
+                          </blockquote>
+                        ),
+                        strong: ({ children }) => (
+                          <strong className="font-semibold text-white">
+                            {children}
+                          </strong>
+                        ),
                       }}
                     >
                       {message.content}
                     </ReactMarkdown>
                   </div>
                 </div>
-                {message.role === 'user' ? (
+                {message.role === "user" ? (
                   <span className="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-300/10 text-amber-200">
                     <UserRound className="h-5 w-5" />
                   </span>
@@ -449,12 +528,19 @@ export default function StewardshipCoach() {
                         type="button"
                         onClick={() => setShowThinking((prev) => !prev)}
                         className="flex w-full items-center justify-between px-2 py-2 text-left text-xs font-semibold text-sky-100 sm:px-4 sm:py-3 sm:text-sm"
+                        aria-expanded={showThinking}
+                        aria-controls="thinking-content"
                       >
                         Thinking
-                        <span className="text-xs text-sky-200/70">{showThinking ? 'Hide' : 'Show'}</span>
+                        <span className="text-xs text-sky-200/70">
+                          {showThinking ? "Hide" : "Show"}
+                        </span>
                       </button>
                       {showThinking ? (
-                        <p className="whitespace-pre-wrap border-t border-sky-300/10 px-2 py-2 text-xs leading-5 text-sky-100/80 sm:px-4 sm:py-3">
+                        <p
+                          id="thinking-content"
+                          className="whitespace-pre-wrap border-t border-sky-300/10 px-2 py-2 text-xs leading-5 text-sky-100/80 sm:px-4 sm:py-3"
+                        >
                           {streamingThinking}
                         </p>
                       ) : null}
@@ -465,29 +551,74 @@ export default function StewardshipCoach() {
                     <div className="markdown-content break-words">
                       <ReactMarkdown
                         components={{
-                          p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
-                          h1: ({ children }) => <h1 className="mb-2 mt-3 text-base font-bold text-white">{children}</h1>,
-                          h2: ({ children }) => <h2 className="mb-2 mt-3 text-sm font-semibold text-white">{children}</h2>,
-                          h3: ({ children }) => <h3 className="mb-1 mt-2 text-sm font-semibold text-slate-200">{children}</h3>,
-                          ul: ({ children }) => <ul className="mb-2 list-disc space-y-1 pl-4">{children}</ul>,
-                          ol: ({ children }) => <ol className="mb-2 list-decimal space-y-1 pl-4">{children}</ol>,
-                          li: ({ children }) => <li className="leading-relaxed">{children}</li>,
-                          a: ({ children, href }) => <a href={href} className="text-amber-200 underline hover:text-amber-100" target="_blank" rel="noopener noreferrer">{children}</a>,
+                          p: ({ children }) => (
+                            <p className="mb-2 last:mb-0">{children}</p>
+                          ),
+                          h1: ({ children }) => (
+                            <h1 className="mb-2 mt-3 text-base font-bold text-white">
+                              {children}
+                            </h1>
+                          ),
+                          h2: ({ children }) => (
+                            <h2 className="mb-2 mt-3 text-sm font-semibold text-white">
+                              {children}
+                            </h2>
+                          ),
+                          h3: ({ children }) => (
+                            <h3 className="mb-1 mt-2 text-sm font-semibold text-slate-200">
+                              {children}
+                            </h3>
+                          ),
+                          ul: ({ children }) => (
+                            <ul className="mb-2 list-disc space-y-1 pl-4">
+                              {children}
+                            </ul>
+                          ),
+                          ol: ({ children }) => (
+                            <ol className="mb-2 list-decimal space-y-1 pl-4">
+                              {children}
+                            </ol>
+                          ),
+                          li: ({ children }) => (
+                            <li className="leading-relaxed">{children}</li>
+                          ),
+                          a: ({ children, href }) => (
+                            <a
+                              href={href}
+                              className="text-amber-200 underline hover:text-amber-100"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              {children}
+                            </a>
+                          ),
                           code: ({ children, className }) => {
                             const isInline = !className;
                             return isInline ? (
-                              <code className="rounded bg-slate-800 px-1 py-0.5 text-xs text-amber-100">{children}</code>
+                              <code className="rounded bg-slate-800 px-1 py-0.5 text-xs text-amber-100">
+                                {children}
+                              </code>
                             ) : (
                               <pre className="mb-2 overflow-x-auto rounded-lg bg-slate-900 p-3 text-xs">
-                                <code className="text-slate-200">{children}</code>
+                                <code className="text-slate-200">
+                                  {children}
+                                </code>
                               </pre>
                             );
                           },
-                          blockquote: ({ children }) => <blockquote className="mb-2 border-l-2 border-amber-300/30 pl-3 italic text-slate-300">{children}</blockquote>,
-                          strong: ({ children }) => <strong className="font-semibold text-white">{children}</strong>,
+                          blockquote: ({ children }) => (
+                            <blockquote className="mb-2 border-l-2 border-amber-300/30 pl-3 italic text-slate-300">
+                              {children}
+                            </blockquote>
+                          ),
+                          strong: ({ children }) => (
+                            <strong className="font-semibold text-white">
+                              {children}
+                            </strong>
+                          ),
                         }}
                       >
-                        {streamingContent || 'Listening and thinking...'}
+                        {streamingContent || "Listening and thinking..."}
                       </ReactMarkdown>
                     </div>
                   </div>
@@ -521,7 +652,7 @@ export default function StewardshipCoach() {
                 value={input}
                 onChange={(event) => setInput(event.target.value)}
                 onKeyDown={(event) => {
-                  if (event.key === 'Enter' && !event.shiftKey) {
+                  if (event.key === "Enter" && !event.shiftKey) {
                     event.preventDefault();
                     void sendMessage();
                   }
