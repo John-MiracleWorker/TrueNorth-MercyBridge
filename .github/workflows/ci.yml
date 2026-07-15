@@ -17,7 +17,7 @@ concurrency:
 env:
   VITE_SUPABASE_URL: https://example.supabase.co
   VITE_SUPABASE_PUBLISHABLE_KEY: "${{ format('{0}{1}', 'sb_', 'publishable_ci-placeholder') }}"
-  VITE_TRUENORTH_URL: https://find-true-north.net
+  VITE_TRUENORTH_URL: https://www.find-true-north.net
 
 jobs:
   validate:

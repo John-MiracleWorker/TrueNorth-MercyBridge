@@ -31,6 +31,9 @@ describe('Cloudflare deployment configuration', () => {
     expect(ciWorkflow).toContain('npm run build');
     expect(ciWorkflow).toContain('npm audit --omit=dev --audit-level=moderate');
     expect(ciWorkflow).toContain('VITE_SUPABASE_PUBLISHABLE_KEY');
+    expect(ciWorkflow).toContain(
+      'VITE_TRUENORTH_URL: https://www.find-true-north.net',
+    );
     expect(ciWorkflow).not.toContain('VITE_SUPABASE_ANON_KEY');
   });
 });
