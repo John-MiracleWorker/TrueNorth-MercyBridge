@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/SafeAuthProvider';
@@ -111,6 +111,7 @@ export default function NeedDetail() {
   const [isManaging, setIsManaging] = useState(false);
   const [docFiles, setDocFiles] = useState<File[]>([]);
   const [isSubmittingDocs, setIsSubmittingDocs] = useState(false);
+  const additionalDocumentsIdempotencyKey = useRef<string | null>(null);
   const stripeEnabled = isStripeEnabled();
   const { user } = useAuth();
   const isRequester = user?.id === need?.requester_id;
@@ -280,10 +281,14 @@ export default function NeedDetail() {
     setIsSubmittingDocs(true);
     setError(null);
     try {
+      const submissionKey = additionalDocumentsIdempotencyKey.current || crypto.randomUUID();
+      additionalDocumentsIdempotencyKey.current = submissionKey;
       await submitAdditionalDocuments({
         need_id: need.id,
         files: docFiles,
+        idempotency_key: submissionKey,
       });
+      additionalDocumentsIdempotencyKey.current = null;
       setDocFiles([]);
       setSuccess(true);
       setTimeout(() => setSuccess(false), 5000);

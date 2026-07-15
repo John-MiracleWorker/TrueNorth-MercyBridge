@@ -3167,6 +3167,7 @@ export type Database = {
           gift_note: string | null
           id: string
           is_anonymous: boolean
+          submission_idempotency_key: string | null
           need_id: string
           payment_method: string
           proof_notes: string | null
@@ -3202,6 +3203,7 @@ export type Database = {
           gift_note?: string | null
           id?: string
           is_anonymous?: boolean
+          submission_idempotency_key?: string | null
           need_id: string
           payment_method?: string
           proof_notes?: string | null
@@ -3237,6 +3239,7 @@ export type Database = {
           gift_note?: string | null
           id?: string
           is_anonymous?: boolean
+          submission_idempotency_key?: string | null
           need_id?: string
           payment_method?: string
           proof_notes?: string | null
@@ -7657,6 +7660,75 @@ export type Database = {
           verification_status: Database["public"]["Enums"]["mercybridge_payee_verification_status"]
         }[]
       }
+      mercybridge_mark_need_paid: {
+        Args: {
+          p_confirmation_note: string
+          p_need_id: string
+          p_payment_proof_path?: string
+        }
+        Returns: {
+          ai_screening_status: string | null
+          amount_funded: number
+          amount_remaining: number | null
+          amount_requested: number
+          approved_at: string | null
+          bill_amount: number
+          biller_name: string
+          category: Database["public"]["Enums"]["need_category"]
+          created_at: string | null
+          document_storage_paths: Json | null
+          document_summary_retained: string | null
+          document_urls: Json | null
+          due_date: string | null
+          funded_at: string | null
+          hardship_attestation: boolean | null
+          hardship_document_purged_at: string | null
+          hardship_document_retention_until: string | null
+          hardship_document_storage_paths: Json | null
+          hardship_document_urls: Json | null
+          hardship_proof_type: string | null
+          hardship_summary_private: string
+          hardship_summary_public: string | null
+          id: string
+          paid_at: string | null
+          payee_id: string | null
+          payee_match_confidence: number | null
+          payee_match_status: Database["public"]["Enums"]["mercybridge_payee_match_status"]
+          payee_review_notes: string | null
+          payee_risk_score: number | null
+          payment_confirmation_note: string | null
+          payment_instructions_public: string | null
+          payment_proof_url: string | null
+          private_payment_details: string | null
+          public_location: string | null
+          purge_status: string | null
+          raw_document_purged_at: string | null
+          raw_document_retention_until: string | null
+          rejected_at: string | null
+          rejection_reason: string | null
+          requester_consent_ai_review: boolean | null
+          requester_consent_human_review: boolean | null
+          requester_consent_no_guarantee: boolean | null
+          requester_consent_temp_storage: boolean | null
+          requester_disclosure_acknowledged_at: string | null
+          requester_disclosure_version: string | null
+          requester_id: string
+          review_notes: string | null
+          reviewer_id: string | null
+          status: Database["public"]["Enums"]["need_status"]
+          submitted_at: string | null
+          title: string
+          updated_at: string | null
+          urgency_level: Database["public"]["Enums"]["urgency_level"]
+          verification_level: Database["public"]["Enums"]["verification_level"]
+        }
+        SetofOptions: {
+          from: "*"
+          to: "mercybridge_needs"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       mercybridge_mark_paid: {
         Args: { p_amount: number; p_need_id: string; p_payment_method?: string }
         Returns: {
@@ -7671,6 +7743,232 @@ export type Database = {
       mercybridge_recalculate_payee_trust: {
         Args: { target_payee_id: string }
         Returns: undefined
+      }
+      mercybridge_review_need: {
+        Args: {
+          p_action: Database["public"]["Enums"]["review_action"]
+          p_checklist?: Json
+          p_decision_reason?: string
+          p_need_id: string
+          p_notes?: string
+          p_public_summary?: string
+          p_rejection_reason?: string
+          p_verification_level?: Database["public"]["Enums"]["verification_level"]
+        }
+        Returns: {
+          ai_screening_status: string | null
+          amount_funded: number
+          amount_remaining: number | null
+          amount_requested: number
+          approved_at: string | null
+          bill_amount: number
+          biller_name: string
+          category: Database["public"]["Enums"]["need_category"]
+          created_at: string | null
+          document_storage_paths: Json | null
+          document_summary_retained: string | null
+          document_urls: Json | null
+          due_date: string | null
+          funded_at: string | null
+          hardship_attestation: boolean | null
+          hardship_document_purged_at: string | null
+          hardship_document_retention_until: string | null
+          hardship_document_storage_paths: Json | null
+          hardship_document_urls: Json | null
+          hardship_proof_type: string | null
+          hardship_summary_private: string
+          hardship_summary_public: string | null
+          id: string
+          paid_at: string | null
+          payee_id: string | null
+          payee_match_confidence: number | null
+          payee_match_status: Database["public"]["Enums"]["mercybridge_payee_match_status"]
+          payee_review_notes: string | null
+          payee_risk_score: number | null
+          payment_confirmation_note: string | null
+          payment_instructions_public: string | null
+          payment_proof_url: string | null
+          private_payment_details: string | null
+          public_location: string | null
+          purge_status: string | null
+          raw_document_purged_at: string | null
+          raw_document_retention_until: string | null
+          rejected_at: string | null
+          rejection_reason: string | null
+          requester_consent_ai_review: boolean | null
+          requester_consent_human_review: boolean | null
+          requester_consent_no_guarantee: boolean | null
+          requester_consent_temp_storage: boolean | null
+          requester_disclosure_acknowledged_at: string | null
+          requester_disclosure_version: string | null
+          requester_id: string
+          review_notes: string | null
+          reviewer_id: string | null
+          status: Database["public"]["Enums"]["need_status"]
+          submitted_at: string | null
+          title: string
+          updated_at: string | null
+          urgency_level: Database["public"]["Enums"]["urgency_level"]
+          verification_level: Database["public"]["Enums"]["verification_level"]
+        }
+        SetofOptions: {
+          from: "*"
+          to: "mercybridge_needs"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      mercybridge_set_need_payee_match: {
+        Args: {
+          p_confidence?: number | null
+          p_match_status: Database["public"]["Enums"]["mercybridge_payee_match_status"]
+          p_need_id: string
+          p_payee_id: string | null
+        }
+        Returns: {
+          ai_screening_status: string | null
+          amount_funded: number
+          amount_remaining: number | null
+          amount_requested: number
+          approved_at: string | null
+          bill_amount: number
+          biller_name: string
+          category: Database["public"]["Enums"]["need_category"]
+          created_at: string | null
+          document_storage_paths: Json | null
+          document_summary_retained: string | null
+          document_urls: Json | null
+          due_date: string | null
+          funded_at: string | null
+          hardship_attestation: boolean | null
+          hardship_document_purged_at: string | null
+          hardship_document_retention_until: string | null
+          hardship_document_storage_paths: Json | null
+          hardship_document_urls: Json | null
+          hardship_proof_type: string | null
+          hardship_summary_private: string
+          hardship_summary_public: string | null
+          id: string
+          paid_at: string | null
+          payee_id: string | null
+          payee_match_confidence: number | null
+          payee_match_status: Database["public"]["Enums"]["mercybridge_payee_match_status"]
+          payee_review_notes: string | null
+          payee_risk_score: number | null
+          payment_confirmation_note: string | null
+          payment_instructions_public: string | null
+          payment_proof_url: string | null
+          private_payment_details: string | null
+          public_location: string | null
+          purge_status: string | null
+          raw_document_purged_at: string | null
+          raw_document_retention_until: string | null
+          rejected_at: string | null
+          rejection_reason: string | null
+          requester_consent_ai_review: boolean | null
+          requester_consent_human_review: boolean | null
+          requester_consent_no_guarantee: boolean | null
+          requester_consent_temp_storage: boolean | null
+          requester_disclosure_acknowledged_at: string | null
+          requester_disclosure_version: string | null
+          requester_id: string
+          review_notes: string | null
+          reviewer_id: string | null
+          status: Database["public"]["Enums"]["need_status"]
+          submitted_at: string | null
+          title: string
+          updated_at: string | null
+          urgency_level: Database["public"]["Enums"]["urgency_level"]
+          verification_level: Database["public"]["Enums"]["verification_level"]
+        }
+        SetofOptions: {
+          from: "*"
+          to: "mercybridge_needs"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      mercybridge_create_need: {
+        Args: {
+          p_document_paths?: string[]
+          p_hardship_paths?: string[]
+          p_idempotency_key: string
+          p_payload: Json
+        }
+        Returns: Json
+      }
+      mercybridge_get_need_private_documents: {
+        Args: { p_need_id: string }
+        Returns: Json
+      }
+      mercybridge_submit_additional_documents: {
+        Args: {
+          p_document_paths: string[]
+          p_hardship_paths: string[]
+          p_need_id: string
+        }
+        Returns: {
+          ai_screening_status: string | null
+          amount_funded: number
+          amount_remaining: number | null
+          amount_requested: number
+          approved_at: string | null
+          bill_amount: number
+          biller_name: string
+          category: Database["public"]["Enums"]["need_category"]
+          created_at: string | null
+          document_storage_paths: Json | null
+          document_summary_retained: string | null
+          document_urls: Json | null
+          due_date: string | null
+          funded_at: string | null
+          hardship_attestation: boolean | null
+          hardship_document_purged_at: string | null
+          hardship_document_retention_until: string | null
+          hardship_document_storage_paths: Json | null
+          hardship_document_urls: Json | null
+          hardship_proof_type: string | null
+          hardship_summary_private: string
+          hardship_summary_public: string | null
+          id: string
+          paid_at: string | null
+          payee_id: string | null
+          payee_match_confidence: number | null
+          payee_match_status: Database["public"]["Enums"]["mercybridge_payee_match_status"]
+          payee_review_notes: string | null
+          payee_risk_score: number | null
+          payment_confirmation_note: string | null
+          payment_instructions_public: string | null
+          payment_proof_url: string | null
+          private_payment_details: string | null
+          public_location: string | null
+          purge_status: string | null
+          raw_document_purged_at: string | null
+          raw_document_retention_until: string | null
+          rejected_at: string | null
+          rejection_reason: string | null
+          requester_consent_ai_review: boolean | null
+          requester_consent_human_review: boolean | null
+          requester_consent_no_guarantee: boolean | null
+          requester_consent_temp_storage: boolean | null
+          requester_disclosure_acknowledged_at: string | null
+          requester_disclosure_version: string | null
+          requester_id: string
+          review_notes: string | null
+          reviewer_id: string | null
+          status: Database["public"]["Enums"]["need_status"]
+          submitted_at: string | null
+          title: string
+          updated_at: string | null
+          urgency_level: Database["public"]["Enums"]["urgency_level"]
+          verification_level: Database["public"]["Enums"]["verification_level"]
+        }
+        SetofOptions: {
+          from: "*"
+          to: "mercybridge_needs"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       reset_user_quota: {
         Args: { new_max_calls?: number; target_user_id: string }

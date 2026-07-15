@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -90,6 +90,7 @@ const ALLOWED_HARDSHIP_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'applic
 
 export default function RequestHelp() {
   const navigate = useNavigate();
+  const submissionIdempotencyKey = useRef<string | null>(null);
   const { user } = useAuth();
   const [step, setStep] = useState<Step>(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -191,24 +192,25 @@ export default function RequestHelp() {
         return;
       }
 
+      const submissionKey = submissionIdempotencyKey.current ?? crypto.randomUUID();
+      submissionIdempotencyKey.current = submissionKey;
+
       const documentUrls: string[] = [];
       const documentStoragePaths: string[] = [];
-      for (const doc of billDocuments) {
-        const upload = await uploadBillDocument(doc);
-        documentUrls.push(upload.url);
+      for (const [index, doc] of billDocuments.entries()) {
+        const upload = await uploadBillDocument(doc, `${submissionKey}-bill-${index}`);
         documentStoragePaths.push(upload.path);
       }
 
       const hardshipDocumentUrls: string[] = [];
       const hardshipDocumentStoragePaths: string[] = [];
-      for (const doc of hardshipDocuments) {
-        const upload = await uploadBillDocument(doc);
-        hardshipDocumentUrls.push(upload.url);
+      for (const [index, doc] of hardshipDocuments.entries()) {
+        const upload = await uploadBillDocument(doc, `${submissionKey}-hardship-${index}`);
         hardshipDocumentStoragePaths.push(upload.path);
       }
 
-      const now = new Date().toISOString();
       const needPayload: CreateNeedRequest = {
+        idempotency_key: submissionKey,
         category: data.category,
         biller_name: data.biller_name,
         bill_amount: data.bill_amount,
@@ -225,8 +227,6 @@ export default function RequestHelp() {
         payment_instructions_public: data.payment_instructions_public,
         document_urls: documentUrls,
         document_storage_paths: documentStoragePaths,
-        requester_disclosure_acknowledged_at: now,
-        requester_disclosure_version: 'v1',
         requester_consent_ai_review: data.consent_ai_review,
         requester_consent_human_review: data.consent_human_review,
         requester_consent_temp_storage: data.consent_temp_storage,
@@ -234,6 +234,7 @@ export default function RequestHelp() {
       };
 
       const need = await createNeed(needPayload);
+      submissionIdempotencyKey.current = null;
 
       try {
         const screening = await screenNeedWithAI(need.id);
