@@ -187,7 +187,8 @@ export interface Need {
   reviewer_id: string | null;
   review_notes: string | null;
   payment_confirmation_note: string | null;
-  payment_proof_url: string | null; // Receipt from paying biller directly
+  payment_proof_url: string | null; // Legacy; new writes remain null.
+  payment_proof_storage_path: string | null; // Private receipt object path
 
   // AI screening (high-level status only; detailed results are admin-only)
   ai_screening_status?: 'pending' | 'approved' | 'rejected' | 'flagged' | 'failed' | null;
@@ -592,6 +593,7 @@ export interface MercyBridgeProfile {
 
 /** Create a new need */
 export interface CreateNeedRequest {
+  idempotency_key: string;
   category: NeedCategory;
   biller_name: string;
   bill_amount: number;
@@ -653,21 +655,19 @@ export interface CreateContributionRequest {
 }
 
 export interface SubmitPaymentProofRequest {
+  idempotency_key: string;
   need_id: string;
   amount: number;
-  proof_url?: string;
   proof_storage_path?: string;
   confirmation_number?: string;
   notes?: string;
   gift_note?: string;
   is_anonymous?: boolean;
   // Sponsor disclosure
-  sponsor_disclosure_acknowledged_at?: string;
-  sponsor_disclosure_version?: string;
-  sponsor_ack_direct_pay?: boolean;
-  sponsor_ack_not_tax_deductible?: boolean;
-  sponsor_ack_mercybridge_no_custody?: boolean;
-  sponsor_ack_no_reversal_guarantee?: boolean;
+  sponsor_ack_direct_pay: boolean;
+  sponsor_ack_not_tax_deductible: boolean;
+  sponsor_ack_mercybridge_no_custody: boolean;
+  sponsor_ack_no_reversal_guarantee: boolean;
 }
 
 export interface VerifyContributionRequest {
@@ -678,7 +678,7 @@ export interface VerifyContributionRequest {
 /** Mark need as paid (admin) */
 export interface MarkPaidRequest {
   payment_confirmation_note: string;
-  payment_proof_url?: string;
+  payment_proof_storage_path?: string;
 }
 
 /** Filter options for browsing needs */

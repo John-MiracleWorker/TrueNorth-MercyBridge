@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Upload, FileText, CheckCircle2, Loader2, Sparkles, Info, AlertTriangle, Lock, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -14,7 +14,7 @@ interface ProofUploadModalProps {
   isOpen: boolean;
   onClose: () => void;
   needId: string;
-  onUploadComplete: (proofUrl: string) => void;
+  onUploadComplete: () => void;
 }
 
 export function ProofUploadModal({ isOpen, onClose, needId, onUploadComplete }: ProofUploadModalProps) {
@@ -34,6 +34,7 @@ export function ProofUploadModal({ isOpen, onClose, needId, onUploadComplete }: 
   const [ackNotTaxDeductible, setAckNotTaxDeductible] = useState(false);
   const [ackNoCustody, setAckNoCustody] = useState(false);
   const [ackNoReversal, setAckNoReversal] = useState(false);
+  const proofSubmissionIdempotencyKey = useRef<string | null>(null);
   const { toast } = useSafeToast();
 
   const allAcknowledged = ackDirectPay && ackNotTaxDeductible && ackNoCustody && ackNoReversal;
@@ -87,32 +88,30 @@ export function ProofUploadModal({ isOpen, onClose, needId, onUploadComplete }: 
     setError(null);
 
     try {
-      let proofUrl = '';
+      const submissionKey = proofSubmissionIdempotencyKey.current || crypto.randomUUID();
+      proofSubmissionIdempotencyKey.current = submissionKey;
       let proofStoragePath = '';
 
       if (file) {
-        const upload = await uploadBillDocument(file);
-        proofUrl = upload.url;
+        const upload = await uploadBillDocument(file, `${submissionKey}-payment-proof`);
         proofStoragePath = upload.path;
       }
 
-      const now = new Date().toISOString();
       const contribution = await submitPaymentProof({
+        idempotency_key: submissionKey,
         need_id: needId,
         amount: numericAmount,
-        proof_url: proofUrl || undefined,
         proof_storage_path: proofStoragePath || undefined,
         confirmation_number: confirmationNumber.trim() || undefined,
         notes: notes || undefined,
         gift_note: giftNote || undefined,
         is_anonymous: isAnonymous,
-        sponsor_disclosure_acknowledged_at: now,
-        sponsor_disclosure_version: 'v1',
         sponsor_ack_direct_pay: ackDirectPay,
         sponsor_ack_not_tax_deductible: ackNotTaxDeductible,
         sponsor_ack_mercybridge_no_custody: ackNoCustody,
         sponsor_ack_no_reversal_guarantee: ackNoReversal,
       });
+      proofSubmissionIdempotencyKey.current = null;
 
       // Trigger AI verification
       setIsVerifying(true);
@@ -140,7 +139,7 @@ export function ProofUploadModal({ isOpen, onClose, needId, onUploadComplete }: 
         setIsVerifying(false);
       }
 
-      onUploadComplete(proofUrl);
+      onUploadComplete();
       toast({
         title: 'Proof submitted',
         description: finalVerificationMessage,

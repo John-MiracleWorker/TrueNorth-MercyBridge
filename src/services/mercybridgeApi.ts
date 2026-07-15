@@ -35,16 +35,77 @@ import type {
 const ENABLE_STRIPE = import.meta.env.VITE_MERCYBRIDGE_ENABLE_STRIPE === 'true';
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 
-type SupabaseAny = typeof supabase & {
-  from: (table: string) => any;
-  rpc: (fn: string, args?: Record<string, unknown>) => any;
-};
-
-const db = supabase as SupabaseAny;
+const MERCYBRIDGE_DOCUMENT_BUCKET = 'mercybridge-documents';
+const db = supabase;
 
 export interface UploadedMercyBridgeDocument {
-  url: string;
   path: string;
+}
+
+async function createSignedDocumentUrls(paths: unknown): Promise<string[]> {
+  if (!Array.isArray(paths)) return [];
+
+  const signed = await Promise.all(
+    paths
+      .filter((path): path is string => typeof path === 'string' && path.length > 0)
+      .map(async (path) => {
+        const { data, error } = await supabase.storage
+          .from(MERCYBRIDGE_DOCUMENT_BUCKET)
+          .createSignedUrl(path, 10 * 60);
+
+        if (error) throw new Error(error.message);
+        return data.signedUrl;
+      }),
+  );
+
+  return signed;
+}
+
+// Intentionally fail closed: requester/admin review pages must not render a need
+// with silently missing private evidence when authorization or object signing fails.
+async function withSignedNeedDocumentUrls<T extends Need>(need: T): Promise<T> {
+  const [documentUrls, hardshipDocumentUrls, paymentProofUrls] = await Promise.all([
+    createSignedDocumentUrls(need.document_storage_paths),
+    createSignedDocumentUrls(need.hardship_document_storage_paths),
+    createSignedDocumentUrls(
+      need.payment_proof_storage_path ? [need.payment_proof_storage_path] : [],
+    ),
+  ]);
+
+  return {
+    ...need,
+    document_urls: documentUrls,
+    hardship_document_urls: hardshipDocumentUrls,
+    payment_proof_url: paymentProofUrls[0] || null,
+  };
+}
+
+async function withAuthorizedPrivateNeedDocuments<T extends Need>(need: T): Promise<T> {
+  const { data, error } = await db.rpc('mercybridge_get_need_private_documents', {
+    p_need_id: need.id,
+  });
+
+  if (error) throw new Error(error.message);
+
+  const privateDocuments = (data || {}) as {
+    document_storage_paths?: unknown;
+    hardship_document_storage_paths?: unknown;
+    payment_proof_storage_path?: unknown;
+  };
+
+  return withSignedNeedDocumentUrls({
+    ...need,
+    document_storage_paths: Array.isArray(privateDocuments.document_storage_paths)
+      ? privateDocuments.document_storage_paths.filter((path): path is string => typeof path === 'string')
+      : [],
+    hardship_document_storage_paths: Array.isArray(privateDocuments.hardship_document_storage_paths)
+      ? privateDocuments.hardship_document_storage_paths.filter((path): path is string => typeof path === 'string')
+      : [],
+    payment_proof_storage_path:
+      typeof privateDocuments.payment_proof_storage_path === 'string'
+        ? privateDocuments.payment_proof_storage_path
+        : null,
+  });
 }
 
 export function isStripeEnabled(): boolean {
@@ -92,9 +153,11 @@ export async function createNeed(payload: CreateNeedRequest): Promise<Need> {
 
   console.log('Creating need for user:', user.id);
 
-  const { data, error } = await supabase
-    .from('mercybridge_needs')
-    .insert({
+  const initialDocumentPaths = payload.document_storage_paths || [];
+  const initialHardshipPaths = payload.hardship_document_storage_paths || [];
+  const { data, error } = await db.rpc('mercybridge_create_need', {
+    p_idempotency_key: payload.idempotency_key,
+    p_payload: {
       category: payload.category,
       biller_name: payload.biller_name,
       bill_amount: payload.bill_amount,
@@ -105,41 +168,27 @@ export async function createNeed(payload: CreateNeedRequest): Promise<Need> {
       hardship_summary_private: payload.hardship_summary_private,
       hardship_attestation: Boolean(payload.hardship_attestation),
       hardship_proof_type: payload.hardship_proof_type || 'none',
-      hardship_document_urls: payload.hardship_document_urls || [],
-      hardship_document_storage_paths: payload.hardship_document_storage_paths || [],
-      hardship_document_retention_until: payload.hardship_document_storage_paths?.length
-        ? new Date(Date.now() + 72 * 60 * 60 * 1000).toISOString()
-        : null,
       private_payment_details: payload.private_payment_details?.trim() || null,
       payment_instructions_public: payload.payment_instructions_public?.trim() || null,
-      document_urls: payload.document_urls,
-      document_storage_paths: payload.document_storage_paths || [],
-      title: payload.biller_name,
-      requester_id: user.id,
       status: 'submitted',
-      verification_level: 'level_1_document',
-      // Disclosure & consent
-      requester_disclosure_acknowledged_at: payload.requester_disclosure_acknowledged_at || new Date().toISOString(),
-      requester_disclosure_version: payload.requester_disclosure_version || 'v1',
       requester_consent_ai_review: Boolean(payload.requester_consent_ai_review),
       requester_consent_human_review: Boolean(payload.requester_consent_human_review),
       requester_consent_temp_storage: Boolean(payload.requester_consent_temp_storage),
       requester_consent_no_guarantee: Boolean(payload.requester_consent_no_guarantee),
-      // Document lifecycle
-      raw_document_retention_until: payload.document_storage_paths?.length
-        ? new Date(Date.now() + 72 * 60 * 60 * 1000).toISOString()
-        : null,
-      purge_status: payload.document_storage_paths?.length ? 'pending' : 'not_needed',
-    })
-    .select()
-    .single();
+    },
+    p_document_paths: initialDocumentPaths,
+    p_hardship_paths: initialHardshipPaths,
+  });
 
   if (error) {
-    console.error('Supabase insert error:', error);
+    console.error('Supabase create-need RPC error:', error);
     throw new Error(error.message);
   }
 
-  const createdNeed = data as Need;
+  const createdNeed = data as unknown as Need;
+  if (!createdNeed?.id) {
+    throw new Error('Need creation did not return the created request.');
+  }
 
   // V2 payee-directory bootstrap: preserve document-level intake records and
   // attach high-confidence known payees as reviewer suggestions. This is
@@ -165,21 +214,6 @@ export async function createNeed(payload: CreateNeedRequest): Promise<Need> {
       })
     )
   );
-
-  const matches = await findPayeeMatches(payload.biller_name, 1).catch(() => []);
-  const bestMatch = matches[0];
-  if (bestMatch?.confidence >= 0.9 && ['limited_verified', 'verified', 'trusted'].includes(bestMatch.verification_status)) {
-    return attachPayeeToNeed(createdNeed.id, bestMatch.payee_id, bestMatch.confidence, 'matched').catch(() => createdNeed);
-  }
-  if (bestMatch?.confidence >= 0.72) {
-    return attachPayeeToNeed(createdNeed.id, bestMatch.payee_id, bestMatch.confidence, 'possible_match').catch(() => createdNeed);
-  }
-
-  await db
-    .from('mercybridge_needs')
-    .update({ payee_match_status: 'no_match' })
-    .eq('id', createdNeed.id)
-    .then(() => undefined, () => undefined);
 
   return createdNeed;
 }
@@ -223,6 +257,7 @@ export async function screenNeedWithAI(needId: string): Promise<NeedScreeningRes
 export interface SubmitAdditionalDocumentsRequest {
   need_id: string;
   files: File[];
+  idempotency_key: string;
 }
 
 export async function submitAdditionalDocuments(
@@ -231,38 +266,20 @@ export async function submitAdditionalDocuments(
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('Not authenticated');
 
-  const uploads = await Promise.all(payload.files.map(file => uploadBillDocument(file)));
-  const newDocumentUrls: string[] = uploads.map(u => u.url);
+  const uploads = await Promise.all(
+    payload.files.map((file, index) => (
+      uploadBillDocument(file, `${payload.idempotency_key}-additional-${index}`)
+    )),
+  );
   const newDocumentPaths: string[] = uploads.map(u => u.path);
 
-  const { data: currentNeed, error: fetchError } = await supabase
-    .from('mercybridge_needs')
-    .select('document_urls, document_storage_paths, hardship_document_urls, hardship_document_storage_paths')
-    .eq('id', payload.need_id)
-    .single();
-
-  if (fetchError) throw new Error(fetchError.message);
-
-  const updatedDocumentUrls = [...(currentNeed.document_urls || []), ...newDocumentUrls];
-  const updatedDocumentPaths = [...(currentNeed.document_storage_paths || []), ...newDocumentPaths];
-  const updatedHardshipUrls = [...(currentNeed.hardship_document_urls || []), ...newDocumentUrls];
-  const updatedHardshipPaths = [...(currentNeed.hardship_document_storage_paths || []), ...newDocumentPaths];
-
-  const { data, error } = await supabase
-    .from('mercybridge_needs')
-    .update({
-      document_urls: updatedDocumentUrls,
-      document_storage_paths: updatedDocumentPaths,
-      hardship_document_urls: updatedHardshipUrls,
-      hardship_document_storage_paths: updatedHardshipPaths,
-      status: 'submitted',
-      review_notes: null,
-      ai_screening_status: 'pending',
-      updated_at: new Date().toISOString(),
-    })
-    .eq('id', payload.need_id)
-    .select()
-    .single();
+  // Stable upload paths plus the SQL RPC's DISTINCT merge and changed-only audit make
+  // a lost-response retry idempotent without trusting the client key at the write boundary.
+  const { data, error } = await db.rpc('mercybridge_submit_additional_documents', {
+    p_need_id: payload.need_id,
+    p_document_paths: newDocumentPaths,
+    p_hardship_paths: [],
+  });
 
   if (error) throw new Error(error.message);
 
@@ -321,7 +338,7 @@ export async function getRequesterNeedById(id: string): Promise<NeedWithDetails 
     .single();
 
   if (error) return null;
-  return data as unknown as NeedWithDetails;
+  return withAuthorizedPrivateNeedDocuments(data as unknown as NeedWithDetails);
 }
 
 export async function getAdminNeedById(id: string): Promise<NeedWithDetails | null> {
@@ -332,19 +349,12 @@ export async function getAdminNeedById(id: string): Promise<NeedWithDetails | nu
     .single();
 
   if (error) return null;
-  return data as unknown as NeedWithDetails;
+  return withAuthorizedPrivateNeedDocuments(data as unknown as NeedWithDetails);
 }
 
-/** @deprecated Use getPublicNeedById, getRequesterNeedById, or getAdminNeedById instead */
-export async function getNeedById(id: string): Promise<NeedWithDetails | null> {
-  const { data, error } = await supabase
-    .from('mercybridge_needs')
-    .select('*')
-    .eq('id', id)
-    .single();
-
-  if (error) return null;
-  return data as unknown as NeedWithDetails;
+/** @deprecated Public-safe compatibility alias. Private evidence requires an explicit requester/admin API. */
+export async function getNeedById(id: string): Promise<PublicNeed | null> {
+  return getPublicNeedById(id);
 }
 
 export async function getRequesterNeeds(): Promise<Need[]> {
@@ -545,36 +555,18 @@ export async function getPendingContributions(): Promise<Contribution[]> {
 }
 
 export async function reviewNeed(needId: string, review: ReviewNeedRequest): Promise<void> {
-  const { data: { user } } = await supabase.auth.getUser();
-
-  const updates: Record<string, unknown> = {
-    status: review.action === 'approved' ? 'approved' : review.action === 'rejected' ? 'rejected' : 'more_info_needed',
-    reviewer_id: user?.id,
-  };
-
-  if (review.verification_level) updates.verification_level = review.verification_level;
-  if (review.rejection_reason) updates.rejection_reason = review.rejection_reason;
-  if (review.public_summary_approved) updates.hardship_summary_public = review.public_summary_approved;
-
-  const { error } = await supabase
-    .from('mercybridge_needs')
-    .update(updates)
-    .eq('id', needId);
+  const { error } = await db.rpc('mercybridge_review_need', {
+    p_need_id: needId,
+    p_action: review.action,
+    p_notes: review.notes?.trim() || null,
+    p_rejection_reason: review.rejection_reason?.trim() || null,
+    p_verification_level: review.verification_level || null,
+    p_checklist: review.checklist || {},
+    p_decision_reason: review.decision_reason?.trim() || review.notes?.trim() || null,
+    p_public_summary: review.public_summary_approved?.trim() || null,
+  });
 
   if (error) throw new Error(error.message);
-
-  // Record admin review with checklist and decision reason
-  await supabase.from('mercybridge_admin_reviews').insert({
-    need_id: needId,
-    reviewer_id: user?.id,
-    action: review.action,
-    previous_status: 'submitted',
-    new_status: updates.status,
-    notes: review.notes,
-    checklist: review.checklist || {},
-    decision_reason: review.decision_reason || review.notes || null,
-    public_summary_approved: review.public_summary_approved || null,
-  });
 }
 
 export interface ManageNeedRequest {
@@ -623,15 +615,13 @@ export async function manageNeed(needId: string, payload: ManageNeedRequest): Pr
 }
 
 export async function markNeedPaid(needId: string, payload: MarkPaidRequest): Promise<void> {
-  const { error } = await supabase
-    .from('mercybridge_needs')
-    .update({
-      status: 'paid',
-      paid_at: new Date().toISOString(),
-      payment_confirmation_note: payload.payment_confirmation_note,
-      payment_proof_url: payload.payment_proof_url,
-    })
-    .eq('id', needId);
+  // The public-row RPC return intentionally omits this path. Authorized reads
+  // recover it only through mercybridge_get_need_private_documents.
+  const { error } = await db.rpc('mercybridge_mark_need_paid', {
+    p_need_id: needId,
+    p_confirmation_note: payload.payment_confirmation_note,
+    p_payment_proof_path: payload.payment_proof_storage_path || null,
+  });
 
   if (error) throw new Error(error.message);
 }
@@ -1014,11 +1004,16 @@ export async function streamStewardshipCoachMessage(
 // UPLOAD
 // ============================================================================
 
-export async function uploadBillDocument(file: File): Promise<UploadedMercyBridgeDocument> {
+export async function uploadBillDocument(
+  file: File,
+  stableUploadKey?: string,
+): Promise<UploadedMercyBridgeDocument> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('Not authenticated');
 
-  const filePath = `${user.id}/${Date.now()}_${file.name}`;
+  const uploadToken = (stableUploadKey || crypto.randomUUID()).replace(/[^a-zA-Z0-9_-]/g, '_');
+  const safeFileName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_') || 'document';
+  const filePath = `${user.id}/${uploadToken}_${safeFileName}`;
 
   const { error: uploadError } = await supabase.storage
     .from('mercybridge-documents')
@@ -1026,14 +1021,7 @@ export async function uploadBillDocument(file: File): Promise<UploadedMercyBridg
 
   if (uploadError) throw new Error(uploadError.message);
 
-  const { data: { publicUrl } } = supabase.storage
-    .from('mercybridge-documents')
-    .getPublicUrl(filePath);
-
-  return {
-    url: publicUrl,
-    path: filePath,
-  };
+  return { path: filePath };
 }
 
 // ============================================================================
@@ -1230,16 +1218,12 @@ export async function attachPayeeToNeed(
   confidence = 1,
   status: Need['payee_match_status'] = 'matched'
 ): Promise<Need> {
-  const { data, error } = await db
-    .from('mercybridge_needs')
-    .update({
-      payee_id: payeeId,
-      payee_match_status: status,
-      payee_match_confidence: confidence,
-    })
-    .eq('id', needId)
-    .select()
-    .single();
+  const { data, error } = await db.rpc('mercybridge_set_need_payee_match', {
+    p_need_id: needId,
+    p_payee_id: payeeId,
+    p_match_status: status,
+    p_confidence: confidence,
+  });
   if (error) throw new Error(error.message);
   return data as Need;
 }
