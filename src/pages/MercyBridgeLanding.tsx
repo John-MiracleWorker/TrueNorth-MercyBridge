@@ -6,7 +6,6 @@ import {
   ArrowRight,
   CheckCircle2,
   CircleDollarSign,
-  Compass,
   Eye,
   FileCheck2,
   FileText,
@@ -168,44 +167,6 @@ export default function MercyBridgeLanding() {
         />
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:72px_72px] [mask-image:linear-gradient(to_bottom,black,transparent_78%)]" />
       </div>
-
-      <header className="sticky top-0 z-50 hidden border-b border-white/10 bg-slate-950/45 backdrop-blur-2xl safe-area-inset-top lg:block">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8 lg:px-10">
-          <button
-            type="button"
-            onClick={() => window.location.href='https://www.find-true-north.net'}
-            className="flex items-center gap-3 rounded-full text-left transition-opacity hover:opacity-85"
-          >
-            <span className="flex h-10 w-10 items-center justify-center rounded-2xl border border-amber-200/20 bg-amber-200/10 shadow-[0_18px_42px_rgba(251,191,36,0.12)]">
-              <HeartHandshake className="h-5 w-5 text-amber-100" />
-            </span>
-            <span>
-              <span className="block text-base font-semibold leading-none text-white">MercyBridge</span>
-              <span className="hidden text-xs uppercase tracking-[0.2em] text-amber-100/60 sm:block">
-                TrueNorth Labs
-              </span>
-            </span>
-          </button>
-
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="hidden rounded-full text-slate-300 hover:bg-white/10 hover:text-white sm:inline-flex"
-              onClick={() => window.location.href='https://www.find-true-north.net'}
-            >
-              Hub
-            </Button>
-            <Button
-              size="sm"
-              onClick={() => navigate(isLoggedIn ? '/browse' : '/login')}
-              className="rounded-full bg-white/10 px-4 text-white backdrop-blur-xl hover:bg-white/15"
-            >
-              {isLoggedIn ? 'Browse' : 'Sign in'}
-            </Button>
-          </div>
-        </div>
-      </header>
 
       <main>
         <section className="relative mx-auto grid min-h-[88vh] max-w-7xl items-center gap-12 px-5 py-16 sm:px-8 lg:grid-cols-[1.02fr_0.98fr] lg:px-10 lg:py-20">

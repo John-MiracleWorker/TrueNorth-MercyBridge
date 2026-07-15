@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { motion } from 'framer-motion';
-import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import {
   ArrowLeft,
   ClipboardCheck,
@@ -20,6 +20,7 @@ import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/SafeAuthProvider';
 import { getMercyBridgeRole } from '@/services/mercybridgeApi';
 import { prefetchRoute } from '@/hooks/useRoutePrefetch';
+import { buildServiceHubUrl } from '@/lib/serviceHub';
 
 interface MercyBridgeLayoutProps {
   children: ReactNode;
@@ -116,7 +117,6 @@ function MercyBridgeMark({ compact = false }: { compact?: boolean }) {
 
 export function MercyBridgeLayout({ children }: MercyBridgeLayoutProps) {
   const location = useLocation();
-  const navigate = useNavigate();
   const { user } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [role, setRole] = useState<string | null>(null);
@@ -203,13 +203,13 @@ export function MercyBridgeLayout({ children }: MercyBridgeLayoutProps) {
           type="button"
           variant="ghost"
           className="w-full justify-start gap-3 rounded-xl border border-amber-200/20 bg-gradient-to-r from-amber-200/12 to-emerald-200/8 px-3 py-3 text-amber-100 hover:border-amber-100/35 hover:bg-amber-200/15 hover:text-white"
-          onClick={() => window.location.href = 'https://www.find-true-north.net'}
+          onClick={() => window.location.assign(buildServiceHubUrl('/hub'))}
         >
           <ArrowLeft className="h-4 w-4" />
           Service Hub
         </Button>
         <a
-          href="https://www.find-true-north.net"
+          href={buildServiceHubUrl('/')}
           target="_blank"
           rel="noopener noreferrer"
           className="flex w-full items-center justify-start gap-3 rounded-xl border border-sky-200/20 bg-gradient-to-r from-sky-200/12 to-cyan-200/8 px-3 py-3 text-sm font-medium text-sky-100 transition-colors hover:border-sky-100/35 hover:bg-sky-200/15 hover:text-white"
@@ -271,7 +271,7 @@ export function MercyBridgeLayout({ children }: MercyBridgeLayoutProps) {
             variant="ghost"
             size="icon"
             className="h-10 w-10 rounded-xl border border-amber-300/20 bg-amber-300/10 text-amber-100 hover:bg-amber-300/15 hover:text-white"
-            onClick={() => window.location.href = 'https://www.find-true-north.net'}
+            onClick={() => window.location.assign(buildServiceHubUrl('/hub'))}
             aria-label="Open TrueNorth"
           >
             <ArrowLeft className="h-5 w-5" />

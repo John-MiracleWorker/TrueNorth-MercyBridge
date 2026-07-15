@@ -1,8 +1,7 @@
 import { useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/SafeAuthProvider';
-
-const HUB_LOGIN_URL = 'https://www.find-true-north.net/login';
+import { buildServiceHubUrl, buildTrueNorthLoginUrl } from '@/lib/serviceHub';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -15,21 +14,21 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   useEffect(() => {
     if (!loading) {
       if (!user) {
-        // Redirect to hub login (no return_to to avoid redirect loops)
-        window.location.href = HUB_LOGIN_URL;
+        const returnTo = `${window.location.origin}${location.pathname}${location.search}${location.hash}`;
+        window.location.replace(buildTrueNorthLoginUrl(returnTo));
         return;
       }
 
       if (isPermanentlyBanned) {
         if (location.pathname !== '/banned') {
-          window.location.href = `${HUB_LOGIN_URL}?error=banned`;
+          window.location.replace(buildServiceHubUrl('/login?error=banned'));
         }
         return;
       }
 
       if (isBanned && !isPermanentlyBanned) {
         if (!location.pathname.startsWith('/appeal')) {
-          window.location.href = `${HUB_LOGIN_URL}?error=appeal_required`;
+          window.location.replace(buildServiceHubUrl('/login?error=appeal_required'));
         }
         return;
       }
@@ -41,6 +40,7 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     isPermanentlyBanned,
     location.pathname,
     location.search,
+    location.hash,
   ]);
 
   if (loading) {

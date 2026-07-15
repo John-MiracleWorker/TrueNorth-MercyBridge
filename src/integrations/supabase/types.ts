@@ -12,6 +12,31 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.1"
   }
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
   public: {
     Tables: {
       admin_audit_log: {
@@ -50,6 +75,7 @@ export type Database = {
           scripture_text: string
           study_type: string | null
           title: string
+          topic: string | null
           total_days: number | null
           user_id: string | null
           user_notes: string | null
@@ -65,6 +91,7 @@ export type Database = {
           scripture_text: string
           study_type?: string | null
           title: string
+          topic?: string | null
           total_days?: number | null
           user_id?: string | null
           user_notes?: string | null
@@ -80,6 +107,7 @@ export type Database = {
           scripture_text?: string
           study_type?: string | null
           title?: string
+          topic?: string | null
           total_days?: number | null
           user_id?: string | null
           user_notes?: string | null
@@ -440,6 +468,71 @@ export type Database = {
         }
         Relationships: []
       }
+      bible_chat_conversations: {
+        Row: {
+          created_at: string | null
+          id: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      bible_chat_messages: {
+        Row: {
+          content: string
+          context_book: string | null
+          context_chapter: number | null
+          context_verses: number[] | null
+          conversation_id: string
+          created_at: string | null
+          id: string
+          role: string
+          scripture_references: Json | null
+        }
+        Insert: {
+          content: string
+          context_book?: string | null
+          context_chapter?: number | null
+          context_verses?: number[] | null
+          conversation_id: string
+          created_at?: string | null
+          id?: string
+          role: string
+          scripture_references?: Json | null
+        }
+        Update: {
+          content?: string
+          context_book?: string | null
+          context_chapter?: number | null
+          context_verses?: number[] | null
+          conversation_id?: string
+          created_at?: string | null
+          id?: string
+          role?: string
+          scripture_references?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bible_chat_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "bible_chat_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bible_cross_references: {
         Row: {
           connection_type: string
@@ -478,6 +571,51 @@ export type Database = {
           target_verse?: number | null
         }
         Relationships: []
+      }
+      bible_cross_refs: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          relationship_type: string
+          source_verse_id: string
+          strength: number | null
+          target_verse_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          relationship_type?: string
+          source_verse_id: string
+          strength?: number | null
+          target_verse_id: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          relationship_type?: string
+          source_verse_id?: string
+          strength?: number | null
+          target_verse_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bible_cross_refs_source_verse_id_fkey"
+            columns: ["source_verse_id"]
+            isOneToOne: false
+            referencedRelation: "bible_verse_embeddings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bible_cross_refs_target_verse_id_fkey"
+            columns: ["target_verse_id"]
+            isOneToOne: false
+            referencedRelation: "bible_verse_embeddings"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       bible_discussion_messages: {
         Row: {
@@ -557,6 +695,36 @@ export type Database = {
           title?: string
           updated_at?: string
           verse_number?: number | null
+        }
+        Relationships: []
+      }
+      bible_people: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          display_name: string | null
+          era: string | null
+          id: string
+          is_divine: boolean | null
+          name: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          display_name?: string | null
+          era?: string | null
+          id?: string
+          is_divine?: boolean | null
+          name: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          display_name?: string | null
+          era?: string | null
+          id?: string
+          is_divine?: boolean | null
+          name?: string
         }
         Relationships: []
       }
@@ -673,6 +841,219 @@ export type Database = {
           title?: string
           updated_at?: string | null
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      bible_themes: {
+        Row: {
+          category: string | null
+          created_at: string | null
+          description: string | null
+          display_name: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          display_name?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          display_name?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      bible_verse_embeddings: {
+        Row: {
+          book: string
+          chapter: number
+          created_at: string | null
+          embedding: string | null
+          id: string
+          text: string
+          translation: string | null
+          updated_at: string | null
+          verse: number
+          verse_ref: string | null
+        }
+        Insert: {
+          book: string
+          chapter: number
+          created_at?: string | null
+          embedding?: string | null
+          id?: string
+          text: string
+          translation?: string | null
+          updated_at?: string | null
+          verse: number
+          verse_ref?: string | null
+        }
+        Update: {
+          book?: string
+          chapter?: number
+          created_at?: string | null
+          embedding?: string | null
+          id?: string
+          text?: string
+          translation?: string | null
+          updated_at?: string | null
+          verse?: number
+          verse_ref?: string | null
+        }
+        Relationships: []
+      }
+      bible_verse_people: {
+        Row: {
+          created_at: string | null
+          id: string
+          person_id: string
+          role: string | null
+          verse_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          person_id: string
+          role?: string | null
+          verse_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          person_id?: string
+          role?: string | null
+          verse_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bible_verse_people_person_id_fkey"
+            columns: ["person_id"]
+            isOneToOne: false
+            referencedRelation: "bible_people"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bible_verse_people_verse_id_fkey"
+            columns: ["verse_id"]
+            isOneToOne: false
+            referencedRelation: "bible_verse_embeddings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bible_verse_themes: {
+        Row: {
+          created_at: string | null
+          id: string
+          relevance_score: number | null
+          theme_id: string
+          verse_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          relevance_score?: number | null
+          theme_id: string
+          verse_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          relevance_score?: number | null
+          theme_id?: string
+          verse_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bible_verse_themes_theme_id_fkey"
+            columns: ["theme_id"]
+            isOneToOne: false
+            referencedRelation: "bible_themes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bible_verse_themes_verse_id_fkey"
+            columns: ["verse_id"]
+            isOneToOne: false
+            referencedRelation: "bible_verse_embeddings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bills: {
+        Row: {
+          account_number_last4: string | null
+          amount: number
+          amount_raised: number
+          category: Database["public"]["Enums"]["bill_category_enum"]
+          created_at: string
+          creditor_account_number: string | null
+          creditor_name: string | null
+          document_ocr_text: string | null
+          document_url: string | null
+          due_date: string | null
+          grace_score: number
+          id: string
+          is_anonymous: boolean
+          location_zip: string | null
+          status: Database["public"]["Enums"]["bill_status_enum"]
+          story: string | null
+          updated_at: string
+          urgency: Database["public"]["Enums"]["urgency_level_enum"]
+          user_id: string
+          vetting_status: Database["public"]["Enums"]["vetting_status_enum"]
+        }
+        Insert: {
+          account_number_last4?: string | null
+          amount: number
+          amount_raised?: number
+          category: Database["public"]["Enums"]["bill_category_enum"]
+          created_at?: string
+          creditor_account_number?: string | null
+          creditor_name?: string | null
+          document_ocr_text?: string | null
+          document_url?: string | null
+          due_date?: string | null
+          grace_score?: number
+          id?: string
+          is_anonymous?: boolean
+          location_zip?: string | null
+          status?: Database["public"]["Enums"]["bill_status_enum"]
+          story?: string | null
+          updated_at?: string
+          urgency?: Database["public"]["Enums"]["urgency_level_enum"]
+          user_id: string
+          vetting_status?: Database["public"]["Enums"]["vetting_status_enum"]
+        }
+        Update: {
+          account_number_last4?: string | null
+          amount?: number
+          amount_raised?: number
+          category?: Database["public"]["Enums"]["bill_category_enum"]
+          created_at?: string
+          creditor_account_number?: string | null
+          creditor_name?: string | null
+          document_ocr_text?: string | null
+          document_url?: string | null
+          due_date?: string | null
+          grace_score?: number
+          id?: string
+          is_anonymous?: boolean
+          location_zip?: string | null
+          status?: Database["public"]["Enums"]["bill_status_enum"]
+          story?: string | null
+          updated_at?: string
+          urgency?: Database["public"]["Enums"]["urgency_level_enum"]
+          user_id?: string
+          vetting_status?: Database["public"]["Enums"]["vetting_status_enum"]
         }
         Relationships: []
       }
@@ -818,6 +1199,95 @@ export type Database = {
           id?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      church_memberships: {
+        Row: {
+          church_id: string
+          created_at: string
+          id: string
+          is_verified: boolean
+          joined_at: string
+          role: Database["public"]["Enums"]["church_membership_role_enum"]
+          user_id: string
+        }
+        Insert: {
+          church_id: string
+          created_at?: string
+          id?: string
+          is_verified?: boolean
+          joined_at?: string
+          role?: Database["public"]["Enums"]["church_membership_role_enum"]
+          user_id: string
+        }
+        Update: {
+          church_id?: string
+          created_at?: string
+          id?: string
+          is_verified?: boolean
+          joined_at?: string
+          role?: Database["public"]["Enums"]["church_membership_role_enum"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "church_memberships_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      churches: {
+        Row: {
+          contact_email: string | null
+          contact_phone: string | null
+          created_at: string
+          description: string | null
+          id: string
+          is_verified: boolean
+          location: string | null
+          logo_url: string | null
+          name: string
+          pastor_name: string | null
+          slug: string
+          updated_at: string
+          verified_at: string | null
+          website: string | null
+        }
+        Insert: {
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_verified?: boolean
+          location?: string | null
+          logo_url?: string | null
+          name: string
+          pastor_name?: string | null
+          slug: string
+          updated_at?: string
+          verified_at?: string | null
+          website?: string | null
+        }
+        Update: {
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_verified?: boolean
+          location?: string | null
+          logo_url?: string | null
+          name?: string
+          pastor_name?: string | null
+          slug?: string
+          updated_at?: string
+          verified_at?: string | null
+          website?: string | null
         }
         Relationships: []
       }
@@ -977,8 +1447,22 @@ export type Database = {
             foreignKeyName: "community_discussion_messages_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "notification_activity_summary"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "community_discussion_messages_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "community_discussion_messages_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_quota_status"
+            referencedColumns: ["user_id"]
           },
         ]
       }
@@ -1022,8 +1506,22 @@ export type Database = {
             foreignKeyName: "community_discussion_threads_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
+            referencedRelation: "notification_activity_summary"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "community_discussion_threads_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "community_discussion_threads_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "user_quota_status"
+            referencedColumns: ["user_id"]
           },
         ]
       }
@@ -1099,8 +1597,22 @@ export type Database = {
             foreignKeyName: "fk_community_members_profile"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "notification_activity_summary"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "fk_community_members_profile"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_community_members_profile"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_quota_status"
+            referencedColumns: ["user_id"]
           },
         ]
       }
@@ -1443,8 +1955,22 @@ export type Database = {
             foreignKeyName: "fk_community_prayer_requests_profile"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "notification_activity_summary"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "fk_community_prayer_requests_profile"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_community_prayer_requests_profile"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_quota_status"
+            referencedColumns: ["user_id"]
           },
         ]
       }
@@ -1517,6 +2043,7 @@ export type Database = {
           id: string
           is_saved: boolean | null
           is_viewed: boolean | null
+          recommendation_context: Json | null
           relevance_score: number | null
           title: string
           user_id: string | null
@@ -1529,6 +2056,7 @@ export type Database = {
           id?: string
           is_saved?: boolean | null
           is_viewed?: boolean | null
+          recommendation_context?: Json | null
           relevance_score?: number | null
           title: string
           user_id?: string | null
@@ -1541,6 +2069,7 @@ export type Database = {
           id?: string
           is_saved?: boolean | null
           is_viewed?: boolean | null
+          recommendation_context?: Json | null
           relevance_score?: number | null
           title?: string
           user_id?: string | null
@@ -1757,6 +2286,96 @@ export type Database = {
         }
         Relationships: []
       }
+      counseling_sessions: {
+        Row: {
+          bill_id: string | null
+          counselor_user_id: string | null
+          created_at: string
+          duration_minutes: number | null
+          homework_assigned: Json
+          id: string
+          next_session_date: string | null
+          recipient_user_id: string
+          session_date: string
+          session_notes: string | null
+          status: Database["public"]["Enums"]["session_status_enum"]
+          updated_at: string
+        }
+        Insert: {
+          bill_id?: string | null
+          counselor_user_id?: string | null
+          created_at?: string
+          duration_minutes?: number | null
+          homework_assigned?: Json
+          id?: string
+          next_session_date?: string | null
+          recipient_user_id: string
+          session_date: string
+          session_notes?: string | null
+          status?: Database["public"]["Enums"]["session_status_enum"]
+          updated_at?: string
+        }
+        Update: {
+          bill_id?: string | null
+          counselor_user_id?: string | null
+          created_at?: string
+          duration_minutes?: number | null
+          homework_assigned?: Json
+          id?: string
+          next_session_date?: string | null
+          recipient_user_id?: string
+          session_date?: string
+          session_notes?: string | null
+          status?: Database["public"]["Enums"]["session_status_enum"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      creditors: {
+        Row: {
+          address: string | null
+          category: string | null
+          created_at: string
+          email: string | null
+          id: string
+          name: string
+          payment_method: Database["public"]["Enums"]["creditor_payment_method_enum"]
+          phone: string | null
+          stripe_connect_account_id: string | null
+          tax_id: string | null
+          updated_at: string
+          verification_status: Database["public"]["Enums"]["creditor_verification_status_enum"]
+        }
+        Insert: {
+          address?: string | null
+          category?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          name: string
+          payment_method?: Database["public"]["Enums"]["creditor_payment_method_enum"]
+          phone?: string | null
+          stripe_connect_account_id?: string | null
+          tax_id?: string | null
+          updated_at?: string
+          verification_status?: Database["public"]["Enums"]["creditor_verification_status_enum"]
+        }
+        Update: {
+          address?: string | null
+          category?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          name?: string
+          payment_method?: Database["public"]["Enums"]["creditor_payment_method_enum"]
+          phone?: string | null
+          stripe_connect_account_id?: string | null
+          tax_id?: string | null
+          updated_at?: string
+          verification_status?: Database["public"]["Enums"]["creditor_verification_status_enum"]
+        }
+        Relationships: []
+      }
       custom_daily_readings: {
         Row: {
           created_at: string | null
@@ -1968,6 +2587,65 @@ export type Database = {
         }
         Relationships: []
       }
+      donations: {
+        Row: {
+          amount: number
+          bill_id: string
+          created_at: string
+          donor_covered_fees: boolean
+          donor_user_id: string | null
+          gift_note: string | null
+          id: string
+          platform_fee: number
+          status: Database["public"]["Enums"]["donation_status_enum"]
+          stripe_fee: number | null
+          stripe_payment_intent_id: string | null
+          stripe_transfer_id: string | null
+          tax_receipt_issued_at: string | null
+          tax_receipt_url: string | null
+        }
+        Insert: {
+          amount: number
+          bill_id: string
+          created_at?: string
+          donor_covered_fees?: boolean
+          donor_user_id?: string | null
+          gift_note?: string | null
+          id?: string
+          platform_fee?: number
+          status?: Database["public"]["Enums"]["donation_status_enum"]
+          stripe_fee?: number | null
+          stripe_payment_intent_id?: string | null
+          stripe_transfer_id?: string | null
+          tax_receipt_issued_at?: string | null
+          tax_receipt_url?: string | null
+        }
+        Update: {
+          amount?: number
+          bill_id?: string
+          created_at?: string
+          donor_covered_fees?: boolean
+          donor_user_id?: string | null
+          gift_note?: string | null
+          id?: string
+          platform_fee?: number
+          status?: Database["public"]["Enums"]["donation_status_enum"]
+          stripe_fee?: number | null
+          stripe_payment_intent_id?: string | null
+          stripe_transfer_id?: string | null
+          tax_receipt_issued_at?: string | null
+          tax_receipt_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "donations_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: false
+            referencedRelation: "bills"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       emotional_progress: {
         Row: {
           created_at: string | null
@@ -2128,6 +2806,39 @@ export type Database = {
           },
         ]
       }
+      gracebill_prayer_requests: {
+        Row: {
+          category: Database["public"]["Enums"]["prayer_category_enum"]
+          content: string
+          created_at: string
+          id: string
+          is_anonymous: boolean
+          prayer_count: number
+          title: string
+          user_id: string | null
+        }
+        Insert: {
+          category: Database["public"]["Enums"]["prayer_category_enum"]
+          content: string
+          created_at?: string
+          id?: string
+          is_anonymous?: boolean
+          prayer_count?: number
+          title: string
+          user_id?: string | null
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["prayer_category_enum"]
+          content?: string
+          created_at?: string
+          id?: string
+          is_anonymous?: boolean
+          prayer_count?: number
+          title?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       habit_completions: {
         Row: {
           completed_at: string
@@ -2206,6 +2917,7 @@ export type Database = {
           created_at: string | null
           emotional_insights: string | null
           emotional_journey: Json | null
+          entry_source: string
           entry_type: string | null
           follow_up_topics: Json | null
           gratitude_moments: Json | null
@@ -2222,6 +2934,7 @@ export type Database = {
           reflection_questions: string[] | null
           related_scripture: string | null
           scripture_references: string[] | null
+          source_metadata: Json | null
           source_thread_id: string | null
           spiritual_health_score: number | null
           spiritual_score: number | null
@@ -2249,6 +2962,7 @@ export type Database = {
           created_at?: string | null
           emotional_insights?: string | null
           emotional_journey?: Json | null
+          entry_source?: string
           entry_type?: string | null
           follow_up_topics?: Json | null
           gratitude_moments?: Json | null
@@ -2265,6 +2979,7 @@ export type Database = {
           reflection_questions?: string[] | null
           related_scripture?: string | null
           scripture_references?: string[] | null
+          source_metadata?: Json | null
           source_thread_id?: string | null
           spiritual_health_score?: number | null
           spiritual_score?: number | null
@@ -2292,6 +3007,7 @@ export type Database = {
           created_at?: string | null
           emotional_insights?: string | null
           emotional_journey?: Json | null
+          entry_source?: string
           entry_type?: string | null
           follow_up_topics?: Json | null
           gratitude_moments?: Json | null
@@ -2308,6 +3024,7 @@ export type Database = {
           reflection_questions?: string[] | null
           related_scripture?: string | null
           scripture_references?: string[] | null
+          source_metadata?: Json | null
           source_thread_id?: string | null
           spiritual_health_score?: number | null
           spiritual_score?: number | null
@@ -2327,10 +3044,6 @@ export type Database = {
           id: number
           inserted_at: string
           message: string
-          provider: string | null
-          room_name: string | null
-          stream_key: string | null
-          stream_url: string | null
           user_id: string
           user_name: string
         }
@@ -2338,10 +3051,6 @@ export type Database = {
           id?: number
           inserted_at?: string
           message: string
-          provider?: string | null
-          room_name?: string | null
-          stream_key?: string | null
-          stream_url?: string | null
           user_id: string
           user_name: string
         }
@@ -2349,14 +3058,1099 @@ export type Database = {
           id?: number
           inserted_at?: string
           message?: string
-          provider?: string | null
-          room_name?: string | null
-          stream_key?: string | null
-          stream_url?: string | null
           user_id?: string
           user_name?: string
         }
         Relationships: []
+      }
+      mercybridge_admin_reviews: {
+        Row: {
+          action: Database["public"]["Enums"]["review_action"]
+          checklist: Json | null
+          created_at: string | null
+          decision_reason: string | null
+          id: string
+          need_id: string
+          new_status: Database["public"]["Enums"]["need_status"]
+          notes: string | null
+          previous_status: Database["public"]["Enums"]["need_status"] | null
+          public_summary_approved: string | null
+          reviewer_id: string
+        }
+        Insert: {
+          action: Database["public"]["Enums"]["review_action"]
+          checklist?: Json | null
+          created_at?: string | null
+          decision_reason?: string | null
+          id?: string
+          need_id: string
+          new_status: Database["public"]["Enums"]["need_status"]
+          notes?: string | null
+          previous_status?: Database["public"]["Enums"]["need_status"] | null
+          public_summary_approved?: string | null
+          reviewer_id: string
+        }
+        Update: {
+          action?: Database["public"]["Enums"]["review_action"]
+          checklist?: Json | null
+          created_at?: string | null
+          decision_reason?: string | null
+          id?: string
+          need_id?: string
+          new_status?: Database["public"]["Enums"]["need_status"]
+          notes?: string | null
+          previous_status?: Database["public"]["Enums"]["need_status"] | null
+          public_summary_approved?: string | null
+          reviewer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mercybridge_admin_reviews_need_id_fkey"
+            columns: ["need_id"]
+            isOneToOne: false
+            referencedRelation: "mercybridge_needs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mercybridge_admin_reviews_need_id_fkey"
+            columns: ["need_id"]
+            isOneToOne: false
+            referencedRelation: "mercybridge_public_needs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mercybridge_audit_logs: {
+        Row: {
+          action: string
+          actor_id: string
+          created_at: string | null
+          details: Json | null
+          id: string
+          target_id: string
+          target_type: string
+        }
+        Insert: {
+          action: string
+          actor_id: string
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          target_id: string
+          target_type: string
+        }
+        Update: {
+          action?: string
+          actor_id?: string
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          target_id?: string
+          target_type?: string
+        }
+        Relationships: []
+      }
+      mercybridge_contributions: {
+        Row: {
+          admin_review_notes: string | null
+          admin_reviewed_at: string | null
+          admin_reviewed_by: string | null
+          ai_confidence_score: number | null
+          ai_review_queue_reason: string | null
+          ai_verification_result: Json | null
+          ai_verification_status: string | null
+          ai_verified_at: string | null
+          amount: number
+          confirmation_number: string | null
+          created_at: string | null
+          fiscal_sponsor_id: string | null
+          gift_note: string | null
+          id: string
+          is_anonymous: boolean
+          need_id: string
+          payment_method: string
+          proof_notes: string | null
+          proof_storage_path: string | null
+          proof_url: string | null
+          rejection_reason: string | null
+          sponsor_ack_direct_pay: boolean | null
+          sponsor_ack_mercybridge_no_custody: boolean | null
+          sponsor_ack_no_reversal_guarantee: boolean | null
+          sponsor_ack_not_tax_deductible: boolean | null
+          sponsor_disclosure_acknowledged_at: string | null
+          sponsor_disclosure_version: string | null
+          sponsor_id: string | null
+          status: Database["public"]["Enums"]["contribution_status"]
+          stripe_payment_intent_id: string | null
+          updated_at: string | null
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          admin_review_notes?: string | null
+          admin_reviewed_at?: string | null
+          admin_reviewed_by?: string | null
+          ai_confidence_score?: number | null
+          ai_review_queue_reason?: string | null
+          ai_verification_result?: Json | null
+          ai_verification_status?: string | null
+          ai_verified_at?: string | null
+          amount: number
+          confirmation_number?: string | null
+          created_at?: string | null
+          fiscal_sponsor_id?: string | null
+          gift_note?: string | null
+          id?: string
+          is_anonymous?: boolean
+          need_id: string
+          payment_method?: string
+          proof_notes?: string | null
+          proof_storage_path?: string | null
+          proof_url?: string | null
+          rejection_reason?: string | null
+          sponsor_ack_direct_pay?: boolean | null
+          sponsor_ack_mercybridge_no_custody?: boolean | null
+          sponsor_ack_no_reversal_guarantee?: boolean | null
+          sponsor_ack_not_tax_deductible?: boolean | null
+          sponsor_disclosure_acknowledged_at?: string | null
+          sponsor_disclosure_version?: string | null
+          sponsor_id?: string | null
+          status?: Database["public"]["Enums"]["contribution_status"]
+          stripe_payment_intent_id?: string | null
+          updated_at?: string | null
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          admin_review_notes?: string | null
+          admin_reviewed_at?: string | null
+          admin_reviewed_by?: string | null
+          ai_confidence_score?: number | null
+          ai_review_queue_reason?: string | null
+          ai_verification_result?: Json | null
+          ai_verification_status?: string | null
+          ai_verified_at?: string | null
+          amount?: number
+          confirmation_number?: string | null
+          created_at?: string | null
+          fiscal_sponsor_id?: string | null
+          gift_note?: string | null
+          id?: string
+          is_anonymous?: boolean
+          need_id?: string
+          payment_method?: string
+          proof_notes?: string | null
+          proof_storage_path?: string | null
+          proof_url?: string | null
+          rejection_reason?: string | null
+          sponsor_ack_direct_pay?: boolean | null
+          sponsor_ack_mercybridge_no_custody?: boolean | null
+          sponsor_ack_no_reversal_guarantee?: boolean | null
+          sponsor_ack_not_tax_deductible?: boolean | null
+          sponsor_disclosure_acknowledged_at?: string | null
+          sponsor_disclosure_version?: string | null
+          sponsor_id?: string | null
+          status?: Database["public"]["Enums"]["contribution_status"]
+          stripe_payment_intent_id?: string | null
+          updated_at?: string | null
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mercybridge_contributions_need_id_fkey"
+            columns: ["need_id"]
+            isOneToOne: false
+            referencedRelation: "mercybridge_needs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mercybridge_contributions_need_id_fkey"
+            columns: ["need_id"]
+            isOneToOne: false
+            referencedRelation: "mercybridge_public_needs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mercybridge_contributions_sponsor_id_fkey"
+            columns: ["sponsor_id"]
+            isOneToOne: false
+            referencedRelation: "notification_activity_summary"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "mercybridge_contributions_sponsor_id_fkey"
+            columns: ["sponsor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mercybridge_contributions_sponsor_id_fkey"
+            columns: ["sponsor_id"]
+            isOneToOne: false
+            referencedRelation: "user_quota_status"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      mercybridge_messages: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_read: boolean
+          message: string
+          need_id: string
+          recipient_id: string
+          sender_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_read?: boolean
+          message: string
+          need_id: string
+          recipient_id: string
+          sender_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_read?: boolean
+          message?: string
+          need_id?: string
+          recipient_id?: string
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mercybridge_messages_need_id_fkey"
+            columns: ["need_id"]
+            isOneToOne: false
+            referencedRelation: "mercybridge_needs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mercybridge_messages_need_id_fkey"
+            columns: ["need_id"]
+            isOneToOne: false
+            referencedRelation: "mercybridge_public_needs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mercybridge_need_ai_screenings: {
+        Row: {
+          created_at: string
+          id: string
+          need_id: string
+          result: Json | null
+          score: number | null
+          screened_at: string
+          screening_status: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          need_id: string
+          result?: Json | null
+          score?: number | null
+          screened_at?: string
+          screening_status: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          need_id?: string
+          result?: Json | null
+          score?: number | null
+          screened_at?: string
+          screening_status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mercybridge_need_ai_screenings_need_id_fkey"
+            columns: ["need_id"]
+            isOneToOne: false
+            referencedRelation: "mercybridge_needs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mercybridge_need_ai_screenings_need_id_fkey"
+            columns: ["need_id"]
+            isOneToOne: false
+            referencedRelation: "mercybridge_public_needs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mercybridge_need_documents: {
+        Row: {
+          created_at: string | null
+          document_type: string
+          extracted_fields: Json | null
+          extraction_confidence: number | null
+          extraction_status: Database["public"]["Enums"]["mercybridge_document_extraction_status"]
+          id: string
+          need_id: string
+          purged_at: string | null
+          retention_until: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          safe_summary: Json | null
+          storage_path: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          document_type?: string
+          extracted_fields?: Json | null
+          extraction_confidence?: number | null
+          extraction_status?: Database["public"]["Enums"]["mercybridge_document_extraction_status"]
+          id?: string
+          need_id: string
+          purged_at?: string | null
+          retention_until?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          safe_summary?: Json | null
+          storage_path: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          document_type?: string
+          extracted_fields?: Json | null
+          extraction_confidence?: number | null
+          extraction_status?: Database["public"]["Enums"]["mercybridge_document_extraction_status"]
+          id?: string
+          need_id?: string
+          purged_at?: string | null
+          retention_until?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          safe_summary?: Json | null
+          storage_path?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mercybridge_need_documents_need_id_fkey"
+            columns: ["need_id"]
+            isOneToOne: false
+            referencedRelation: "mercybridge_needs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mercybridge_need_documents_need_id_fkey"
+            columns: ["need_id"]
+            isOneToOne: false
+            referencedRelation: "mercybridge_public_needs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mercybridge_needs: {
+        Row: {
+          ai_screening_status: string | null
+          amount_funded: number
+          amount_remaining: number | null
+          amount_requested: number
+          approved_at: string | null
+          bill_amount: number
+          biller_name: string
+          category: Database["public"]["Enums"]["need_category"]
+          created_at: string | null
+          document_storage_paths: Json | null
+          document_summary_retained: string | null
+          document_urls: Json | null
+          due_date: string | null
+          funded_at: string | null
+          hardship_attestation: boolean | null
+          hardship_document_purged_at: string | null
+          hardship_document_retention_until: string | null
+          hardship_document_storage_paths: Json | null
+          hardship_document_urls: Json | null
+          hardship_proof_type: string | null
+          hardship_summary_private: string
+          hardship_summary_public: string | null
+          id: string
+          paid_at: string | null
+          payee_id: string | null
+          payee_match_confidence: number | null
+          payee_match_status: Database["public"]["Enums"]["mercybridge_payee_match_status"]
+          payee_review_notes: string | null
+          payee_risk_score: number | null
+          payment_confirmation_note: string | null
+          payment_instructions_public: string | null
+          payment_proof_url: string | null
+          private_payment_details: string | null
+          public_location: string | null
+          purge_status: string | null
+          raw_document_purged_at: string | null
+          raw_document_retention_until: string | null
+          rejected_at: string | null
+          rejection_reason: string | null
+          requester_consent_ai_review: boolean | null
+          requester_consent_human_review: boolean | null
+          requester_consent_no_guarantee: boolean | null
+          requester_consent_temp_storage: boolean | null
+          requester_disclosure_acknowledged_at: string | null
+          requester_disclosure_version: string | null
+          requester_id: string
+          review_notes: string | null
+          reviewer_id: string | null
+          status: Database["public"]["Enums"]["need_status"]
+          submitted_at: string | null
+          title: string
+          updated_at: string | null
+          urgency_level: Database["public"]["Enums"]["urgency_level"]
+          verification_level: Database["public"]["Enums"]["verification_level"]
+        }
+        Insert: {
+          ai_screening_status?: string | null
+          amount_funded?: number
+          amount_remaining?: number | null
+          amount_requested: number
+          approved_at?: string | null
+          bill_amount: number
+          biller_name: string
+          category: Database["public"]["Enums"]["need_category"]
+          created_at?: string | null
+          document_storage_paths?: Json | null
+          document_summary_retained?: string | null
+          document_urls?: Json | null
+          due_date?: string | null
+          funded_at?: string | null
+          hardship_attestation?: boolean | null
+          hardship_document_purged_at?: string | null
+          hardship_document_retention_until?: string | null
+          hardship_document_storage_paths?: Json | null
+          hardship_document_urls?: Json | null
+          hardship_proof_type?: string | null
+          hardship_summary_private: string
+          hardship_summary_public?: string | null
+          id?: string
+          paid_at?: string | null
+          payee_id?: string | null
+          payee_match_confidence?: number | null
+          payee_match_status?: Database["public"]["Enums"]["mercybridge_payee_match_status"]
+          payee_review_notes?: string | null
+          payee_risk_score?: number | null
+          payment_confirmation_note?: string | null
+          payment_instructions_public?: string | null
+          payment_proof_url?: string | null
+          private_payment_details?: string | null
+          public_location?: string | null
+          purge_status?: string | null
+          raw_document_purged_at?: string | null
+          raw_document_retention_until?: string | null
+          rejected_at?: string | null
+          rejection_reason?: string | null
+          requester_consent_ai_review?: boolean | null
+          requester_consent_human_review?: boolean | null
+          requester_consent_no_guarantee?: boolean | null
+          requester_consent_temp_storage?: boolean | null
+          requester_disclosure_acknowledged_at?: string | null
+          requester_disclosure_version?: string | null
+          requester_id: string
+          review_notes?: string | null
+          reviewer_id?: string | null
+          status?: Database["public"]["Enums"]["need_status"]
+          submitted_at?: string | null
+          title: string
+          updated_at?: string | null
+          urgency_level?: Database["public"]["Enums"]["urgency_level"]
+          verification_level?: Database["public"]["Enums"]["verification_level"]
+        }
+        Update: {
+          ai_screening_status?: string | null
+          amount_funded?: number
+          amount_remaining?: number | null
+          amount_requested?: number
+          approved_at?: string | null
+          bill_amount?: number
+          biller_name?: string
+          category?: Database["public"]["Enums"]["need_category"]
+          created_at?: string | null
+          document_storage_paths?: Json | null
+          document_summary_retained?: string | null
+          document_urls?: Json | null
+          due_date?: string | null
+          funded_at?: string | null
+          hardship_attestation?: boolean | null
+          hardship_document_purged_at?: string | null
+          hardship_document_retention_until?: string | null
+          hardship_document_storage_paths?: Json | null
+          hardship_document_urls?: Json | null
+          hardship_proof_type?: string | null
+          hardship_summary_private?: string
+          hardship_summary_public?: string | null
+          id?: string
+          paid_at?: string | null
+          payee_id?: string | null
+          payee_match_confidence?: number | null
+          payee_match_status?: Database["public"]["Enums"]["mercybridge_payee_match_status"]
+          payee_review_notes?: string | null
+          payee_risk_score?: number | null
+          payment_confirmation_note?: string | null
+          payment_instructions_public?: string | null
+          payment_proof_url?: string | null
+          private_payment_details?: string | null
+          public_location?: string | null
+          purge_status?: string | null
+          raw_document_purged_at?: string | null
+          raw_document_retention_until?: string | null
+          rejected_at?: string | null
+          rejection_reason?: string | null
+          requester_consent_ai_review?: boolean | null
+          requester_consent_human_review?: boolean | null
+          requester_consent_no_guarantee?: boolean | null
+          requester_consent_temp_storage?: boolean | null
+          requester_disclosure_acknowledged_at?: string | null
+          requester_disclosure_version?: string | null
+          requester_id?: string
+          review_notes?: string | null
+          reviewer_id?: string | null
+          status?: Database["public"]["Enums"]["need_status"]
+          submitted_at?: string | null
+          title?: string
+          updated_at?: string | null
+          urgency_level?: Database["public"]["Enums"]["urgency_level"]
+          verification_level?: Database["public"]["Enums"]["verification_level"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mercybridge_needs_payee_id_fkey"
+            columns: ["payee_id"]
+            isOneToOne: false
+            referencedRelation: "mercybridge_payees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mercybridge_payee_aliases: {
+        Row: {
+          alias_text: string
+          confidence: number
+          created_at: string | null
+          id: string
+          normalized_alias: string
+          payee_id: string
+          source: string
+        }
+        Insert: {
+          alias_text: string
+          confidence?: number
+          created_at?: string | null
+          id?: string
+          normalized_alias: string
+          payee_id: string
+          source?: string
+        }
+        Update: {
+          alias_text?: string
+          confidence?: number
+          created_at?: string | null
+          id?: string
+          normalized_alias?: string
+          payee_id?: string
+          source?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mercybridge_payee_aliases_payee_id_fkey"
+            columns: ["payee_id"]
+            isOneToOne: false
+            referencedRelation: "mercybridge_payees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mercybridge_payee_payment_methods: {
+        Row: {
+          ach_details_encrypted: string | null
+          check_payable_to: string | null
+          created_at: string | null
+          id: string
+          last_successful_payment_at: string | null
+          mailing_address: Json | null
+          method_type: string
+          notes: string | null
+          payee_id: string
+          payment_url: string | null
+          phone: string | null
+          phone_payment_allowed: boolean
+          requires_account_number: boolean
+          requires_invoice_number: boolean
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          ach_details_encrypted?: string | null
+          check_payable_to?: string | null
+          created_at?: string | null
+          id?: string
+          last_successful_payment_at?: string | null
+          mailing_address?: Json | null
+          method_type: string
+          notes?: string | null
+          payee_id: string
+          payment_url?: string | null
+          phone?: string | null
+          phone_payment_allowed?: boolean
+          requires_account_number?: boolean
+          requires_invoice_number?: boolean
+          status?: string
+          updated_at?: string | null
+        }
+        Update: {
+          ach_details_encrypted?: string | null
+          check_payable_to?: string | null
+          created_at?: string | null
+          id?: string
+          last_successful_payment_at?: string | null
+          mailing_address?: Json | null
+          method_type?: string
+          notes?: string | null
+          payee_id?: string
+          payment_url?: string | null
+          phone?: string | null
+          phone_payment_allowed?: boolean
+          requires_account_number?: boolean
+          requires_invoice_number?: boolean
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mercybridge_payee_payment_methods_payee_id_fkey"
+            columns: ["payee_id"]
+            isOneToOne: false
+            referencedRelation: "mercybridge_payees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mercybridge_payee_verifications: {
+        Row: {
+          created_at: string | null
+          evidence: Json | null
+          id: string
+          need_id: string | null
+          notes: string | null
+          payee_id: string
+          result: string
+          reviewer_id: string | null
+          verification_type: string
+        }
+        Insert: {
+          created_at?: string | null
+          evidence?: Json | null
+          id?: string
+          need_id?: string | null
+          notes?: string | null
+          payee_id: string
+          result: string
+          reviewer_id?: string | null
+          verification_type: string
+        }
+        Update: {
+          created_at?: string | null
+          evidence?: Json | null
+          id?: string
+          need_id?: string | null
+          notes?: string | null
+          payee_id?: string
+          result?: string
+          reviewer_id?: string | null
+          verification_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mercybridge_payee_verifications_need_id_fkey"
+            columns: ["need_id"]
+            isOneToOne: false
+            referencedRelation: "mercybridge_needs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mercybridge_payee_verifications_need_id_fkey"
+            columns: ["need_id"]
+            isOneToOne: false
+            referencedRelation: "mercybridge_public_needs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mercybridge_payee_verifications_payee_id_fkey"
+            columns: ["payee_id"]
+            isOneToOne: false
+            referencedRelation: "mercybridge_payees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mercybridge_payees: {
+        Row: {
+          address: Json | null
+          category: Database["public"]["Enums"]["mercybridge_payee_category"]
+          created_at: string | null
+          created_by: string | null
+          display_name: string
+          ein_or_tax_id_encrypted: string | null
+          id: string
+          last_verified_at: string | null
+          legal_name: string
+          normalized_name: string
+          phone: string | null
+          risk_score: number
+          suspended_at: string | null
+          suspension_reason: string | null
+          trust_score: number
+          updated_at: string | null
+          verification_level: number
+          verification_status: Database["public"]["Enums"]["mercybridge_payee_verification_status"]
+          website: string | null
+        }
+        Insert: {
+          address?: Json | null
+          category?: Database["public"]["Enums"]["mercybridge_payee_category"]
+          created_at?: string | null
+          created_by?: string | null
+          display_name: string
+          ein_or_tax_id_encrypted?: string | null
+          id?: string
+          last_verified_at?: string | null
+          legal_name: string
+          normalized_name: string
+          phone?: string | null
+          risk_score?: number
+          suspended_at?: string | null
+          suspension_reason?: string | null
+          trust_score?: number
+          updated_at?: string | null
+          verification_level?: number
+          verification_status?: Database["public"]["Enums"]["mercybridge_payee_verification_status"]
+          website?: string | null
+        }
+        Update: {
+          address?: Json | null
+          category?: Database["public"]["Enums"]["mercybridge_payee_category"]
+          created_at?: string | null
+          created_by?: string | null
+          display_name?: string
+          ein_or_tax_id_encrypted?: string | null
+          id?: string
+          last_verified_at?: string | null
+          legal_name?: string
+          normalized_name?: string
+          phone?: string | null
+          risk_score?: number
+          suspended_at?: string | null
+          suspension_reason?: string | null
+          trust_score?: number
+          updated_at?: string | null
+          verification_level?: number
+          verification_status?: Database["public"]["Enums"]["mercybridge_payee_verification_status"]
+          website?: string | null
+        }
+        Relationships: []
+      }
+      mercybridge_payment_attempts: {
+        Row: {
+          amount: number
+          confirmation_number: string | null
+          created_at: string | null
+          failed_reason: string | null
+          id: string
+          method: string
+          need_id: string
+          paid_at: string | null
+          payee_id: string | null
+          payment_method_id: string | null
+          receipt_storage_path: string | null
+          reviewer_id: string | null
+          settled_at: string | null
+          status: Database["public"]["Enums"]["mercybridge_payment_attempt_status"]
+          updated_at: string | null
+        }
+        Insert: {
+          amount: number
+          confirmation_number?: string | null
+          created_at?: string | null
+          failed_reason?: string | null
+          id?: string
+          method: string
+          need_id: string
+          paid_at?: string | null
+          payee_id?: string | null
+          payment_method_id?: string | null
+          receipt_storage_path?: string | null
+          reviewer_id?: string | null
+          settled_at?: string | null
+          status?: Database["public"]["Enums"]["mercybridge_payment_attempt_status"]
+          updated_at?: string | null
+        }
+        Update: {
+          amount?: number
+          confirmation_number?: string | null
+          created_at?: string | null
+          failed_reason?: string | null
+          id?: string
+          method?: string
+          need_id?: string
+          paid_at?: string | null
+          payee_id?: string | null
+          payment_method_id?: string | null
+          receipt_storage_path?: string | null
+          reviewer_id?: string | null
+          settled_at?: string | null
+          status?: Database["public"]["Enums"]["mercybridge_payment_attempt_status"]
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mercybridge_payment_attempts_need_id_fkey"
+            columns: ["need_id"]
+            isOneToOne: false
+            referencedRelation: "mercybridge_needs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mercybridge_payment_attempts_need_id_fkey"
+            columns: ["need_id"]
+            isOneToOne: false
+            referencedRelation: "mercybridge_public_needs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mercybridge_payment_attempts_payee_id_fkey"
+            columns: ["payee_id"]
+            isOneToOne: false
+            referencedRelation: "mercybridge_payees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mercybridge_payment_attempts_payment_method_id_fkey"
+            columns: ["payment_method_id"]
+            isOneToOne: false
+            referencedRelation: "mercybridge_payee_payment_methods"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mercybridge_risk_flags: {
+        Row: {
+          created_at: string | null
+          evidence: Json | null
+          flag_type: string
+          id: string
+          message: string
+          need_id: string | null
+          payee_id: string | null
+          requester_id: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          severity: Database["public"]["Enums"]["mercybridge_risk_severity"]
+        }
+        Insert: {
+          created_at?: string | null
+          evidence?: Json | null
+          flag_type: string
+          id?: string
+          message: string
+          need_id?: string | null
+          payee_id?: string | null
+          requester_id?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: Database["public"]["Enums"]["mercybridge_risk_severity"]
+        }
+        Update: {
+          created_at?: string | null
+          evidence?: Json | null
+          flag_type?: string
+          id?: string
+          message?: string
+          need_id?: string | null
+          payee_id?: string | null
+          requester_id?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: Database["public"]["Enums"]["mercybridge_risk_severity"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mercybridge_risk_flags_need_id_fkey"
+            columns: ["need_id"]
+            isOneToOne: false
+            referencedRelation: "mercybridge_needs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mercybridge_risk_flags_need_id_fkey"
+            columns: ["need_id"]
+            isOneToOne: false
+            referencedRelation: "mercybridge_public_needs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mercybridge_risk_flags_payee_id_fkey"
+            columns: ["payee_id"]
+            isOneToOne: false
+            referencedRelation: "mercybridge_payees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mercybridge_status_updates: {
+        Row: {
+          created_at: string | null
+          id: string
+          message: string
+          need_id: string
+          type: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          message: string
+          need_id: string
+          type?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          message?: string
+          need_id?: string
+          type?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mercybridge_status_updates_need_id_fkey"
+            columns: ["need_id"]
+            isOneToOne: false
+            referencedRelation: "mercybridge_needs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mercybridge_status_updates_need_id_fkey"
+            columns: ["need_id"]
+            isOneToOne: false
+            referencedRelation: "mercybridge_public_needs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mercybridge_stewardship_plans: {
+        Row: {
+          created_at: string | null
+          creditor_scripts: Json | null
+          disclaimer: string | null
+          encouragement: string | null
+          financial_summary: string
+          generated_at: string | null
+          hardship_budget_suggestions: string | null
+          id: string
+          need_id: string | null
+          next_step: string | null
+          requester_id: string
+          scripture_references: Json | null
+          seven_day_plan: Json | null
+          urgency_ranking: Json | null
+        }
+        Insert: {
+          created_at?: string | null
+          creditor_scripts?: Json | null
+          disclaimer?: string | null
+          encouragement?: string | null
+          financial_summary: string
+          generated_at?: string | null
+          hardship_budget_suggestions?: string | null
+          id?: string
+          need_id?: string | null
+          next_step?: string | null
+          requester_id: string
+          scripture_references?: Json | null
+          seven_day_plan?: Json | null
+          urgency_ranking?: Json | null
+        }
+        Update: {
+          created_at?: string | null
+          creditor_scripts?: Json | null
+          disclaimer?: string | null
+          encouragement?: string | null
+          financial_summary?: string
+          generated_at?: string | null
+          hardship_budget_suggestions?: string | null
+          id?: string
+          need_id?: string | null
+          next_step?: string | null
+          requester_id?: string
+          scripture_references?: Json | null
+          seven_day_plan?: Json | null
+          urgency_ranking?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mercybridge_stewardship_plans_need_id_fkey"
+            columns: ["need_id"]
+            isOneToOne: false
+            referencedRelation: "mercybridge_needs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mercybridge_stewardship_plans_need_id_fkey"
+            columns: ["need_id"]
+            isOneToOne: false
+            referencedRelation: "mercybridge_public_needs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mercybridge_stewardship_tasks: {
+        Row: {
+          completed_at: string | null
+          created_at: string | null
+          description: string | null
+          due_date: string | null
+          id: string
+          plan_id: string
+          status: Database["public"]["Enums"]["task_status"]
+          title: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string | null
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          plan_id: string
+          status?: Database["public"]["Enums"]["task_status"]
+          title: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string | null
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          plan_id?: string
+          status?: Database["public"]["Enums"]["task_status"]
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mercybridge_stewardship_tasks_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "mercybridge_stewardship_plans"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       moderation_admin_digest_queue: {
         Row: {
@@ -2451,8 +4245,22 @@ export type Database = {
             foreignKeyName: "moderation_appeals_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "notification_activity_summary"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "moderation_appeals_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "moderation_appeals_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_quota_status"
+            referencedColumns: ["user_id"]
           },
         ]
       }
@@ -2500,6 +4308,7 @@ export type Database = {
           bible_reading: boolean | null
           church_attendance: boolean | null
           created_at: string | null
+          emotions: Json | null
           entry_date: string | null
           id: string
           mood_score: number
@@ -2512,6 +4321,7 @@ export type Database = {
           bible_reading?: boolean | null
           church_attendance?: boolean | null
           created_at?: string | null
+          emotions?: Json | null
           entry_date?: string | null
           id?: string
           mood_score: number
@@ -2524,6 +4334,7 @@ export type Database = {
           bible_reading?: boolean | null
           church_attendance?: boolean | null
           created_at?: string | null
+          emotions?: Json | null
           entry_date?: string | null
           id?: string
           mood_score?: number
@@ -2627,6 +4438,7 @@ export type Database = {
       notifications: {
         Row: {
           action_link: string | null
+          channel: string | null
           created_at: string | null
           data: Json | null
           delivered_at: string | null
@@ -2637,9 +4449,12 @@ export type Database = {
           id: string
           is_read: boolean | null
           message: string
+          metadata: Json | null
           notification_type: string
           priority: string | null
           read_at: string | null
+          schedule_id: string | null
+          scheduled_for: string | null
           template_key: string
           title: string
           updated_at: string | null
@@ -2647,6 +4462,7 @@ export type Database = {
         }
         Insert: {
           action_link?: string | null
+          channel?: string | null
           created_at?: string | null
           data?: Json | null
           delivered_at?: string | null
@@ -2657,9 +4473,12 @@ export type Database = {
           id?: string
           is_read?: boolean | null
           message: string
+          metadata?: Json | null
           notification_type?: string
           priority?: string | null
           read_at?: string | null
+          schedule_id?: string | null
+          scheduled_for?: string | null
           template_key: string
           title: string
           updated_at?: string | null
@@ -2667,6 +4486,7 @@ export type Database = {
         }
         Update: {
           action_link?: string | null
+          channel?: string | null
           created_at?: string | null
           data?: Json | null
           delivered_at?: string | null
@@ -2677,13 +4497,46 @@ export type Database = {
           id?: string
           is_read?: boolean | null
           message?: string
+          metadata?: Json | null
           notification_type?: string
           priority?: string | null
           read_at?: string | null
+          schedule_id?: string | null
+          scheduled_for?: string | null
           template_key?: string
           title?: string
           updated_at?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      payment_events: {
+        Row: {
+          created_at: string
+          event_type: string
+          id: string
+          object_id: string | null
+          payload: string | null
+          processed: boolean
+          stripe_event_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_type: string
+          id?: string
+          object_id?: string | null
+          payload?: string | null
+          processed?: boolean
+          stripe_event_id: string
+        }
+        Update: {
+          created_at?: string
+          event_type?: string
+          id?: string
+          object_id?: string | null
+          payload?: string | null
+          processed?: boolean
+          stripe_event_id?: string
         }
         Relationships: []
       }
@@ -2727,6 +4580,56 @@ export type Database = {
             columns: ["plan_id"]
             isOneToOne: false
             referencedRelation: "bible_reading_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      podcast_generation_jobs: {
+        Row: {
+          completed_at: string | null
+          created_at: string | null
+          episode_id: string
+          error_message: string | null
+          id: string
+          lock_until: string | null
+          payload: Json
+          started_at: string | null
+          status: string
+          user_id: string
+          worker_id: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string | null
+          episode_id: string
+          error_message?: string | null
+          id?: string
+          lock_until?: string | null
+          payload: Json
+          started_at?: string | null
+          status?: string
+          user_id: string
+          worker_id?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string | null
+          episode_id?: string
+          error_message?: string | null
+          id?: string
+          lock_until?: string | null
+          payload?: Json
+          started_at?: string | null
+          status?: string
+          user_id?: string
+          worker_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "podcast_generation_jobs_episode_id_fkey"
+            columns: ["episode_id"]
+            isOneToOne: false
+            referencedRelation: "ai_podcast_episodes"
             referencedColumns: ["id"]
           },
         ]
@@ -2800,6 +4703,7 @@ export type Database = {
           description: string
           id: string
           is_answered: boolean | null
+          last_prayed_at: string | null
           prayer_count: number | null
           shared: boolean | null
           tags: string[] | null
@@ -2814,6 +4718,7 @@ export type Database = {
           description: string
           id?: string
           is_answered?: boolean | null
+          last_prayed_at?: string | null
           prayer_count?: number | null
           shared?: boolean | null
           tags?: string[] | null
@@ -2828,6 +4733,7 @@ export type Database = {
           description?: string
           id?: string
           is_answered?: boolean | null
+          last_prayed_at?: string | null
           prayer_count?: number | null
           shared?: boolean | null
           tags?: string[] | null
@@ -2843,18 +4749,30 @@ export type Database = {
           banned_by: string | null
           banned_reason: string | null
           bio: string | null
+          church_id: string | null
           created_at: string | null
           dev_simulate_pro: boolean | null
           display_name: string | null
           first_name: string | null
+          gracebill_role: string | null
           id: string
           is_admin: boolean | null
+          is_anonymous_sponsor: boolean | null
           is_banned: boolean
+          kyc_verified: boolean
           last_active: string | null
           last_name: string | null
+          mercybridge_role: string | null
+          needs_helped_count: number | null
+          needs_profile_rebuild: boolean | null
           notification_preferences: Json | null
+          prayer_streak: number | null
+          prayer_streak_updated_at: string | null
           profile_image_url: string | null
+          profile_rebuild_requested_at: string | null
+          stripe_customer_id: string | null
           timezone: string | null
+          total_contributed: number | null
           updated_at: string | null
         }
         Insert: {
@@ -2862,18 +4780,30 @@ export type Database = {
           banned_by?: string | null
           banned_reason?: string | null
           bio?: string | null
+          church_id?: string | null
           created_at?: string | null
           dev_simulate_pro?: boolean | null
           display_name?: string | null
           first_name?: string | null
+          gracebill_role?: string | null
           id: string
           is_admin?: boolean | null
+          is_anonymous_sponsor?: boolean | null
           is_banned?: boolean
+          kyc_verified?: boolean
           last_active?: string | null
           last_name?: string | null
+          mercybridge_role?: string | null
+          needs_helped_count?: number | null
+          needs_profile_rebuild?: boolean | null
           notification_preferences?: Json | null
+          prayer_streak?: number | null
+          prayer_streak_updated_at?: string | null
           profile_image_url?: string | null
+          profile_rebuild_requested_at?: string | null
+          stripe_customer_id?: string | null
           timezone?: string | null
+          total_contributed?: number | null
           updated_at?: string | null
         }
         Update: {
@@ -2881,21 +4811,41 @@ export type Database = {
           banned_by?: string | null
           banned_reason?: string | null
           bio?: string | null
+          church_id?: string | null
           created_at?: string | null
           dev_simulate_pro?: boolean | null
           display_name?: string | null
           first_name?: string | null
+          gracebill_role?: string | null
           id?: string
           is_admin?: boolean | null
+          is_anonymous_sponsor?: boolean | null
           is_banned?: boolean
+          kyc_verified?: boolean
           last_active?: string | null
           last_name?: string | null
+          mercybridge_role?: string | null
+          needs_helped_count?: number | null
+          needs_profile_rebuild?: boolean | null
           notification_preferences?: Json | null
+          prayer_streak?: number | null
+          prayer_streak_updated_at?: string | null
           profile_image_url?: string | null
+          profile_rebuild_requested_at?: string | null
+          stripe_customer_id?: string | null
           timezone?: string | null
+          total_contributed?: number | null
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_church_id_fkey"
+            columns: ["church_id"]
+            isOneToOne: false
+            referencedRelation: "churches"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       push_subscriptions: {
         Row: {
@@ -3105,39 +5055,6 @@ export type Database = {
         }
         Relationships: []
       }
-      scripture_reads: {
-        Row: {
-          book: string
-          chapter: number | null
-          created_at: string
-          id: string
-          read_at: string
-          user_id: string
-          verse_end: number | null
-          verse_start: number | null
-        }
-        Insert: {
-          book: string
-          chapter?: number | null
-          created_at?: string
-          id?: string
-          read_at?: string
-          user_id: string
-          verse_end?: number | null
-          verse_start?: number | null
-        }
-        Update: {
-          book?: string
-          chapter?: number | null
-          created_at?: string
-          id?: string
-          read_at?: string
-          user_id?: string
-          verse_end?: number | null
-          verse_start?: number | null
-        }
-        Relationships: []
-      }
       scripture_memory: {
         Row: {
           created_at: string | null
@@ -3189,6 +5106,224 @@ export type Database = {
         }
         Relationships: []
       }
+      scripture_memory_packs: {
+        Row: {
+          color: string | null
+          created_at: string
+          description: string | null
+          id: string
+          is_public: boolean
+          name: string
+          pack_type: string
+          topic: string | null
+          updated_at: string
+          user_id: string
+          verse_count: number
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_public?: boolean
+          name: string
+          pack_type?: string
+          topic?: string | null
+          updated_at?: string
+          user_id: string
+          verse_count?: number
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_public?: boolean
+          name?: string
+          pack_type?: string
+          topic?: string | null
+          updated_at?: string
+          user_id?: string
+          verse_count?: number
+        }
+        Relationships: []
+      }
+      scripture_memory_reviews: {
+        Row: {
+          accuracy_score: number | null
+          created_at: string
+          device_type: string | null
+          id: string
+          pack_id: string | null
+          recall_quality: number
+          recording_duration_seconds: number | null
+          recording_url: string | null
+          review_mode: string
+          spoken_text: string | null
+          time_spent_seconds: number
+          user_id: string
+          verse_id: string
+        }
+        Insert: {
+          accuracy_score?: number | null
+          created_at?: string
+          device_type?: string | null
+          id?: string
+          pack_id?: string | null
+          recall_quality: number
+          recording_duration_seconds?: number | null
+          recording_url?: string | null
+          review_mode?: string
+          spoken_text?: string | null
+          time_spent_seconds?: number
+          user_id: string
+          verse_id: string
+        }
+        Update: {
+          accuracy_score?: number | null
+          created_at?: string
+          device_type?: string | null
+          id?: string
+          pack_id?: string | null
+          recall_quality?: number
+          recording_duration_seconds?: number | null
+          recording_url?: string | null
+          review_mode?: string
+          spoken_text?: string | null
+          time_spent_seconds?: number
+          user_id?: string
+          verse_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scripture_memory_reviews_pack_id_fkey"
+            columns: ["pack_id"]
+            isOneToOne: false
+            referencedRelation: "scripture_memory_packs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scripture_memory_reviews_verse_id_fkey"
+            columns: ["verse_id"]
+            isOneToOne: false
+            referencedRelation: "scripture_memory_verses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      scripture_memory_stats: {
+        Row: {
+          active_verses: number
+          current_streak: number
+          last_review_at: string | null
+          longest_streak: number
+          mastered_verses: number
+          total_practice_seconds: number
+          total_reviews: number
+          total_verses: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          active_verses?: number
+          current_streak?: number
+          last_review_at?: string | null
+          longest_streak?: number
+          mastered_verses?: number
+          total_practice_seconds?: number
+          total_reviews?: number
+          total_verses?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          active_verses?: number
+          current_streak?: number
+          last_review_at?: string | null
+          longest_streak?: number
+          mastered_verses?: number
+          total_practice_seconds?: number
+          total_reviews?: number
+          total_verses?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      scripture_memory_verses: {
+        Row: {
+          audio_generated_at: string | null
+          audio_url: string | null
+          correct_count: number
+          created_at: string
+          ease_factor: number
+          id: string
+          interval_days: number
+          last_reviewed_at: string | null
+          mastery_level: string
+          next_review_at: string
+          notes: string | null
+          pack_id: string | null
+          review_count: number
+          tags: string[] | null
+          translation: string
+          updated_at: string
+          user_id: string
+          verse_reference: string
+          verse_text: string
+        }
+        Insert: {
+          audio_generated_at?: string | null
+          audio_url?: string | null
+          correct_count?: number
+          created_at?: string
+          ease_factor?: number
+          id?: string
+          interval_days?: number
+          last_reviewed_at?: string | null
+          mastery_level?: string
+          next_review_at?: string
+          notes?: string | null
+          pack_id?: string | null
+          review_count?: number
+          tags?: string[] | null
+          translation?: string
+          updated_at?: string
+          user_id: string
+          verse_reference: string
+          verse_text: string
+        }
+        Update: {
+          audio_generated_at?: string | null
+          audio_url?: string | null
+          correct_count?: number
+          created_at?: string
+          ease_factor?: number
+          id?: string
+          interval_days?: number
+          last_reviewed_at?: string | null
+          mastery_level?: string
+          next_review_at?: string
+          notes?: string | null
+          pack_id?: string | null
+          review_count?: number
+          tags?: string[] | null
+          translation?: string
+          updated_at?: string
+          user_id?: string
+          verse_reference?: string
+          verse_text?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scripture_memory_verses_pack_id_fkey"
+            columns: ["pack_id"]
+            isOneToOne: false
+            referencedRelation: "scripture_memory_packs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       scripture_practice_sessions: {
         Row: {
           accuracy_score: number | null
@@ -3236,6 +5371,39 @@ export type Database = {
           },
         ]
       }
+      scripture_reads: {
+        Row: {
+          book: string
+          chapter: number | null
+          created_at: string
+          id: string
+          read_at: string
+          user_id: string
+          verse_end: number | null
+          verse_start: number | null
+        }
+        Insert: {
+          book: string
+          chapter?: number | null
+          created_at?: string
+          id?: string
+          read_at?: string
+          user_id: string
+          verse_end?: number | null
+          verse_start?: number | null
+        }
+        Update: {
+          book?: string
+          chapter?: number | null
+          created_at?: string
+          id?: string
+          read_at?: string
+          user_id?: string
+          verse_end?: number | null
+          verse_start?: number | null
+        }
+        Relationships: []
+      }
       security_audit_log: {
         Row: {
           action: string
@@ -3274,6 +5442,50 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      sermon_artifacts: {
+        Row: {
+          artifact_type: string
+          content: Json
+          created_at: string
+          id: string
+          metadata: Json | null
+          sermon_id: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          artifact_type: string
+          content: Json
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          sermon_id: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          artifact_type?: string
+          content?: Json
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          sermon_id?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sermon_artifacts_sermon_id_fkey"
+            columns: ["sermon_id"]
+            isOneToOne: false
+            referencedRelation: "sermon_summaries"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       sermon_bookmarks: {
         Row: {
@@ -3430,6 +5642,104 @@ export type Database = {
             columns: ["session_id"]
             isOneToOne: false
             referencedRelation: "sermon_follow_along_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sermon_processing_jobs: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          error_message: string | null
+          gemini_model_used: string | null
+          id: string
+          input_audio_url: string | null
+          input_date: string | null
+          input_speaker: string | null
+          input_title: string | null
+          input_transcript: string | null
+          input_video_url: string | null
+          lock_until: string | null
+          output_action_steps: Json | null
+          output_applications: Json | null
+          output_key_scriptures: Json | null
+          output_main_points: Json | null
+          output_prayer_guide: string | null
+          output_raw_response: string | null
+          output_reflection_questions: Json | null
+          output_summary: string | null
+          output_tags: Json | null
+          processing_time_ms: number | null
+          sermon_id: string | null
+          started_at: string | null
+          status: string
+          user_id: string
+          worker_id: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          error_message?: string | null
+          gemini_model_used?: string | null
+          id?: string
+          input_audio_url?: string | null
+          input_date?: string | null
+          input_speaker?: string | null
+          input_title?: string | null
+          input_transcript?: string | null
+          input_video_url?: string | null
+          lock_until?: string | null
+          output_action_steps?: Json | null
+          output_applications?: Json | null
+          output_key_scriptures?: Json | null
+          output_main_points?: Json | null
+          output_prayer_guide?: string | null
+          output_raw_response?: string | null
+          output_reflection_questions?: Json | null
+          output_summary?: string | null
+          output_tags?: Json | null
+          processing_time_ms?: number | null
+          sermon_id?: string | null
+          started_at?: string | null
+          status?: string
+          user_id: string
+          worker_id?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          error_message?: string | null
+          gemini_model_used?: string | null
+          id?: string
+          input_audio_url?: string | null
+          input_date?: string | null
+          input_speaker?: string | null
+          input_title?: string | null
+          input_transcript?: string | null
+          input_video_url?: string | null
+          lock_until?: string | null
+          output_action_steps?: Json | null
+          output_applications?: Json | null
+          output_key_scriptures?: Json | null
+          output_main_points?: Json | null
+          output_prayer_guide?: string | null
+          output_raw_response?: string | null
+          output_reflection_questions?: Json | null
+          output_summary?: string | null
+          output_tags?: Json | null
+          processing_time_ms?: number | null
+          sermon_id?: string | null
+          started_at?: string | null
+          status?: string
+          user_id?: string
+          worker_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sermon_processing_jobs_sermon_id_fkey"
+            columns: ["sermon_id"]
+            isOneToOne: false
+            referencedRelation: "sermon_summaries"
             referencedColumns: ["id"]
           },
         ]
@@ -3592,9 +5902,9 @@ export type Database = {
           instructions: string | null
           is_active: boolean | null
           scripture_reference: string | null
-          suggested_time: string | null
           streak_current: number | null
           streak_longest: number | null
+          suggested_time: string | null
           user_id: string | null
         }
         Insert: {
@@ -3608,9 +5918,9 @@ export type Database = {
           instructions?: string | null
           is_active?: boolean | null
           scripture_reference?: string | null
-          suggested_time?: string | null
           streak_current?: number | null
           streak_longest?: number | null
+          suggested_time?: string | null
           user_id?: string | null
         }
         Update: {
@@ -3624,10 +5934,145 @@ export type Database = {
           instructions?: string | null
           is_active?: boolean | null
           scripture_reference?: string | null
-          suggested_time?: string | null
           streak_current?: number | null
           streak_longest?: number | null
+          suggested_time?: string | null
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      spiritual_memory_edges: {
+        Row: {
+          created_at: string
+          id: string
+          metadata: Json | null
+          rationale: string | null
+          relation: string
+          source_node_id: string
+          strength: number
+          target_node_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          rationale?: string | null
+          relation: string
+          source_node_id: string
+          strength?: number
+          target_node_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          rationale?: string | null
+          relation?: string
+          source_node_id?: string
+          strength?: number
+          target_node_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "spiritual_memory_edges_source_node_id_fkey"
+            columns: ["source_node_id"]
+            isOneToOne: false
+            referencedRelation: "spiritual_memory_nodes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "spiritual_memory_edges_target_node_id_fkey"
+            columns: ["target_node_id"]
+            isOneToOne: false
+            referencedRelation: "spiritual_memory_nodes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      spiritual_memory_nodes: {
+        Row: {
+          created_at: string
+          detail: string | null
+          id: string
+          label: string
+          last_seen_at: string | null
+          metadata: Json | null
+          node_type: string
+          source_count: number
+          updated_at: string
+          user_id: string
+          weight: number
+        }
+        Insert: {
+          created_at?: string
+          detail?: string | null
+          id?: string
+          label: string
+          last_seen_at?: string | null
+          metadata?: Json | null
+          node_type: string
+          source_count?: number
+          updated_at?: string
+          user_id: string
+          weight?: number
+        }
+        Update: {
+          created_at?: string
+          detail?: string | null
+          id?: string
+          label?: string
+          last_seen_at?: string | null
+          metadata?: Json | null
+          node_type?: string
+          source_count?: number
+          updated_at?: string
+          user_id?: string
+          weight?: number
+        }
+        Relationships: []
+      }
+      spiritual_pattern_summaries: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          label: string
+          metadata: Json | null
+          strength: number
+          summary: string | null
+          supporting_signals: string[] | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          id?: string
+          label: string
+          metadata?: Json | null
+          strength?: number
+          summary?: string | null
+          supporting_signals?: string[] | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          label?: string
+          metadata?: Json | null
+          strength?: number
+          summary?: string | null
+          supporting_signals?: string[] | null
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -3664,6 +6109,87 @@ export type Database = {
           prayer_points?: Json | null
           related_verses?: Json | null
           theme_name?: string
+        }
+        Relationships: []
+      }
+      spiritual_timeline_events: {
+        Row: {
+          created_at: string
+          event_type: string
+          id: string
+          metadata: Json | null
+          occurred_at: string
+          source_id: string | null
+          source_table: string | null
+          summary: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_type: string
+          id?: string
+          metadata?: Json | null
+          occurred_at: string
+          source_id?: string | null
+          source_table?: string | null
+          summary?: string | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          event_type?: string
+          id?: string
+          metadata?: Json | null
+          occurred_at?: string
+          source_id?: string | null
+          source_table?: string | null
+          summary?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      stewardship_progress: {
+        Row: {
+          budget_plan: Json
+          completion_percentage: number
+          counseling_sessions_attended: number
+          created_at: string
+          debt_snowball_data: Json
+          grace_score_history: Json
+          id: string
+          module_data: Json
+          module_name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          budget_plan?: Json
+          completion_percentage?: number
+          counseling_sessions_attended?: number
+          created_at?: string
+          debt_snowball_data?: Json
+          grace_score_history?: Json
+          id?: string
+          module_data?: Json
+          module_name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          budget_plan?: Json
+          completion_percentage?: number
+          counseling_sessions_attended?: number
+          created_at?: string
+          debt_snowball_data?: Json
+          grace_score_history?: Json
+          id?: string
+          module_data?: Json
+          module_name?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -3831,12 +6357,16 @@ export type Database = {
           context_type: string | null
           corrected_value: string | null
           created_at: string | null
+          feedback_signal: string | null
           feedback_type: string
           id: string
+          memory_item_id: string | null
           message_id: string | null
           original_value: string | null
           processed: boolean | null
           processed_at: string | null
+          response_axis: string | null
+          source_metadata: Json | null
           user_id: string
         }
         Insert: {
@@ -3845,12 +6375,16 @@ export type Database = {
           context_type?: string | null
           corrected_value?: string | null
           created_at?: string | null
+          feedback_signal?: string | null
           feedback_type: string
           id?: string
+          memory_item_id?: string | null
           message_id?: string | null
           original_value?: string | null
           processed?: boolean | null
           processed_at?: string | null
+          response_axis?: string | null
+          source_metadata?: Json | null
           user_id: string
         }
         Update: {
@@ -3859,15 +6393,27 @@ export type Database = {
           context_type?: string | null
           corrected_value?: string | null
           created_at?: string | null
+          feedback_signal?: string | null
           feedback_type?: string
           id?: string
+          memory_item_id?: string | null
           message_id?: string | null
           original_value?: string | null
           processed?: boolean | null
           processed_at?: string | null
+          response_axis?: string | null
+          source_metadata?: Json | null
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "user_ai_feedback_memory_item_id_fkey"
+            columns: ["memory_item_id"]
+            isOneToOne: false
+            referencedRelation: "user_memory_items"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_bible_study_progress: {
         Row: {
@@ -4034,6 +6580,27 @@ export type Database = {
           },
         ]
       }
+      user_daily_quota: {
+        Row: {
+          llm_calls_used: number
+          max_llm_calls: number
+          quota_date: string
+          user_id: string
+        }
+        Insert: {
+          llm_calls_used?: number
+          max_llm_calls?: number
+          quota_date?: string
+          user_id: string
+        }
+        Update: {
+          llm_calls_used?: number
+          max_llm_calls?: number
+          quota_date?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_devotional_progress: {
         Row: {
           completed: boolean | null
@@ -4099,6 +6666,111 @@ export type Database = {
         }
         Relationships: []
       }
+      user_memory_items: {
+        Row: {
+          attributes: Json
+          confidence: number
+          created_at: string
+          decay_expires_at: string | null
+          first_observed_at: string
+          id: string
+          item_key: string
+          kind: string
+          last_observed_at: string
+          source_count: number
+          source_refs: Json
+          status: string
+          summary: string
+          updated_at: string
+          user_control: Json
+          user_id: string
+        }
+        Insert: {
+          attributes?: Json
+          confidence?: number
+          created_at?: string
+          decay_expires_at?: string | null
+          first_observed_at?: string
+          id?: string
+          item_key: string
+          kind: string
+          last_observed_at?: string
+          source_count?: number
+          source_refs?: Json
+          status?: string
+          summary: string
+          updated_at?: string
+          user_control?: Json
+          user_id: string
+        }
+        Update: {
+          attributes?: Json
+          confidence?: number
+          created_at?: string
+          decay_expires_at?: string | null
+          first_observed_at?: string
+          id?: string
+          item_key?: string
+          kind?: string
+          last_observed_at?: string
+          source_count?: number
+          source_refs?: Json
+          status?: string
+          summary?: string
+          updated_at?: string
+          user_control?: Json
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_memory_observations: {
+        Row: {
+          attributes: Json
+          confidence: number
+          created_at: string
+          id: string
+          item_key: string
+          kind: string
+          observation_key: string
+          observed_at: string
+          source_metadata: Json
+          source_ref: string | null
+          source_type: string
+          summary: string
+          user_id: string
+        }
+        Insert: {
+          attributes?: Json
+          confidence?: number
+          created_at?: string
+          id?: string
+          item_key: string
+          kind: string
+          observation_key: string
+          observed_at?: string
+          source_metadata?: Json
+          source_ref?: string | null
+          source_type: string
+          summary: string
+          user_id: string
+        }
+        Update: {
+          attributes?: Json
+          confidence?: number
+          created_at?: string
+          id?: string
+          item_key?: string
+          kind?: string
+          observation_key?: string
+          observed_at?: string
+          source_metadata?: Json
+          source_ref?: string | null
+          source_type?: string
+          summary?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_notification_preferences: {
         Row: {
           created_at: string
@@ -4145,6 +6817,48 @@ export type Database = {
           sms_enabled?: boolean
           timezone?: string
           type_preferences?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_personality_state: {
+        Row: {
+          context_version: number
+          core_voice: Json
+          created_at: string
+          current_stance: string
+          last_refreshed_at: string
+          memory_digest: Json
+          present_state: Json
+          response_style: Json
+          stable_profile: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          context_version?: number
+          core_voice?: Json
+          created_at?: string
+          current_stance?: string
+          last_refreshed_at?: string
+          memory_digest?: Json
+          present_state?: Json
+          response_style?: Json
+          stable_profile?: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          context_version?: number
+          core_voice?: Json
+          created_at?: string
+          current_stance?: string
+          last_refreshed_at?: string
+          memory_digest?: Json
+          present_state?: Json
+          response_style?: Json
+          stable_profile?: Json
           updated_at?: string
           user_id?: string
         }
@@ -4350,6 +7064,33 @@ export type Database = {
         }
         Relationships: []
       }
+      user_tts_daily_quota: {
+        Row: {
+          calls_used: number
+          max_calls: number
+          quota_date: string
+          tts_type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          calls_used?: number
+          max_calls: number
+          quota_date: string
+          tts_type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          calls_used?: number
+          max_calls?: number
+          quota_date?: string
+          tts_type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       verse_notes: {
         Row: {
           book: string
@@ -4386,6 +7127,80 @@ export type Database = {
         }
         Relationships: []
       }
+      vetting_results: {
+        Row: {
+          ai_model_version: string | null
+          ai_reasoning: string | null
+          bill_id: string
+          created_at: string
+          final_decision:
+            | Database["public"]["Enums"]["vetting_decision_enum"]
+            | null
+          human_review_required: boolean
+          id: string
+          income_to_bill_ratio: number | null
+          manipulation_flags: Json
+          narrative_consistency_score: number | null
+          ocr_confidence: number | null
+          ocr_extracted_data: Json
+          reviewed_at: string | null
+          reviewer_id: string | null
+          severity_classification:
+            | Database["public"]["Enums"]["severity_classification_enum"]
+            | null
+        }
+        Insert: {
+          ai_model_version?: string | null
+          ai_reasoning?: string | null
+          bill_id: string
+          created_at?: string
+          final_decision?:
+            | Database["public"]["Enums"]["vetting_decision_enum"]
+            | null
+          human_review_required?: boolean
+          id?: string
+          income_to_bill_ratio?: number | null
+          manipulation_flags?: Json
+          narrative_consistency_score?: number | null
+          ocr_confidence?: number | null
+          ocr_extracted_data?: Json
+          reviewed_at?: string | null
+          reviewer_id?: string | null
+          severity_classification?:
+            | Database["public"]["Enums"]["severity_classification_enum"]
+            | null
+        }
+        Update: {
+          ai_model_version?: string | null
+          ai_reasoning?: string | null
+          bill_id?: string
+          created_at?: string
+          final_decision?:
+            | Database["public"]["Enums"]["vetting_decision_enum"]
+            | null
+          human_review_required?: boolean
+          id?: string
+          income_to_bill_ratio?: number | null
+          manipulation_flags?: Json
+          narrative_consistency_score?: number | null
+          ocr_confidence?: number | null
+          ocr_extracted_data?: Json
+          reviewed_at?: string | null
+          reviewer_id?: string | null
+          severity_classification?:
+            | Database["public"]["Enums"]["severity_classification_enum"]
+            | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vetting_results_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: true
+            referencedRelation: "bills"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       voice_usage_logs: {
         Row: {
           characters: number
@@ -4410,6 +7225,45 @@ export type Database = {
           model_id?: string
           user_id?: string | null
           voice_id?: string
+        }
+        Relationships: []
+      }
+      welcome_emails_sent: {
+        Row: {
+          clicked: boolean | null
+          created_at: string | null
+          email: string
+          email_type: string | null
+          id: string
+          opened: boolean | null
+          replied: boolean | null
+          sent_at: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          clicked?: boolean | null
+          created_at?: string | null
+          email: string
+          email_type?: string | null
+          id?: string
+          opened?: boolean | null
+          replied?: boolean | null
+          sent_at?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          clicked?: boolean | null
+          created_at?: string | null
+          email?: string
+          email_type?: string | null
+          id?: string
+          opened?: boolean | null
+          replied?: boolean | null
+          sent_at?: string | null
+          updated_at?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -4439,6 +7293,85 @@ export type Database = {
       }
     }
     Views: {
+      mercybridge_public_needs: {
+        Row: {
+          amount_funded: number | null
+          amount_remaining: number | null
+          amount_requested: number | null
+          bill_amount: number | null
+          biller_name: string | null
+          category: Database["public"]["Enums"]["need_category"] | null
+          due_date: string | null
+          hardship_summary_public: string | null
+          id: string | null
+          payment_instructions_public: string | null
+          public_location: string | null
+          requester_id: string | null
+          status: Database["public"]["Enums"]["need_status"] | null
+          submitted_at: string | null
+          title: string | null
+          urgency_level: Database["public"]["Enums"]["urgency_level"] | null
+          verification_level:
+            | Database["public"]["Enums"]["verification_level"]
+            | null
+        }
+        Insert: {
+          amount_funded?: number | null
+          amount_remaining?: number | null
+          amount_requested?: number | null
+          bill_amount?: number | null
+          biller_name?: string | null
+          category?: Database["public"]["Enums"]["need_category"] | null
+          due_date?: string | null
+          hardship_summary_public?: string | null
+          id?: string | null
+          payment_instructions_public?: string | null
+          public_location?: string | null
+          requester_id?: never
+          status?: Database["public"]["Enums"]["need_status"] | null
+          submitted_at?: string | null
+          title?: string | null
+          urgency_level?: Database["public"]["Enums"]["urgency_level"] | null
+          verification_level?:
+            | Database["public"]["Enums"]["verification_level"]
+            | null
+        }
+        Update: {
+          amount_funded?: number | null
+          amount_remaining?: number | null
+          amount_requested?: number | null
+          bill_amount?: number | null
+          biller_name?: string | null
+          category?: Database["public"]["Enums"]["need_category"] | null
+          due_date?: string | null
+          hardship_summary_public?: string | null
+          id?: string | null
+          payment_instructions_public?: string | null
+          public_location?: string | null
+          requester_id?: never
+          status?: Database["public"]["Enums"]["need_status"] | null
+          submitted_at?: string | null
+          title?: string | null
+          urgency_level?: Database["public"]["Enums"]["urgency_level"] | null
+          verification_level?:
+            | Database["public"]["Enums"]["verification_level"]
+            | null
+        }
+        Relationships: []
+      }
+      notification_activity_summary: {
+        Row: {
+          active_schedules: number | null
+          first_name: string | null
+          last_notification_at: string | null
+          last_schedule_triggered_at: string | null
+          read_notifications: number | null
+          total_notifications: number | null
+          total_schedules: number | null
+          user_id: string | null
+        }
+        Relationships: []
+      }
       scripture_leaderboard: {
         Row: {
           achievements_count: number | null
@@ -4449,6 +7382,17 @@ export type Database = {
           total_points: number | null
           user_id: string | null
           verses_memorized: number | null
+        }
+        Relationships: []
+      }
+      user_quota_status: {
+        Row: {
+          created_at: string | null
+          dev_simulate_pro: boolean | null
+          display_name: string | null
+          total_voice_chars_used: number | null
+          total_whisper_seconds_used: number | null
+          user_id: string | null
         }
         Relationships: []
       }
@@ -4468,6 +7412,26 @@ export type Database = {
         }
         Returns: string
       }
+      calculate_next_review: {
+        Args: {
+          current_interval: number
+          ease_factor: number
+          recall_quality: number
+        }
+        Returns: {
+          new_ease_factor: number
+          new_interval: number
+          new_mastery_level: string
+        }[]
+      }
+      check_and_increment_quota: {
+        Args: { p_max_calls?: number; p_user_id: string }
+        Returns: {
+          allowed: boolean
+          remaining: number
+          used: number
+        }[]
+      }
       check_community_admin: {
         Args: { p_community_id: string; p_user_id: string }
         Returns: boolean
@@ -4480,7 +7444,19 @@ export type Database = {
         Args: { check_prayer_id: string; check_user_id: string }
         Returns: boolean
       }
+      claim_tts_daily_quota: {
+        Args: { p_max_calls: number; p_tts_type: string; p_user_id: string }
+        Returns: {
+          allowed: boolean
+          remaining: number
+          used: number
+        }[]
+      }
       cleanup_old_conversation_sessions: { Args: never; Returns: undefined }
+      clear_profile_rebuild_flag: {
+        Args: { p_user_id: string }
+        Returns: undefined
+      }
       complete_reading_day: {
         Args: { p_day_number: number; p_plan_id: string; p_user_id: string }
         Returns: boolean
@@ -4489,15 +7465,10 @@ export type Database = {
         Args: { p_user_id: string }
         Returns: undefined
       }
-      create_notification_from_schedule: {
-        Args: { p_schedule_id: string }
-        Returns: string
-      }
       create_test_pro_subscription: {
         Args: { user_id_param: string }
         Returns: undefined
       }
-      execute_sql_query: { Args: { query_text: string }; Returns: Json }
       generate_blog_slug: { Args: { title_text: string }; Returns: string }
       get_community_member_counts: {
         Args: { community_ids: string[] }
@@ -4522,7 +7493,6 @@ export type Database = {
         }[]
       }
       get_cron_secret: { Args: never; Returns: string }
-      get_database_stats: { Args: never; Returns: Json }
       get_moderation_user_summary: {
         Args: { p_user_ids: string[]; p_window_days?: number }
         Returns: {
@@ -4545,20 +7515,91 @@ export type Database = {
           community_id: string
         }[]
       }
+      get_people_mentions: {
+        Args: { p_limit?: number; p_person_name: string }
+        Returns: {
+          book: string
+          chapter: number
+          id: string
+          person_name: string
+          role: string
+          text: string
+          verse: number
+          verse_ref: string
+        }[]
+      }
+      get_public_profiles: {
+        Args: { p_user_ids: string[] }
+        Returns: {
+          display_name: string
+          first_name: string
+          id: string
+          profile_image_url: string
+        }[]
+      }
+      get_related_verses: {
+        Args: { p_limit?: number; p_verse_id: string }
+        Returns: {
+          book: string
+          chapter: number
+          description: string
+          id: string
+          relationship_type: string
+          strength: number
+          text: string
+          verse: number
+          verse_ref: string
+        }[]
+      }
       get_spiritual_stats: {
         Args: { end_date: string; start_date: string }
         Returns: Json
       }
-      get_table_columns: {
-        Args: { table_name: string }
+      get_verse_context: { Args: { p_verse_id: string }; Returns: Json }
+      get_verse_people: {
+        Args: { p_verse_id: string }
         Returns: {
-          column_name: string
+          display_name: string
+          era: string
+          person_id: string
+          person_name: string
+          role: string
         }[]
       }
-      get_tables: {
-        Args: never
+      get_verse_themes: {
+        Args: { p_verse_id: string }
         Returns: {
-          table_name: string
+          category: string
+          display_name: string
+          relevance_score: number
+          theme_id: string
+          theme_name: string
+        }[]
+      }
+      get_verses_by_theme: {
+        Args: { p_limit?: number; p_theme_name: string }
+        Returns: {
+          book: string
+          chapter: number
+          id: string
+          relevance_score: number
+          text: string
+          theme_name: string
+          verse: number
+          verse_ref: string
+        }[]
+      }
+      get_verses_within_hops: {
+        Args: { p_limit?: number; p_max_hops?: number; p_verse_id: string }
+        Returns: {
+          book: string
+          chapter: number
+          hop_distance: number
+          id: string
+          path_relationships: string[]
+          text: string
+          verse: number
+          verse_ref: string
         }[]
       }
       increment_prayer_count: {
@@ -4570,6 +7611,7 @@ export type Database = {
           description: string
           id: string
           is_answered: boolean | null
+          last_prayed_at: string | null
           prayer_count: number | null
           shared: boolean | null
           tags: string[] | null
@@ -4585,6 +7627,7 @@ export type Database = {
         }
       }
       is_admin: { Args: never; Returns: boolean }
+      is_mercybridge_admin: { Args: never; Returns: boolean }
       log_security_event: {
         Args: {
           p_action: string
@@ -4595,16 +7638,69 @@ export type Database = {
         }
         Returns: undefined
       }
-      set_user_admin_flag: {
-        Args: { new_is_admin: boolean; reason?: string; target_user: string }
+      mark_mercybridge_message_read: {
+        Args: { message_id: string }
+        Returns: undefined
+      }
+      mercybridge_find_payee_matches: {
+        Args: { query_text: string; result_limit?: number }
         Returns: {
-          id: string
-          is_admin: boolean
-          updated_at: string
+          category: Database["public"]["Enums"]["mercybridge_payee_category"]
+          confidence: number
+          display_name: string
+          legal_name: string
+          matched_alias: string
+          payee_id: string
+          risk_score: number
+          trust_score: number
+          verification_level: number
+          verification_status: Database["public"]["Enums"]["mercybridge_payee_verification_status"]
         }[]
       }
-      toggle_test_pro_subscriptions: {
-        Args: { enabled: boolean }
+      mercybridge_mark_paid: {
+        Args: { p_amount: number; p_need_id: string; p_payment_method?: string }
+        Returns: {
+          amount_paid: number
+          amount_remaining: number
+          contribution_id: string
+          need_id: string
+          status: Database["public"]["Enums"]["need_status"]
+        }[]
+      }
+      mercybridge_normalize_text: { Args: { input: string }; Returns: string }
+      mercybridge_recalculate_payee_trust: {
+        Args: { target_payee_id: string }
+        Returns: undefined
+      }
+      reset_user_quota: {
+        Args: { new_max_calls?: number; target_user_id: string }
+        Returns: undefined
+      }
+      search_bible_with_graph: {
+        Args: {
+          p_graph_hops?: number
+          p_graph_weight?: number
+          p_limit?: number
+          p_query_embedding: string
+          p_similarity_weight?: number
+        }
+        Returns: {
+          book: string
+          chapter: number
+          combined_score: number
+          graph_score: number
+          id: string
+          similarity_score: number
+          source: string
+          text: string
+          verse: number
+          verse_ref: string
+        }[]
+      }
+      show_limit: { Args: never; Returns: number }
+      show_trgm: { Args: { "": string }; Returns: string[] }
+      update_scripture_memory_stats: {
+        Args: { p_user_id: string }
         Returns: undefined
       }
       update_user_scripture_stats: {
@@ -4613,6 +7709,14 @@ export type Database = {
           p_practice_completed?: boolean
           p_user_id: string
           p_verse_memorized?: boolean
+        }
+        Returns: undefined
+      }
+      update_verse_after_review: {
+        Args: {
+          p_recall_quality: number
+          p_time_spent: number
+          p_verse_id: string
         }
         Returns: undefined
       }
@@ -4625,9 +7729,173 @@ export type Database = {
         }
         Returns: undefined
       }
+      upsert_verse_embedding: {
+        Args: {
+          p_book: string
+          p_chapter: number
+          p_embedding: string
+          p_text: string
+          p_translation?: string
+          p_verse: number
+        }
+        Returns: string
+      }
+      verify_contribution: {
+        Args: { action: string; contribution_id: string; reason?: string }
+        Returns: {
+          admin_review_notes: string | null
+          admin_reviewed_at: string | null
+          admin_reviewed_by: string | null
+          ai_confidence_score: number | null
+          ai_review_queue_reason: string | null
+          ai_verification_result: Json | null
+          ai_verification_status: string | null
+          ai_verified_at: string | null
+          amount: number
+          confirmation_number: string | null
+          created_at: string | null
+          fiscal_sponsor_id: string | null
+          gift_note: string | null
+          id: string
+          is_anonymous: boolean
+          need_id: string
+          payment_method: string
+          proof_notes: string | null
+          proof_storage_path: string | null
+          proof_url: string | null
+          rejection_reason: string | null
+          sponsor_ack_direct_pay: boolean | null
+          sponsor_ack_mercybridge_no_custody: boolean | null
+          sponsor_ack_no_reversal_guarantee: boolean | null
+          sponsor_ack_not_tax_deductible: boolean | null
+          sponsor_disclosure_acknowledged_at: string | null
+          sponsor_disclosure_version: string | null
+          sponsor_id: string | null
+          status: Database["public"]["Enums"]["contribution_status"]
+          stripe_payment_intent_id: string | null
+          updated_at: string | null
+          verified_at: string | null
+          verified_by: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "mercybridge_contributions"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
     }
     Enums: {
-      [_ in never]: never
+      bill_category_enum:
+        | "medical"
+        | "housing"
+        | "utilities"
+        | "transportation"
+        | "education"
+        | "food"
+        | "other"
+      bill_status_enum: "active" | "funded" | "expired" | "paid"
+      church_membership_role_enum: "member" | "deacon" | "admin"
+      contribution_status: "pending" | "completed" | "refunded" | "failed"
+      creditor_payment_method_enum: "stripe_transfer" | "check" | "ach"
+      creditor_verification_status_enum: "pending" | "verified" | "rejected"
+      donation_status_enum: "pending" | "completed" | "refunded" | "failed"
+      mercybridge_document_extraction_status:
+        | "pending"
+        | "processing"
+        | "completed"
+        | "failed"
+        | "reviewed"
+      mercybridge_payee_category:
+        | "utility"
+        | "rent_landlord"
+        | "property_manager"
+        | "medical"
+        | "dental"
+        | "auto_repair"
+        | "insurance"
+        | "childcare"
+        | "school"
+        | "church_partner"
+        | "government_fee"
+        | "telecom"
+        | "other"
+      mercybridge_payee_match_status:
+        | "not_checked"
+        | "matched"
+        | "possible_match"
+        | "new_payee_pending"
+        | "no_match"
+        | "rejected"
+      mercybridge_payee_verification_status:
+        | "unverified"
+        | "pending_review"
+        | "limited_verified"
+        | "verified"
+        | "trusted"
+        | "suspended"
+        | "rejected"
+      mercybridge_payment_attempt_status:
+        | "pending"
+        | "initiated"
+        | "paid"
+        | "confirmed"
+        | "settled"
+        | "failed"
+        | "reversed"
+        | "cancelled"
+      mercybridge_risk_severity: "low" | "medium" | "high" | "critical"
+      need_category:
+        | "utilities"
+        | "rent_housing"
+        | "medical"
+        | "transportation"
+        | "childcare"
+        | "food"
+        | "other_essentials"
+      need_status:
+        | "draft"
+        | "submitted"
+        | "more_info_needed"
+        | "approved"
+        | "partially_funded"
+        | "funded"
+        | "payment_pending"
+        | "paid"
+        | "rejected"
+        | "cancelled"
+        | "archived"
+      prayer_category_enum:
+        | "financial"
+        | "health"
+        | "employment"
+        | "family"
+        | "other"
+      review_action: "approved" | "rejected" | "more_info" | "escalated"
+      session_status_enum: "scheduled" | "completed" | "cancelled" | "no_show"
+      severity_classification_enum: "emergency" | "chronic" | "lifestyle"
+      task_status: "pending" | "in_progress" | "completed" | "skipped"
+      urgency_level: "critical" | "high" | "medium" | "low"
+      urgency_level_enum: "critical" | "high" | "medium" | "low"
+      verification_level:
+        | "level_1_document"
+        | "level_2_identity"
+        | "level_3_hardship"
+        | "level_4_community"
+      vetting_decision_enum:
+        | "auto_approved"
+        | "human_approved"
+        | "rejected"
+        | "flagged"
+      vetting_status_enum:
+        | "pending"
+        | "approved"
+        | "rejected"
+        | "human_review"
+        | "live"
+        | "funded"
+        | "paid"
+        | "expired"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -4753,7 +8021,133 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  public: {
+  graphql_public: {
     Enums: {},
+  },
+  public: {
+    Enums: {
+      bill_category_enum: [
+        "medical",
+        "housing",
+        "utilities",
+        "transportation",
+        "education",
+        "food",
+        "other",
+      ],
+      bill_status_enum: ["active", "funded", "expired", "paid"],
+      church_membership_role_enum: ["member", "deacon", "admin"],
+      contribution_status: ["pending", "completed", "refunded", "failed"],
+      creditor_payment_method_enum: ["stripe_transfer", "check", "ach"],
+      creditor_verification_status_enum: ["pending", "verified", "rejected"],
+      donation_status_enum: ["pending", "completed", "refunded", "failed"],
+      mercybridge_document_extraction_status: [
+        "pending",
+        "processing",
+        "completed",
+        "failed",
+        "reviewed",
+      ],
+      mercybridge_payee_category: [
+        "utility",
+        "rent_landlord",
+        "property_manager",
+        "medical",
+        "dental",
+        "auto_repair",
+        "insurance",
+        "childcare",
+        "school",
+        "church_partner",
+        "government_fee",
+        "telecom",
+        "other",
+      ],
+      mercybridge_payee_match_status: [
+        "not_checked",
+        "matched",
+        "possible_match",
+        "new_payee_pending",
+        "no_match",
+        "rejected",
+      ],
+      mercybridge_payee_verification_status: [
+        "unverified",
+        "pending_review",
+        "limited_verified",
+        "verified",
+        "trusted",
+        "suspended",
+        "rejected",
+      ],
+      mercybridge_payment_attempt_status: [
+        "pending",
+        "initiated",
+        "paid",
+        "confirmed",
+        "settled",
+        "failed",
+        "reversed",
+        "cancelled",
+      ],
+      mercybridge_risk_severity: ["low", "medium", "high", "critical"],
+      need_category: [
+        "utilities",
+        "rent_housing",
+        "medical",
+        "transportation",
+        "childcare",
+        "food",
+        "other_essentials",
+      ],
+      need_status: [
+        "draft",
+        "submitted",
+        "more_info_needed",
+        "approved",
+        "partially_funded",
+        "funded",
+        "payment_pending",
+        "paid",
+        "rejected",
+        "cancelled",
+        "archived",
+      ],
+      prayer_category_enum: [
+        "financial",
+        "health",
+        "employment",
+        "family",
+        "other",
+      ],
+      review_action: ["approved", "rejected", "more_info", "escalated"],
+      session_status_enum: ["scheduled", "completed", "cancelled", "no_show"],
+      severity_classification_enum: ["emergency", "chronic", "lifestyle"],
+      task_status: ["pending", "in_progress", "completed", "skipped"],
+      urgency_level: ["critical", "high", "medium", "low"],
+      urgency_level_enum: ["critical", "high", "medium", "low"],
+      verification_level: [
+        "level_1_document",
+        "level_2_identity",
+        "level_3_hardship",
+        "level_4_community",
+      ],
+      vetting_decision_enum: [
+        "auto_approved",
+        "human_approved",
+        "rejected",
+        "flagged",
+      ],
+      vetting_status_enum: [
+        "pending",
+        "approved",
+        "rejected",
+        "human_review",
+        "live",
+        "funded",
+        "paid",
+        "expired",
+      ],
+    },
   },
 } as const
