@@ -30,12 +30,16 @@ npm install
 
 ### Environment Variables
 
-Create a `.env` file:
+Copy `.env.example` to `.env` and use the shared project's current browser-safe publishable key:
 
 ```
 VITE_SUPABASE_URL=https://your-project.supabase.co
-VITE_SUPABASE_ANON_KEY=your-anon-key
+VITE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_your-key
+VITE_TRUENORTH_URL=https://www.find-true-north.net
 ```
+
+TrueNorth is the canonical owner of the shared Supabase migrations and Edge Functions. See
+[`supabase/README.md`](supabase/README.md) before making backend changes.
 
 ### Development
 

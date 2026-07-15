@@ -2,6 +2,7 @@ import { useEffect, useState, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { Loader2, ShieldAlert } from 'lucide-react';
 import { getMercyBridgeRole } from '@/services/mercybridgeApi';
+import { buildServiceHubUrl } from '@/lib/serviceHub';
 
 interface RoleGateProps {
   children: ReactNode;
@@ -54,12 +55,12 @@ export function RoleGate({ children, allowed = ['admin', 'reviewer'] }: RoleGate
           >
             MercyBridge overview
           </Link>
-          <Link
-            to="/hub"
+          <a
+            href={buildServiceHubUrl('/hub')}
             className="rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-amber-400"
           >
             Service Hub
-          </Link>
+          </a>
         </div>
       </div>
     );

@@ -699,7 +699,7 @@ export interface BrowseNeedsFilters {
 /** Need with public-safe fields for browsing */
 export interface PublicNeed {
   id: string;
-  requester_id: string;
+  requester_id: string | null;
   title: string;
   category: NeedCategory;
   biller_name: string;

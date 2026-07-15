@@ -21,58 +21,6 @@ interface SafeAuthProviderProps {
   children: ReactNode;
 }
 
-function getCrossDomainSession(): string | null {
-  try {
-    // Look for Supabase auth-token cookies (written by TrueNorth hub)
-    const cookies = document.cookie.split(';');
-    for (const cookie of cookies) {
-      const [name, value] = cookie.trim().split('=');
-      if (name && name.includes('auth-token') && !name.includes('code-verifier')) {
-        return decodeURIComponent(value);
-      }
-    }
-    return null;
-  } catch {
-    return null;
-  }
-}
-
-function importSessionFromCookie() {
-  try {
-    const cookieSession = getCrossDomainSession();
-    if (!cookieSession) return false;
-
-    // Find or create the supabase auth key in localStorage
-    let authKey: string | null = null;
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key && key.includes('auth-token')) {
-        authKey = key;
-        break;
-      }
-    }
-    
-    // If no key found, construct one from the Supabase URL
-    if (!authKey) {
-      const url = import.meta.env.VITE_SUPABASE_URL || '';
-      const match = url.match(/https:\/\/([^.]+)/);
-      if (match) {
-        authKey = `sb-${match[1]}-auth-token`;
-      }
-    }
-
-    if (authKey) {
-      localStorage.setItem(authKey, cookieSession);
-      console.info('[Auth] Session imported from cross-domain cookie');
-      return true;
-    }
-    return false;
-  } catch (err) {
-    console.error('[Auth] Failed to import session from cookie:', err);
-    return false;
-  }
-}
-
 function AuthProviderContent({ children }: SafeAuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -135,9 +83,6 @@ function AuthProviderContent({ children }: SafeAuthProviderProps) {
 
     const initializeAuth = async () => {
       try {
-        // Import session from cross-domain cookie before checking Supabase
-        importSessionFromCookie();
-        
         const { data: { session: initialSession }, error } = await supabase.auth.getSession();
         
         if (error) {

@@ -1,22 +1,17 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { logger } from '@/lib/logger';
-
-const HUB_LOGIN_URL = 'https://www.find-true-north.net/login';
+import { buildTrueNorthLoginUrl } from '@/lib/serviceHub';
 
 export default function LoginRedirect() {
   const location = useLocation();
 
   useEffect(() => {
-    // Store current MercyBridge path so we can return after hub login
-    try {
-      sessionStorage.setItem('mb_return_path', location.pathname + location.search);
-    } catch {
-      // ignore
-    }
-    
-    logger.info('[LoginRedirect] Redirecting to hub login');
-    window.location.href = HUB_LOGIN_URL;
+    const returnTo = `${window.location.origin}${location.pathname}${location.search}${location.hash}`;
+    const loginUrl = buildTrueNorthLoginUrl(returnTo);
+
+    logger.info('[LoginRedirect] Redirecting to hub login with a validated return destination');
+    window.location.replace(loginUrl);
   }, [location]);
 
   return (
