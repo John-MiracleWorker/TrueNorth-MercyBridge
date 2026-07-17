@@ -1,3 +1,9 @@
 ## 2024-05-10 - Add aria labels and aria-pressed attributes to filter buttons and copy buttons
 **Learning:** Adding descriptive `aria-label` attributes to icon-only buttons (like the copy button) and dynamically adding `aria-pressed` to filter toggles significantly improves accessibility for screen readers without altering the visual design.
 **Action:** Always check for interactive elements that lack text content or rely purely on visual state, and enhance them with appropriate ARIA attributes.
+## 2026-06-28 - Review Queue Filter Radio Buttons
+**Learning:** When using custom filter buttons that act as a single-choice toggle (like radio buttons), using `aria-pressed` is inaccurate because it suggests multiple selections are possible (like standard toggle buttons). Using a `role="radiogroup"` wrapper with individual `role="radio"` elements and `aria-checked` correctly announces the mutual exclusivity and current selection state to screen readers.
+**Action:** Use the `radiogroup` / `radio` pattern for any custom single-select filter or segmented control instead of multiple independent buttons with `aria-pressed`.
+## 2026-06-28 - Radio Groups and Keyboard Handlers
+**Learning:** Implementing a true `role="radiogroup"` and `role="radio"` requires more than just ARIA attributes; it strictly demands implementing roving `tabIndex` and arrow-key navigation handlers to be WCAG compliant. For standard custom filter buttons (which users expect to tab through), using `role="group"` to announce the grouping, and reverting to standard buttons with `aria-pressed` is a much safer, native approach that doesn't break keyboard navigation.
+**Action:** Reverted the filter buttons in the Review Queue back to standard buttons with `aria-pressed` and a `role="group"` wrapper. Avoid using `role="radiogroup"` unless you are prepared to write the custom arrow-key event handlers required for it.
