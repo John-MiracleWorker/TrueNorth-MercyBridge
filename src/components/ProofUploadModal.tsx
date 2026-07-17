@@ -297,16 +297,17 @@ export function ProofUploadModal({ isOpen, onClose, needId, onUploadComplete }: 
 
                 {/* File Upload */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-white">
+                  <span className="text-sm font-medium text-white" id="proof-file-label">
                     Screenshot or Receipt (optional)
-                  </label>
-                  <div
-                    className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-colors ${
+                  </span>
+                  <label
+                    htmlFor="proof-file"
+                    aria-labelledby="proof-file-label"
+                    className={`block border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-colors focus-within:ring-2 focus-within:ring-amber-500/50 focus-within:ring-offset-2 focus-within:ring-offset-slate-950 focus-within:border-amber-500 ${
                       file
                         ? 'border-emerald-500 bg-emerald-500/10'
                         : 'border-white/10 hover:border-slate-500 bg-white/[0.04]'
                     }`}
-                    onClick={() => document.getElementById('proof-file')?.click()}
                   >
                     {preview ? (
                       <img
@@ -331,9 +332,9 @@ export function ProofUploadModal({ isOpen, onClose, needId, onUploadComplete }: 
                       type="file"
                       accept="image/*,.pdf"
                       onChange={handleFileChange}
-                      className="hidden"
+                      className="sr-only"
                     />
-                  </div>
+                  </label>
                 </div>
 
                 {/* Confirmation Number */}
