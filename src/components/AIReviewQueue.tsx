@@ -1,17 +1,17 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { 
-  CheckCircle2, 
-  XCircle, 
-  AlertTriangle, 
+import { useState } from "react";
+import { motion } from "framer-motion";
+import {
+  CheckCircle2,
+  XCircle,
+  AlertTriangle,
   Loader2,
   Eye,
   Sparkles,
   TrendingUp,
   Clock,
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import type { Contribution } from '@/types/mercybridge';
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import type { Contribution } from "@/types/mercybridge";
 
 interface AIReviewQueueProps {
   flaggedContributions: Contribution[];
@@ -20,11 +20,11 @@ interface AIReviewQueueProps {
   loading: boolean;
 }
 
-export function AIReviewQueue({ 
-  flaggedContributions, 
-  onApprove, 
+export function AIReviewQueue({
+  flaggedContributions,
+  onApprove,
   onReject,
-  loading 
+  loading,
 }: AIReviewQueueProps) {
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -37,7 +37,9 @@ export function AIReviewQueue({
         className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-8 text-center"
       >
         <CheckCircle2 className="mx-auto h-12 w-12 text-emerald-400" />
-        <h3 className="mt-4 text-lg font-semibold text-white">All Caught Up!</h3>
+        <h3 className="mt-4 text-lg font-semibold text-white">
+          All Caught Up!
+        </h3>
         <p className="mt-2 text-slate-400">
           No contributions need manual review. AI is handling verification.
         </p>
@@ -57,7 +59,7 @@ export function AIReviewQueue({
   const handleReject = async (contribution: Contribution) => {
     setProcessingId(contribution.id);
     try {
-      await onReject(contribution, 'Admin manually rejected after AI flag');
+      await onReject(contribution, "Admin manually rejected after AI flag");
     } finally {
       setProcessingId(null);
     }
@@ -71,9 +73,13 @@ export function AIReviewQueue({
             <Sparkles className="h-5 w-5 text-amber-100" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-white">AI-Flagged for Review</h3>
+            <h3 className="text-lg font-semibold text-white">
+              AI-Flagged for Review
+            </h3>
             <p className="text-xs text-slate-400">
-              {flaggedContributions.length} contribution{flaggedContributions.length !== 1 ? 's' : ''} need{flaggedContributions.length !== 1 ? '' : 's'} manual review
+              {flaggedContributions.length} contribution
+              {flaggedContributions.length !== 1 ? "s" : ""} need
+              {flaggedContributions.length !== 1 ? "" : "s"} manual review
             </p>
           </div>
         </div>
@@ -105,22 +111,26 @@ export function AIReviewQueue({
                       for Need #{contribution.need_id?.slice(0, 8)}
                     </span>
                     {confidence > 0 && (
-                      <span className={`text-xs px-2 py-1 rounded-full ${
-                        confidence >= 70 
-                          ? 'bg-emerald-500/10 text-emerald-400' 
-                          : 'bg-amber-500/10 text-amber-100'
-                      }`}>
+                      <span
+                        className={`text-xs px-2 py-1 rounded-full ${
+                          confidence >= 70
+                            ? "bg-emerald-500/10 text-emerald-400"
+                            : "bg-amber-500/10 text-amber-100"
+                        }`}
+                      >
                         {confidence}% confidence
                       </span>
                     )}
                   </div>
-                  
+
                   {issues.length > 0 ? (
                     <div className="flex items-start gap-2 text-xs text-amber-100">
                       <AlertTriangle className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
                       <span>{issues[0]}</span>
                       {issues.length > 1 && (
-                        <span className="text-slate-500">+{issues.length - 1} more</span>
+                        <span className="text-slate-500">
+                          +{issues.length - 1} more
+                        </span>
                       )}
                     </div>
                   ) : (
@@ -135,18 +145,27 @@ export function AIReviewQueue({
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => setExpandedId(expandedId === contribution.id ? null : contribution.id)}
+                    onClick={() =>
+                      setExpandedId(
+                        expandedId === contribution.id ? null : contribution.id,
+                      )
+                    }
                     className="border-white/10 text-slate-300 hover:bg-white/[0.08]"
+                    aria-expanded={expandedId === contribution.id}
+                    aria-controls={`ai-details-${contribution.id}`}
                   >
                     <Eye className="h-3.5 w-3.5 mr-1.5" />
-                    {expandedId === contribution.id ? 'Hide' : 'Details'}
+                    {expandedId === contribution.id ? "Hide" : "Details"}
                   </Button>
                 </div>
               </div>
 
               {/* Expanded Details */}
               {expandedId === contribution.id && (
-                <div className="border-t border-slate-800 p-4 space-y-4 bg-slate-950/30">
+                <div
+                  id={`ai-details-${contribution.id}`}
+                  className="border-t border-slate-800 p-4 space-y-4 bg-slate-950/30"
+                >
                   {/* AI Analysis */}
                   <div className="space-y-2">
                     <h4 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
@@ -156,7 +175,7 @@ export function AIReviewQueue({
                       <div>
                         <span className="text-slate-500">Amount Detected:</span>
                         <span className="text-white ml-2">
-                          ${aiResult.amount_detected?.toFixed(2) || 'N/A'}
+                          ${aiResult.amount_detected?.toFixed(2) || "N/A"}
                         </span>
                       </div>
                       <div>
@@ -167,11 +186,15 @@ export function AIReviewQueue({
                       </div>
                       <div>
                         <span className="text-slate-500">Biller:</span>
-                        <span className="text-white ml-2">{aiResult.biller_detected || 'N/A'}</span>
+                        <span className="text-white ml-2">
+                          {aiResult.biller_detected || "N/A"}
+                        </span>
                       </div>
                       <div>
                         <span className="text-slate-500">Date:</span>
-                        <span className="text-white ml-2">{aiResult.date_detected || 'N/A'}</span>
+                        <span className="text-white ml-2">
+                          {aiResult.date_detected || "N/A"}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -185,7 +208,10 @@ export function AIReviewQueue({
                       </h4>
                       <ul className="space-y-1.5">
                         {issues.map((issue: string, i: number) => (
-                          <li key={i} className="text-sm text-amber-200 flex items-start gap-2">
+                          <li
+                            key={i}
+                            className="text-sm text-amber-200 flex items-start gap-2"
+                          >
                             <span className="text-amber-200 mt-1">•</span>
                             <span>{issue}</span>
                           </li>
