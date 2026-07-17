@@ -1,3 +1,6 @@
 ## 2024-05-10 - Add aria labels and aria-pressed attributes to filter buttons and copy buttons
 **Learning:** Adding descriptive `aria-label` attributes to icon-only buttons (like the copy button) and dynamically adding `aria-pressed` to filter toggles significantly improves accessibility for screen readers without altering the visual design.
 **Action:** Always check for interactive elements that lack text content or rely purely on visual state, and enhance them with appropriate ARIA attributes.
+## 2024-05-18 - ARIA Labels for Custom Radio Groups
+**Learning:** When building custom radio button groups (e.g., using `<div>` and `<button>` elements instead of standard `<fieldset>` and `<input type="radio">`), screen readers lose the context and state of the selection. Visual `<Label>` components need explicit `id` attributes to be referenced by the group via `aria-labelledby`, and individual buttons require `role="radio"` and `aria-checked` to maintain accessibility.
+**Action:** Always wrap custom radio button collections in a `<div role="radiogroup" aria-labelledby="[label-id]">` and apply `role="radio"` and `aria-checked={boolean}` to the individual buttons. Ensure keyboard accessibility is maintained with `focus-visible` styling.
