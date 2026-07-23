@@ -271,6 +271,7 @@ export function ProofUploadModal({ isOpen, onClose, needId, onUploadComplete }: 
               <form onSubmit={handleSubmit} className="p-6 space-y-5">
                 <button
                   type="button"
+                  aria-label="Back to disclosures"
                   onClick={() => setShowDisclosures(true)}
                   className="flex items-center gap-1 text-xs text-slate-400 hover:text-white"
                 >
