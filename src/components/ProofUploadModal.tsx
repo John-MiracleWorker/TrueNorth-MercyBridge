@@ -300,13 +300,13 @@ export function ProofUploadModal({ isOpen, onClose, needId, onUploadComplete }: 
                   <label className="text-sm font-medium text-white">
                     Screenshot or Receipt (optional)
                   </label>
-                  <div
-                    className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-colors ${
+                  <label
+                    htmlFor="proof-file"
+                    className={`block border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-colors focus-within:ring-2 focus-within:ring-emerald-500 focus-within:ring-offset-2 focus-within:ring-offset-slate-950 ${
                       file
                         ? 'border-emerald-500 bg-emerald-500/10'
                         : 'border-white/10 hover:border-slate-500 bg-white/[0.04]'
                     }`}
-                    onClick={() => document.getElementById('proof-file')?.click()}
                   >
                     {preview ? (
                       <img
@@ -331,9 +331,9 @@ export function ProofUploadModal({ isOpen, onClose, needId, onUploadComplete }: 
                       type="file"
                       accept="image/*,.pdf"
                       onChange={handleFileChange}
-                      className="hidden"
+                      className="sr-only"
                     />
-                  </div>
+                  </label>
                 </div>
 
                 {/* Confirmation Number */}
