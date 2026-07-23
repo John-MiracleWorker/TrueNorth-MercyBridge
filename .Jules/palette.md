@@ -1,3 +1,3 @@
-## 2024-05-10 - Add aria labels and aria-pressed attributes to filter buttons and copy buttons
-**Learning:** Adding descriptive `aria-label` attributes to icon-only buttons (like the copy button) and dynamically adding `aria-pressed` to filter toggles significantly improves accessibility for screen readers without altering the visual design.
-**Action:** Always check for interactive elements that lack text content or rely purely on visual state, and enhance them with appropriate ARIA attributes.
+## 2024-06-20 - Expanded Content Needs Accessibility State
+**Learning:** Found a common pattern in the React codebase where interactive content toggle buttons lack an `aria-expanded` property. Specifically in `MercyBridgeAdmin.tsx`, a `<button>` expands and collapses a review area based on state (`isExpanded`), but screen readers have no way of knowing whether the content is expanded or not.
+**Action:** When implementing clickable content expanders/accordions, consistently use `aria-expanded={isExpanded}` and `aria-controls="[id]"` to inform assistive technology of the state change.
